@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Дебитометр — Замер дебита скважины</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@300;400;600&family=IBM+Plex+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e14;
+    --panel: #111620;
+    --border: #1e2a38;
+    --accent: #00c2ff;
+    --accent2: #ff6b2b;
+    --accent3: #00e5a0;
+    --text: #c8d8e8;
+    --muted: #4a6070;
+    --warn: #ffd166;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    min-height: 100vh;
+    padding: 20px;
+    background-image: 
+      radial-gradient(ellipse at 20% 10%, rgba(0,194,255,0.05) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 90%, rgba(255,107,43,0.04) 0%, transparent 50%);
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 32px;
+    padding-top: 12px;
+  }
+
+  header .label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    opacity: 0.8;
+  }
+
+  header h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(36px, 7vw, 64px);
+    letter-spacing: 3px;
+    color: #fff;
+    line-height: 1;
+  }
+
+  header h1 span { color: var(--accent); }
+
+  .subtitle {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 6px;
+    letter-spacing: 1px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  @media (max-width: 640px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity: 0.5;
+  }
+
+  .card.full { grid-column: 1 / -1; }
+  .card.orange::before { background: linear-gradient(90deg, transparent, var(--accent2), transparent); }
+  .card.green::before { background: linear-gradient(90deg, transparent, var(--accent3), transparent); }
+
+  .card-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .card-title .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+  }
+
+  .card.orange .dot { background: var(--accent2); }
+  .card.green .dot { background: var(--accent3); }
+
+  .field { margin-bottom: 16px; }
+
+  .field label {
+    display: block;
+    font-size: 11px;
+    color: var(--muted);
+    font-family: 'IBM Plex Mono', monospace;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+
+  .field input {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 14px;
+    color: #fff;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 18px;
+    font-weight: 600;
+    outline: none;
+    transition: border-color 0.2s;
+    -moz-appearance: textfield;
+  }
+
+  .field input::-webkit-outer-spin-button,
+  .field input::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+  .field input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(0,194,255,0.08);
+  }
+
+  .card.orange .field input:focus {
+    border-color: var(--accent2);
+    box-shadow: 0 0 0 3px rgba(255,107,43,0.08);
+  }
+
+  .unit-hint {
+    font-size: 10px;
+    color: var(--muted);
+    font-family: 'IBM Plex Mono', monospace;
+    margin-top: 4px;
+  }
+
+  .btn {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 8px;
+  }
+
+  .btn-primary { background: var(--accent); color: var(--bg); }
+  .btn-primary:hover {
+    background: #33cfff;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(0,194,255,0.25);
+  }
+
+  .btn-orange { background: var(--accent2); color: var(--bg); }
+  .btn-orange:hover {
+    background: #ff8a57;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(255,107,43,0.25);
+  }
+
+  .btn:active { transform: translateY(0); }
+
+  .result-block {
+    margin-top: 20px;
+    padding: 18px;
+    background: var(--bg);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    display: none;
+  }
+
+  .result-block.visible { display: block; animation: fadeIn 0.3s ease; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .result-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .result-row:last-child { border-bottom: none; }
+
+  .result-label {
+    font-size: 11px;
+    color: var(--muted);
+    font-family: 'IBM Plex Mono', monospace;
+    letter-spacing: 0.5px;
+  }
+
+  .result-value {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+    font-size: 20px;
+    color: var(--accent);
+  }
+
+  .result-value.orange { color: var(--accent2); }
+  .result-value.white { color: #fff; }
+
+  .result-unit {
+    font-size: 11px;
+    color: var(--muted);
+    margin-left: 4px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .big-result {
+    text-align: center;
+    padding: 24px;
+    background: var(--bg);
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    margin-top: 12px;
+    display: none;
+  }
+
+  .big-result.visible { display: block; animation: fadeIn 0.4s ease; }
+
+  .big-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .big-number {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(40px, 10vw, 72px);
+    line-height: 1;
+    letter-spacing: 2px;
+  }
+
+  .big-number.cyan { color: var(--accent); }
+  .big-number.orange { color: var(--accent2); }
+
+  .big-unit {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 14px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  .pkv-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 4px;
+  }
+
+  .info-tile {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+  }
+
+  .info-tile-label {
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    font-family: 'IBM Plex Mono', monospace;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .info-tile-value {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 30px;
+    letter-spacing: 1px;
+  }
+
+  .info-tile-unit {
+    font-size: 10px;
+    color: var(--muted);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .error {
+    background: rgba(255,80,80,0.1);
+    border: 1px solid rgba(255,80,80,0.3);
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 12px;
+    color: #ff8080;
+    font-family: 'IBM Plex Mono', monospace;
+    margin-top: 10px;
+    display: none;
+  }
+
+  .error.visible { display: block; }
+
+  footer {
+    text-align: center;
+    margin-top: 32px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 2px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="label">⬡ Нефтегазовый инструмент</div>
+  <h1>ДЕБИТ<span>ОМЕТР</span></h1>
+  <div class="subtitle">// замер дебита скважины · режим ПКВ · суточный дебит</div>
+</header>
+
+<div class="grid">
+
+  <!-- БЛОК 1: Прямой замер -->
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>ПРЯМОЙ ЗАМЕР</div>
+
+    <div class="field">
+      <label>Объём жидкости</label>
+      <input type="number" id="vol1" placeholder="0" min="0" step="any">
+      <div class="unit-hint">→ литры (л)</div>
+    </div>
+
+    <div class="field">
+      <label>Время замера</label>
+      <input type="number" id="time1" placeholder="0" min="0" step="any">
+      <div class="unit-hint">→ минуты (мин)</div>
+    </div>
+
+    <button class="btn btn-primary" onclick="calcDirect()">РАССЧИТАТЬ</button>
+    <div class="error" id="err1">Введите корректные значения (> 0)</div>
+
+    <div class="result-block" id="res1">
+      <div class="result-row">
+        <span class="result-label">Объём</span>
+        <span><span class="result-value" id="r1_m3">—</span><span class="result-unit">м³</span></span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">Дебит</span>
+        <span><span class="result-value" id="r1_lpm">—</span><span class="result-unit">л/мин</span></span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">Дебит</span>
+        <span><span class="result-value" id="r1_m3h">—</span><span class="result-unit">м³/ч</span></span>
+      </div>
+    </div>
+
+    <div class="big-result" id="big1">
+      <div class="big-label">// суточный дебит</div>
+      <div class="big-number cyan" id="b1_day">—</div>
+      <div class="big-unit">м³ / сутки</div>
+    </div>
+  </div>
+
+  <!-- БЛОК 2: Режим ПКВ -->
+  <div class="card orange">
+    <div class="card-title"><span class="dot"></span>РЕЖИМ ПКВ</div>
+
+    <div class="field">
+      <label>Объём за цикл (слито)</label>
+      <input type="number" id="vol2" placeholder="0" min="0" step="any">
+      <div class="unit-hint">→ литры (л)</div>
+    </div>
+
+    <div class="pkv-row">
+      <div class="field">
+        <label>Работа насоса</label>
+        <input type="number" id="t_work" placeholder="10" min="0" step="any">
+        <div class="unit-hint">→ минуты</div>
+      </div>
+      <div class="field">
+        <label>Простой (стоп)</label>
+        <input type="number" id="t_stop" placeholder="5" min="0" step="any">
+        <div class="unit-hint">→ минуты</div>
+      </div>
+    </div>
+
+    <button class="btn btn-orange" onclick="calcPKV()">РАССЧИТАТЬ ПКВ</button>
+    <div class="error" id="err2">Введите корректные значения (> 0)</div>
+
+    <div class="result-block" id="res2">
+      <div class="result-row">
+        <span class="result-label">Объём за цикл</span>
+        <span><span class="result-value orange" id="r2_m3">—</span><span class="result-unit">м³</span></span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">Длина цикла (работа + простой)</span>
+        <span><span class="result-value white" id="r2_cycle">—</span><span class="result-unit">мин</span></span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">КПД работы насоса</span>
+        <span><span class="result-value orange" id="r2_kpd">—</span><span class="result-unit">%</span></span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">Циклов в сутки</span>
+        <span><span class="result-value white" id="r2_cycles_day">—</span><span class="result-unit">цикл</span></span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">Дебит в рабочее время</span>
+        <span><span class="result-value orange" id="r2_lpm">—</span><span class="result-unit">л/мин</span></span>
+      </div>
+    </div>
+
+    <div class="big-result" id="big2">
+      <div class="big-label">// суточный дебит ПКВ</div>
+      <div class="big-number orange" id="b2_day">—</div>
+      <div class="big-unit">м³ / сутки</div>
+    </div>
+  </div>
+
+  <!-- Сводный блок -->
+  <div class="card full green" id="summary_card" style="display:none">
+    <div class="card-title"><span class="dot"></span>СВОДНЫЙ РЕЗУЛЬТАТ — СУТОЧНЫЙ ДЕБИТ</div>
+    <div class="info-grid">
+      <div class="info-tile">
+        <div class="info-tile-label">Прямой замер</div>
+        <div class="info-tile-value" id="s_direct" style="color: var(--accent)">—</div>
+        <div class="info-tile-unit">м³ / сутки</div>
+      </div>
+      <div class="info-tile">
+        <div class="info-tile-label">Режим ПКВ</div>
+        <div class="info-tile-value" id="s_pkv" style="color: var(--accent2)">—</div>
+        <div class="info-tile-unit">м³ / сутки</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>ДЕБИТОМЕТР v1.0 · 2026 · НЕФТЕГАЗ</footer>
+
+<script>
+  let directResult = null;
+  let pkvResult = null;
+
+  function showError(id, show) {
+    document.getElementById(id).classList.toggle('visible', show);
+  }
+
+  function updateSummary() {
+    const card = document.getElementById('summary_card');
+    if (!directResult && !pkvResult) { card.style.display = 'none'; return; }
+    card.style.display = 'block';
+    document.getElementById('s_direct').textContent = directResult !== null ? directResult.toFixed(2) : '—';
+    document.getElementById('s_pkv').textContent = pkvResult !== null ? pkvResult.toFixed(2) : '—';
+  }
+
+  function calcDirect() {
+    const vol = parseFloat(document.getElementById('vol1').value);
+    const time = parseFloat(document.getElementById('time1').value);
+    if (!vol || !time || vol <= 0 || time <= 0) {
+      showError('err1', true);
+      document.getElementById('res1').classList.remove('visible');
+      document.getElementById('big1').classList.remove('visible');
+      return;
+    }
+    showError('err1', false);
+    const m3 = vol / 1000;
+    const lpm = vol / time;
+    const m3h = lpm * 60 / 1000;
+    const dayM3 = lpm * 1440 / 1000;
+    document.getElementById('r1_m3').textContent = m3.toFixed(3);
+    document.getElementById('r1_lpm').textContent = lpm.toFixed(2);
+    document.getElementById('r1_m3h').textContent = m3h.toFixed(3);
+    document.getElementById('b1_day').textContent = dayM3.toFixed(2);
+    document.getElementById('res1').classList.add('visible');
+    document.getElementById('big1').classList.add('visible');
+    directResult = dayM3;
+    updateSummary();
+  }
+
+  function calcPKV() {
+    const vol = parseFloat(document.getElementById('vol2').value);
+    const tWork = parseFloat(document.getElementById('t_work').value);
+    const tStop = parseFloat(document.getElementById('t_stop').value);
+    if (!vol || !tWork || !tStop || vol <= 0 || tWork <= 0 || tStop <= 0) {
+      showError('err2', true);
+      document.getElementById('res2').classList.remove('visible');
+      document.getElementById('big2').classList.remove('visible');
+      return;
+    }
+    showError('err2', false);
+    const cycleMin = tWork + tStop;
+    const kpd = (tWork / cycleMin) * 100;
+    const cyclesPerDay = (24 * 60) / cycleMin;
+    const lpm = vol / tWork;
+    const dayM3 = (vol * cyclesPerDay) / 1000;
+    const m3PerCycle = vol / 1000;
+    document.getElementById('r2_m3').textContent = m3PerCycle.toFixed(3);
+    document.getElementById('r2_cycle').textContent = cycleMin.toFixed(0);
+    document.getElementById('r2_kpd').textContent = kpd.toFixed(1);
+    document.getElementById('r2_cycles_day').textContent = cyclesPerDay.toFixed(1);
+    document.getElementById('r2_lpm').textContent = lpm.toFixed(2);
+    document.getElementById('b2_day').textContent = dayM3.toFixed(2);
+    document.getElementById('res2').classList.add('visible');
+    document.getElementById('big2').classList.add('visible');
+    pkvResult = dayM3;
+    updateSummary();
+  }
+
+  document.querySelectorAll('input').forEach(inp => {
+    inp.addEventListener('keydown', e => {
+      if (e.key === 'Enter') inp.closest('.card').querySelector('.btn').click();
+    });
+  });
+</script>
+</body>
+</html>
