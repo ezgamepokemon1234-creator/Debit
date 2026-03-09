@@ -3,168 +3,168 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ATA ULTIMATE v32.0 | INDUSTRIAL</title>
+    <title>ATA v33.0 | PRO STATION</title>
     <script src="https://cdn.jsdelivr.net/npm/davidshimjs-qrcodejs@0.0.2/qrcode.min.js"></script>
     <style>
         :root { --gold: #d4af37; --bg: #0b0e14; --panel: #1c2128; --border: #444c56; --text: #adbac7; }
-        body { font-family: sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 50px; }
-        header { background: #000; border-bottom: 2px solid var(--gold); padding: 15px; display: flex; justify-content: space-between; align-items: center; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 30px; }
+        header { background: #000; border-bottom: 2px solid var(--gold); padding: 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
         .logo { font-size: 1rem; font-weight: bold; color: var(--gold); text-transform: uppercase; }
-        .view { display: none; padding: 15px; }
+        .view { display: none; padding: 15px; min-height: 80vh; }
         .view.active { display: block; }
         .nav-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .nav-btn { background: var(--panel); border: 1px solid var(--border); border-radius: 4px; padding: 20px 10px; color: #fff; text-align: center; cursor: pointer; text-transform: uppercase; font-size: 0.7rem; font-weight: bold; }
+        .nav-btn { background: var(--panel); border: 1px solid var(--border); border-radius: 4px; padding: 22px 5px; color: #fff; text-align: center; cursor: pointer; text-transform: uppercase; font-size: 0.75rem; font-weight: 800; }
+        .nav-btn:active { background: #30363d; }
         .card { background: var(--panel); border: 1px solid var(--border); border-radius: 4px; padding: 15px; margin-bottom: 12px; }
-        h3 { margin-top: 0; font-size: 0.85rem; color: #fff; border-bottom: 1px solid var(--gold); padding-bottom: 5px; margin-bottom: 12px; text-transform: uppercase; }
-        label { display: block; font-size: 0.65rem; color: #768390; margin-bottom: 4px; text-transform: uppercase; }
-        input, select { width: 100%; background: #22272e; border: 1px solid var(--border); padding: 10px; border-radius: 4px; color: #fff; margin-bottom: 10px; font-size: 1rem; box-sizing: border-box; }
-        .btn-exe { width: 100%; padding: 15px; border: none; border-radius: 4px; font-weight: bold; background: var(--gold); color: #000; cursor: pointer; text-transform: uppercase; margin-bottom: 10px; }
-        .btn-share { width: 100%; padding: 15px; border: 1px solid var(--gold); border-radius: 4px; font-weight: bold; background: transparent; color: var(--gold); cursor: pointer; text-transform: uppercase; }
-        .result-box { background: #000; padding: 15px; border-radius: 4px; text-align: center; border: 1px dashed var(--border); margin: 10px 0; }
-        .result-val { font-size: 1.8rem; font-weight: bold; color: #fff; }
-        #qr-wrap { background: #fff; padding: 10px; display: inline-block; border-radius: 4px; margin: 15px 0; }
+        h3 { margin-top: 0; font-size: 0.9rem; color: #fff; border-bottom: 1px solid var(--gold); padding-bottom: 8px; margin-bottom: 15px; text-transform: uppercase; }
+        label { display: block; font-size: 0.7rem; color: #768390; margin-bottom: 5px; text-transform: uppercase; font-weight: bold; }
+        input, select { width: 100%; background: #22272e; border: 1px solid var(--border); padding: 12px; border-radius: 4px; color: #fff; margin-bottom: 12px; font-size: 1rem; box-sizing: border-box; outline: none; }
+        input:focus { border-color: var(--gold); }
+        .btn-exe { width: 100%; padding: 16px; border: none; border-radius: 4px; font-weight: 900; background: var(--gold); color: #000; cursor: pointer; text-transform: uppercase; font-size: 0.9rem; margin-top: 10px; }
+        .btn-secondary { width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 4px; background: transparent; color: #fff; cursor: pointer; text-transform: uppercase; margin-top: 8px; font-size: 0.8rem; }
+        .res-box { background: #000; border: 1px solid var(--gold); padding: 15px; border-radius: 4px; text-align: center; margin: 15px 0; }
+        .res-val { font-size: 2rem; font-weight: bold; color: #fff; }
+        #qr-out { background: #fff; padding: 10px; display: inline-block; border-radius: 4px; margin: 20px 0; }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="logo">ATA v32.0</div>
-    <button style="background:#333; color:#fff; border:none; padding:8px 12px; border-radius:4px;" onclick="nav('dash')">МЕНЮ</button>
+    <div class="logo">ATA ULTIMATE v33.0</div>
+    <button style="background:var(--gold); color:#000; border:none; padding:8px 15px; border-radius:4px; font-weight:bold;" onclick="nav('dash')">МЕНЮ</button>
 </header>
 
 <div id="dash" class="view active">
     <div class="card">
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-            <div><label>Куст</label><input type="text" id="reg_kp" placeholder="КП"></div>
-            <div><label>Скважина</label><input type="text" id="reg_skv" placeholder="СКВ"></div>
+            <div><label>КУСТ</label><input type="text" id="reg_kp" placeholder="№"></div>
+            <div><label>СКВАЖИНА</label><input type="text" id="reg_skv" placeholder="№"></div>
         </div>
     </div>
     <div class="nav-grid">
-        <div class="nav-btn" onclick="nav('v_tms')">ТМС Мониторинг</div>
-        <div class="nav-btn" onclick="nav('v_krs')">Глушение (ЖГ)</div>
-        <div class="nav-btn" onclick="nav('v_q')">Дебит / Вода</div>
+        <div class="nav-btn" onclick="nav('v_params')">ПАРАМЕТРЫ</div>
+        <div class="nav-btn" onclick="nav('v_glush')">ГЛУШЕНИЕ (ЖГ)</div>
+        <div class="nav-btn" onclick="nav('v_q')">ДЕБИТ / ВОДА</div>
         <div class="nav-btn" onclick="nav('v_tech')">ГРП / КОЙЛ</div>
         <div class="nav-btn" onclick="nav('v_ppd')">ППД</div>
-        <div class="nav-btn" onclick="buildReport()" style="background:var(--gold); color:#000;">ОТПРАВИТЬ ОТЧЕТ</div>
+        <div class="nav-btn" onclick="createReport()" style="background:var(--gold); color:#000;">ОТПРАВИТЬ ОТЧЕТ</div>
     </div>
 </div>
 
-<div id="v_tms" class="view">
+<div id="v_params" class="view">
     <div class="card">
-        <h3>Параметры ТМС</h3>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-            <div><label>Нд (м)</label><input type="number" id="tms_nd"></div>
-            <div><label>Рз (атм)</label><input type="number" id="tms_rz"></div>
-            <div><label>Рб (атм)</label><input type="number" id="tms_rb"></div>
-            <div><label>Рл (атм)</label><input type="number" id="tms_rl"></div>
-            <div><label>F (Гц)</label><input type="number" id="tms_f"></div>
-            <div><label>I (А)</label><input type="number" id="tms_i"></div>
-            <div><label>З (%)</label><input type="number" id="tms_z"></div>
-            <div><label>Рпр (атм)</label><input type="number" id="tms_ppr"></div>
-            <div><label>Тдв (°C)</label><input type="number" id="tms_tdv"></div>
-            <div><label>Нст затр</label><input type="number" id="tms_nstz"></div>
+        <h3>ПАРАМЕТРЫ ТМС</h3>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div><label>Нд (м)</label><input type="number" id="p_nd"></div>
+            <div><label>Рз (атм)</label><input type="number" id="p_rz"></div>
+            <div><label>Рб (атм)</label><input type="number" id="p_rb"></div>
+            <div><label>Рл (атм)</label><input type="number" id="p_rl"></div>
+            <div><label>F (Гц)</label><input type="number" id="p_f"></div>
+            <div><label>I (А)</label><input type="number" id="p_i"></div>
+            <div><label>З (%)</label><input type="number" id="p_z"></div>
+            <div><label>Рпр (атм)</label><input type="number" id="p_ppr"></div>
+            <div><label>Тдв (°C)</label><input type="number" id="p_tdv"></div>
+            <div><label>Нст затр</label><input type="number" id="p_nstz"></div>
+            <div style="grid-column: span 2;"><label>Нст нкт</label><input type="number" id="p_nstn"></div>
         </div>
-        <button class="btn-exe" onclick="buildReport()">Сформировать</button>
+        <button class="btn-exe" onclick="createReport()">Сформировать отчет</button>
     </div>
 </div>
 
-<div id="v_krs" class="view">
+<div id="v_glush" class="view">
     <div class="card">
-        <h3>Расчет глушения</h3>
-        <label>P пласт (атм)</label><input type="number" id="krs_ppl">
-        <label>H верт (м)</label><input type="number" id="krs_h">
-        <label>K запас</label><input type="number" id="krs_k" value="1.1">
-        <button class="btn-exe" onclick="calcG()">Рассчитать</button>
-        <div class="result-box">Плотность: <span id="res_g" class="result-val">0.00</span></div>
+        <h3>РАСЧЕТ ГЛУШЕНИЯ</h3>
+        <label>P пластовое (атм)</label><input type="number" id="g_ppl">
+        <label>H вертикаль (м)</label><input type="number" id="g_h">
+        <label>Коэффициент запаса</label><input type="number" id="g_k" value="1.1">
+        <button class="btn-exe" onclick="doGlush()">Рассчитать</button>
+        <div class="res-box">Удельный вес ЖГ:<br><span id="res_g" class="res-val">0.00</span></div>
     </div>
 </div>
 
 <div id="v_tech" class="view">
     <div class="card">
-        <h3>Объемы (ГРП/КОЙЛ)</h3>
-        <label>Глубина (м)</label><input type="number" id="c_h">
+        <h3>ОБЪЕМЫ (ГРП/КОЙЛ)</h3>
+        <label>Глубина (м)</label><input type="number" id="t_h">
         <label>Диаметр Э/К (мм)</label>
-        <select id="c_ek"><option value="168">168</option><option value="146">146</option><option value="178">178</option></select>
+        <select id="t_ek"><option value="168">168</option><option value="146">146</option><option value="178">178</option></select>
         <label>Диаметр НКТ/ГНКТ (мм)</label>
-        <select id="c_nkt"><option value="73">73</option><option value="60">60</option><option value="38.1">38.1</option><option value="44.5">44.5</option></select>
-        <button class="btn-exe" onclick="calcC()">Рассчитать</button>
-        <div class="result-box">
-            V труб: <span id="res_v1">0.0</span> м³<br>
-            V затр: <span id="res_v2">0.0</span> м³
+        <select id="t_nkt"><option value="73">73</option><option value="60">60</option><option value="38.1">38.1</option><option value="44.5">44.5</option></select>
+        <button class="btn-exe" onclick="doTech()">Рассчитать объемы</button>
+        <div class="res-box">
+            V внутри: <span id="res_t1">0.0</span> м³<br>
+            V затруб: <span id="res_t2">0.0</span> м³
         </div>
     </div>
 </div>
 
-<div id="v_qr" class="view">
+<div id="v_report" class="view">
     <div class="card" style="text-align:center;">
-        <h3>Отчет сформирован</h3>
-        <div id="qr-wrap"></div>
-        <div style="margin-top:10px;">
-            <button class="btn-exe" onclick="shareSystem()">ОТПРАВИТЬ (ВЫБРАТЬ МЕССЕНДЖЕР)</button>
-            <button class="btn-share" onclick="copyText()">КОПИРОВАТЬ ТЕКСТОМ</button>
-        </div>
-        <button class="btn-share" style="margin-top:15px; border:none;" onclick="nav('dash')">← В МЕНЮ</button>
+        <h3>ОТЧЕТ ГОТОВ</h3>
+        <div id="qr-out"></div>
+        <button class="btn-exe" onclick="sendSys()">ОТПРАВИТЬ (MESSENGER/MAIL)</button>
+        <button class="btn-secondary" onclick="copyTxt()">КОПИРОВАТЬ ТЕКСТ</button>
+        <button class="btn-secondary" style="border:none; color:var(--gold)" onclick="nav('dash')">НАЗАД В МЕНЮ</button>
     </div>
 </div>
 
 <script>
-    let currentReport = "";
+    let finalData = "";
 
     function nav(id) {
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
+        const target = document.getElementById(id);
+        if(target) target.classList.add('active');
+        window.scrollTo(0,0);
     }
 
-    function calcG() {
-        const p = parseFloat(document.getElementById('krs_ppl').value) || 0;
-        const h = parseFloat(document.getElementById('krs_h').value) || 1;
-        const k = parseFloat(document.getElementById('krs_k').value) || 1.1;
+    function doGlush() {
+        const p = parseFloat(document.getElementById('g_ppl').value) || 0;
+        const h = parseFloat(document.getElementById('g_h').value) || 1;
+        const k = parseFloat(document.getElementById('g_k').value) || 1.1;
         document.getElementById('res_g').innerText = ((p * k * 10) / h).toFixed(2);
     }
 
-    function calcC() {
-        const h = parseFloat(document.getElementById('c_h').value) || 0;
-        const ek = parseFloat(document.getElementById('c_ek').value) || 1;
-        const nkt = parseFloat(document.getElementById('c_nkt').value) || 1;
+    function doTech() {
+        const h = parseFloat(document.getElementById('t_h').value) || 0;
+        const ek = parseFloat(document.getElementById('t_ek').value) || 1;
+        const nkt = parseFloat(document.getElementById('t_nkt').value) || 1;
         const v1 = (Math.PI * Math.pow((nkt - 10) / 1000, 2) / 4) * h;
         const v2 = (Math.PI * (Math.pow(ek / 1000, 2) - Math.pow(nkt / 1000, 2)) / 4) * h;
-        document.getElementById('res_v1').innerText = v1.toFixed(1);
-        document.getElementById('res_v2').innerText = v2.toFixed(1);
+        document.getElementById('res_t1').innerText = v1.toFixed(1);
+        document.getElementById('res_t2').innerText = v2.toFixed(1);
     }
 
-    function buildReport() {
-        const kp = document.getElementById('reg_kp').value || "-";
-        const skv = document.getElementById('reg_skv').value || "-";
-        let text = `ОТЧЕТ: КП-${kp}, СКВ-${skv}\n`;
+    function createReport() {
+        const kp = document.getElementById('reg_kp').value || "?";
+        const skv = document.getElementById('reg_skv').value || "?";
+        let out = `СКВ: ${skv} (КП-${kp})\n`;
         
         document.querySelectorAll('input').forEach(i => {
             if(i.value && !i.id.includes('reg')) {
                 const label = i.previousElementSibling ? i.previousElementSibling.innerText : i.id;
-                text += `${label}: ${i.value}\n`;
+                out += `${label}: ${i.value}\n`;
             }
         });
 
-        currentReport = text;
-        nav('v_qr');
-        
-        const qrContainer = document.getElementById('qr-wrap');
-        qrContainer.innerHTML = "";
-        new QRCode(qrContainer, { text: text, width: 200, height: 200 });
+        finalData = out;
+        nav('v_report');
+        const container = document.getElementById('qr-out');
+        container.innerHTML = "";
+        new QRCode(container, { text: out, width: 220, height: 220 });
     }
 
-    async function shareSystem() {
+    async function sendSys() {
         if (navigator.share) {
-            try {
-                await navigator.share({ title: 'Замер скважины', text: currentReport });
-            } catch (err) { console.log("Отмена"); }
+            await navigator.share({ title: 'Отчет по скважине', text: finalData });
         } else {
-            alert("Ваш браузер не поддерживает быстрый доступ. Скопируйте текст кнопкой ниже.");
+            alert("Ваш браузер не поддерживает прямую отправку. Используйте кнопку копирования.");
         }
     }
 
-    function copyText() {
-        navigator.clipboard.writeText(currentReport);
-        alert("Текст скопирован!");
+    function copyTxt() {
+        navigator.clipboard.writeText(finalData);
+        alert("Текст скопирован в буфер обмена!");
     }
 </script>
 </body>
