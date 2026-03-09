@@ -4,69 +4,66 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="author" content="Anvarov Timur Akramovich">
-    <title>ATA-1 PRO v68.0 | Bitrate Control</title>
+    <title>ATA-1 PRO v76.0 | RADIO FIX</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
-        :root { --gold: #d4af37; --bg: #000; --card: #151515; --ai: #00ff9d; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #fff; margin: 0; padding-bottom: 30px; }
-        header { border-bottom: 2px solid var(--gold); padding: 15px; text-align: center; background: #000; position: sticky; top: 0; z-index: 100; }
+        :root { --gold: #d4af37; --bg: #000; --card: #121212; --ai: #00ff9d; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #fff; margin: 0; padding: 0; }
+        header { border-bottom: 2px solid var(--gold); padding: 15px; text-align: center; background: #000; }
         .view { display: none; padding: 15px; }
         .view.active { display: block !important; }
-        .card { background: var(--card); border: 1px solid #252525; padding: 15px; border-radius: 15px; margin-bottom: 12px; }
-        .ai-btn { width: 70px; height: 70px; border: 3px solid var(--ai); border-radius: 50%; margin: 5px auto; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; cursor: pointer; transition: 0.3s; }
-        .ai-btn.active { background: #ff3b30; border-color: #fff; box-shadow: 0 0 25px #ff3b30; }
+        .card { background: var(--card); border: 1px solid #222; padding: 15px; border-radius: 15px; margin-bottom: 12px; }
+        .ai-btn { width: 70px; height: 70px; border: 3px solid var(--ai); border-radius: 50%; margin: 5px auto; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; cursor: pointer; }
+        .ai-btn.listening { background: #ff3b30; box-shadow: 0 0 20px #ff3b30; }
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        input, select { width: 100%; background: #0a0a0a; border: 1px solid #333; padding: 12px; border-radius: 10px; color: var(--ai); font-size: 1rem; box-sizing: border-box; margin-bottom: 8px; }
-        label { font-size: 0.65rem; color: #888; text-transform: uppercase; font-weight: bold; margin-left: 5px; }
-        .btn-gold { width: 100%; background: var(--gold); color: #000; padding: 16px; border: none; border-radius: 12px; font-weight: 900; text-transform: uppercase; cursor: pointer; }
-        #qrcode { background: #fff; padding: 10px; display: inline-block; border-radius: 10px; margin: 10px 0; }
-        audio { width: 100%; height: 35px; filter: invert(1); margin-top: 5px; }
-        .signal-low { color: #ff9500; font-size: 0.6rem; margin-top: -5px; margin-bottom: 10px; display: block; }
+        input, select { width: 100%; background: #080808; border: 1px solid #333; padding: 14px; border-radius: 10px; color: var(--ai); font-size: 1rem; margin-bottom: 10px; box-sizing: border-box; }
+        label { font-size: 0.7rem; color: #777; text-transform: uppercase; font-weight: bold; margin-bottom: 4px; display: block; }
+        .btn-gold { width: 100%; background: var(--gold); color: #000; padding: 18px; border: none; border-radius: 12px; font-weight: 900; text-transform: uppercase; cursor: pointer; }
+        #qrcode { background: #fff; padding: 10px; border-radius: 10px; display: inline-block; margin: 15px 0; }
+        audio { width: 100%; height: 40px; filter: invert(1); margin-top: 10px; }
     </style>
 </head>
 <body>
 
 <header>
-    <div style="font-weight: 900; color: var(--gold); letter-spacing: 1px;">ATA-1 PRO v68.0</div>
-    <div style="font-size: 0.55rem; color: #666;">ANVAROV TIMUR AKRAMOVICH</div>
+    <div style="font-weight: 900; color: var(--gold); letter-spacing: 2px;">ATA-1 PRO v76.0</div>
+    <div style="font-size: 0.6rem; color: #555;">STABLE RADIO FLOW</div>
 </header>
 
 <div id="dash" class="view active">
     <div class="card" style="text-align: center; border-color: var(--ai);">
-        <div id="ai_status" style="color: var(--ai); font-weight: bold; margin-bottom: 5px;">ГОТОВА</div>
-        <div class="ai-btn" id="micBtn" onclick="toggleAI()">🎙</div>
+        <div id="ai_status" style="color: var(--ai); font-size: 0.8rem; font-weight: bold;">ГОЛОСОВОЙ ВВОД</div>
+        <div class="ai-btn" id="micBtn" onclick="runVoice()">🎙</div>
     </div>
 
     <div class="card">
-        <label>ИНТЕРНЕТ / КАЧЕСТВО</label>
-        <select id="quality-sel" onchange="updateRadio()">
-            <option value="low">СЛАБЫЙ СВЯЗЬ (Экономия / 64 kbps)</option>
-            <option value="high" selected>ХОРОШИЙ СВЯЗЬ (Чистый звук / 128 kbps)</option>
+        <label>ИНТЕРНЕТ</label>
+        <select id="bitrate" onchange="changeStation()">
+            <option value="low">СЛАБЫЙ (Экономия)</option>
+            <option value="high" selected>ХОРОШИЙ (128k)</option>
         </select>
-        <span class="signal-low">↑ Режим "Слабый связь" убирает заикание при плохом интернете</span>
-
-        <label>СТАНЦИЯ</label>
-        <select id="radio-sel" onchange="updateRadio()">
+        <label>РАДИОСТАНЦИЯ</label>
+        <select id="station" onchange="changeStation()">
             <option value="">-- ВЫКЛ --</option>
             <option value="chanson">📻 ШАНСОН</option>
-            <option value="dorognoe">ДОРОЖНОЕ РАДИО</option>
+            <option value="dorognoe">ДОРОЖНОЕ</option>
             <option value="ep">ЕВРОПА ПЛЮС</option>
             <option value="retro">РЕТРО FM</option>
             <option value="dfm">DFM</option>
         </select>
-        <audio id="player" controls></audio>
+        <audio id="player" controls autoplay></audio>
     </div>
 
     <div class="grid">
         <button class="btn-gold" style="background:#222; color:#fff" onclick="nav('params')">ПАРАМЕТРЫ</button>
-        <button class="btn-gold" onclick="genQR()">ОТЧЕТ (QR)</button>
+        <button class="btn-gold" onclick="makeQR()">ОТЧЕТ (QR)</button>
     </div>
 </div>
 
 <div id="params" class="view">
     <div class="card">
         <label>ЦДНГ</label><input type="text" id="cdng">
-        <label>БРИГАДА</label><input type="text" id="br">
+        <label>БРИГАДА</label><input type="text" id="brig">
         <div class="grid">
             <div><label>КУСТ</label><input type="text" id="kust"></div>
             <div><label>СКВ</label><input type="text" id="skv"></div>
@@ -80,12 +77,13 @@
 <div id="report" class="view" style="text-align: center;">
     <div class="card">
         <div id="qrcode"></div>
-        <div id="rep_txt" style="text-align:left; font-family:monospace; font-size:0.7rem; color:var(--ai); white-space: pre-wrap;"></div>
-        <button class="btn-gold" style="margin-top:15px;" onclick="nav('dash')">НАЗАД</button>
+        <div id="qr_txt" style="text-align:left; font-family:monospace; font-size:0.7rem; color:var(--ai); white-space: pre-wrap;"></div>
+        <button class="btn-gold" style="margin-top:20px;" onclick="nav('dash')">НАЗАД</button>
     </div>
 </div>
 
 <script>
+    // ПРОВЕРЕННЫЕ ССЫЛКИ
     const streams = {
         chanson: { low: "https://chanson.hostingradio.ru:8001/chanson64.mp3", high: "https://chanson.hostingradio.ru:8001/chanson128.mp3" },
         dorognoe: { low: "https://dorognoe.hostingradio.ru:8000/radio_64", high: "https://dorognoe.hostingradio.ru:8000/radio" },
@@ -94,56 +92,51 @@
         dfm: { low: "https://dfm.hostingradio.ru:8000/dfm64", high: "https://dfm.hostingradio.ru:8000/dfm128" }
     };
 
-    function updateRadio() {
-        const station = document.getElementById('radio-sel').value;
-        const quality = document.getElementById('quality-sel').value;
-        const player = document.getElementById('player');
-        
-        if (station && streams[station]) {
-            player.src = streams[station][quality];
-            player.play();
-            if(quality === 'low') speak("Режим экономии включен");
-        }
-    }
-
-    const rec = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-    rec.lang = 'ru-RU';
-    let active = false;
-
     function nav(id) {
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
         document.getElementById(id).classList.add('active');
     }
 
-    function toggleAI() {
-        if(!active) { rec.start(); active=true; document.getElementById('micBtn').classList.add('active'); }
-        else { rec.stop(); }
+    function changeStation() {
+        const s = document.getElementById('station').value;
+        const b = document.getElementById('bitrate').value;
+        const p = document.getElementById('player');
+        if(s) { 
+            p.src = streams[s][b];
+            p.load();
+            p.play().catch(e => console.log("Ошибка воспроизведения"));
+        } else { p.src = ""; }
     }
 
-    rec.onresult = (e) => {
-        const cmd = e.results[0][0].transcript.toLowerCase();
-        if(cmd.includes("шансон")) { document.getElementById('radio-sel').value = "chanson"; updateRadio(); }
-        if(cmd.includes("экономи") || cmd.includes("плохой интернет")) { 
-            document.getElementById('quality-sel').value = "low"; 
-            updateRadio(); 
-        }
-    };
-
-    rec.onend = () => { active=false; document.getElementById('micBtn').classList.remove('active'); };
-    function speak(t) { window.speechSynthesis.speak(new SpeechSynthesisUtterance(t)); }
-
-    function genQR() {
-        const d = `ATA-1|ANVAROV\nЦДНГ:${document.getElementById('cdng').value}\nК:${document.getElementById('kust').value}\nС:${document.getElementById('skv').value}\nI:${document.getElementById('tok').value}A\nF:${document.getElementById('freq').value}Hz`;
-        document.getElementById('rep_txt').innerText = d;
+    // QR КОД - ИСПРАВЛЕННЫЙ
+    function makeQR() {
+        const d = `ATA-1 PRO\nЦДНГ:${document.getElementById('cdng').value}\nБР:${document.getElementById('brig').value}\nК:${document.getElementById('kust').value}\nС:${document.getElementById('skv').value}\nI:${document.getElementById('tok').value}A\nF:${document.getElementById('freq').value}Hz`;
+        document.getElementById('qr_txt').innerText = d;
         document.getElementById("qrcode").innerHTML = "";
-        new QRCode(document.getElementById("qrcode"), { text: d, width: 160, height: 160 });
+        new QRCode(document.getElementById("qrcode"), { text: d, width: 180, height: 180 });
         nav('report');
     }
 
+    // ГОЛОС
+    const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if(Speech) {
+        const rec = new Speech();
+        rec.lang = 'ru-RU';
+        function runVoice() { rec.start(); document.getElementById('micBtn').classList.add('listening'); }
+        rec.onresult = (e) => {
+            const t = e.results[0][0].transcript.toLowerCase();
+            if(t.includes("отчет")) makeQR();
+            if(t.includes("параметр")) nav('params');
+            if(t.includes("шансон")) { document.getElementById('station').value = 'chanson'; changeStation(); }
+        };
+        rec.onend = () => document.getElementById('micBtn').classList.remove('listening');
+    }
+
     window.onload = () => {
-        document.querySelectorAll('input').forEach(el => {
-            el.value = localStorage.getItem('ata_' + el.id) || '';
-            el.oninput = () => localStorage.setItem('ata_' + el.id, el.value);
+        ['cdng', 'brig', 'kust', 'skv', 'tok', 'freq'].forEach(id => {
+            const el = document.getElementById(id);
+            el.value = localStorage.getItem('ata76_' + id) || '';
+            el.oninput = () => localStorage.setItem('ata76_' + id, el.value);
         });
     };
 </script>
