@@ -3,162 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <link rel="icon" type="image/png" href="icon_1024x1024.png">
-    <link rel="apple-touch-icon" href="icon_1024x1024.png">
-    <title>ΛTΛ Enterprise OS</title>
+    <meta name="author" content="Anvarov Timur Akramovich">
+    <link rel="icon" type="image/jpeg" href="icon_1024x1024.jpg">
+    <link rel="apple-touch-icon" href="icon_1024x1024.jpg">
+    <title>ATA Enterprise OS</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
-        :root { --gold: #d4af37; --bg: #05080a; --panel: #0d1117; --border: #30363d; --accent: #58a6ff; --text: #c9d1d9; --danger: #f85149; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; }
-        header { background: #000; border-bottom: 2px solid var(--gold); padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
-        .brand { display: flex; align-items: center; gap: 10px; }
+        :root { --gold: #d4af37; --bg: #05080a; --panel: #0d1117; --border: #30363d; --accent: #58a6ff; --text: #c9d1d9; --danger: #ff4444; --success: #238636; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 50px; }
+        header { background: #000; border-bottom: 2px solid var(--gold); padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }
+        .brand { display: flex; align-items: center; gap: 10px; cursor: pointer; }
         .brand img { width: 35px; height: 35px; border-radius: 5px; border: 1px solid var(--gold); }
-        .logo-text { font-size: 1.4rem; letter-spacing: 4px; color: var(--gold); font-weight: 900; }
-        .h-btn { background: var(--panel); border: 1px solid var(--gold); color: var(--gold); padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 0.75rem; font-weight: bold; }
-        .group-label { padding: 15px 15px 5px; font-size: 0.65rem; text-transform: uppercase; color: #666; letter-spacing: 2px; font-weight: bold; }
-        .nav-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 15px 15px; }
-        .nav-card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 22px 10px; text-align: center; cursor: pointer; }
-        .nav-card i { display: block; font-size: 1.6rem; margin-bottom: 8px; color: var(--gold); }
-        .nav-card span { font-size: 0.65rem; font-weight: bold; text-transform: uppercase; }
+        .logo-text { font-size: 1.5rem; letter-spacing: 2px; color: var(--gold); font-weight: 900; }
+        .h-btn { background: var(--panel); border: 1px solid var(--gold); color: var(--gold); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.75rem; font-weight: bold; }
         .view { display: none; padding: 15px; animation: fadeIn 0.3s; }
         .view.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .card { background: var(--panel); border-radius: 15px; padding: 18px; border: 1px solid var(--border); margin-bottom: 12px; }
-        h2 { color: var(--gold); font-size: 0.8rem; text-transform: uppercase; margin: 0 0 15px 0; border-left: 3px solid var(--gold); padding-left: 10px; }
-        label { display: block; font-size: 0.6rem; color: #8b949e; margin-bottom: 4px; text-transform: uppercase; }
-        input, select { width: 100%; background: #010409; border: 1px solid var(--border); padding: 12px; border-radius: 8px; color: #fff; font-size: 1rem; margin-bottom: 10px; box-sizing: border-box; }
+        .group-label { padding: 15px 5px 5px; font-size: 0.7rem; text-transform: uppercase; color: var(--gold); letter-spacing: 2px; font-weight: bold; border-bottom: 1px solid #222; margin-bottom: 10px; }
+        .nav-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .nav-card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 20px 10px; text-align: center; cursor: pointer; }
+        .nav-card i { display: block; font-size: 1.8rem; margin-bottom: 8px; color: var(--gold); }
+        .nav-card span { font-size: 0.7rem; font-weight: bold; text-transform: uppercase; }
+        .card { background: var(--panel); border-radius: 15px; padding: 18px; border: 1px solid var(--border); margin-bottom: 15px; }
+        h2 { color: var(--gold); font-size: 0.9rem; text-transform: uppercase; margin: 0 0 15px 0; border-left: 4px solid var(--gold); padding-left: 10px; }
+        label { display: block; font-size: 0.65rem; color: #8b949e; margin-bottom: 5px; text-transform: uppercase; }
+        input, select { width: 100%; background: #010409; border: 1px solid var(--border); padding: 12px; border-radius: 8px; color: #fff; font-size: 1rem; margin-bottom: 15px; box-sizing: border-box; }
         .btn-exe { width: 100%; padding: 16px; background: linear-gradient(135deg, var(--gold), #b08d2b); border: none; border-radius: 10px; color: #000; font-weight: 900; text-transform: uppercase; cursor: pointer; }
-        .btn-back { width: 100%; padding: 12px; background: transparent; border: 1px solid #333; color: #555; border-radius: 10px; margin-top: 10px; cursor: pointer; text-align: center; }
-        .res-zone { background: rgba(88, 166, 255, 0.05); border: 1px solid var(--accent); padding: 15px; border-radius: 10px; margin-top: 15px; text-align: center; }
-        .res-val { display: block; font-size: 1.6rem; font-weight: 900; color: #fff; }
-        #qr-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; flex-direction: column; align-items: center; justify-content: center; }
+        .btn-back { width: 100%; padding: 12px; background: transparent; border: 1px solid #333; color: #888; border-radius: 10px; cursor: pointer; text-align: center; text-transform: uppercase; font-size: 0.8rem; margin-top: 10px; }
+        .res-zone { background: rgba(88, 166, 255, 0.05); border: 1px solid var(--accent); padding: 15px; border-radius: 10px; text-align: center; margin-top: 10px; }
+        .res-val { display: block; font-size: 1.8rem; font-weight: 900; color: #fff; }
+        footer { text-align: center; font-size: 0.6rem; color: #444; padding: 20px 0; border-top: 1px solid #111; }
+        #modal, #qr-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
         #qrcode { background: #fff; padding: 15px; border-radius: 10px; }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="brand"><img src="icon_1024x1024.png" alt="ΛTΛ"><div class="logo-text">ΛTΛ</div></div>
-    <div class="header-btns">
-        <button class="h-btn" onclick="showQR()">QR</button>
-        <button class="h-btn" onclick="copyLink()" id="copyBtn">🔗</button>
-        <button class="h-btn" onclick="toggleLang()" id="langBtn">EN</button>
-    </div>
+    <div class="brand" onclick="showAbout()"><img src="icon_1024x1024.jpg" alt="АТА"><div class="logo-text">АТА</div></div>
+    <div style="display: flex; gap: 8px;"><button class="h-btn" onclick="showQR()">QR</button><button class="h-btn" onclick="copyLink()" id="copyBtn">🔗</button></div>
 </header>
 
 <div id="dash" class="view active">
-    <div class="group-label" data-key="g_elec">Электротехника & СУ</div>
+    <div class="group-label">Электротехника</div>
     <div class="nav-grid">
-        <div class="nav-card" onclick="nav('v_cable')"><i>🔌</i><span data-key="m_cable">Кабель & ΔU</span></div>
-        <div class="nav-card" onclick="nav('v_su')"><i>⚡</i><span data-key="m_su">Станция СУ</span></div>
+        <div class="nav-card" onclick="nav('v_cable')"><i>🔌</i><span>Кабель</span></div>
+        <div class="nav-card" onclick="nav('v_su')"><i>⚡</i><span>ПЭД</span></div>
     </div>
-    <div class="group-label" data-key="g_prod">Добыча & Скважина</div>
+    <div class="group-label">ГРП & Койл</div>
     <div class="nav-grid">
-        <div class="nav-card" onclick="nav('v_vol')"><i>📏</i><span data-key="m_vol">Объемы НКТ</span></div>
-        <div class="nav-card" onclick="nav('v_time')"><i>⏱️</i><span data-key="m_time">Время подачи</span></div>
+        <div class="nav-card" onclick="nav('v_grp')"><i>💥</i><span>ГРП</span></div>
+        <div class="nav-card" onclick="nav('v_coil')"><i>🌀</i><span>ГНКТ</span></div>
     </div>
+    <div class="group-label">Скважина & Глушение</div>
+    <div class="nav-grid">
+        <div class="nav-card" onclick="nav('v_kill')"><i>💧</i><span>Глушение</span></div>
+        <div class="nav-card" onclick="nav('v_ann')"><i>⭕</i><span>Затруб</span></div>
+        <div class="nav-card" onclick="nav('v_vol')"><i>📏</i><span>НКТ</span></div>
+        <div class="nav-card" onclick="nav('v_weight')"><i>⚖️</i><span>Вес</span></div>
+    </div>
+    <div class="group-label">Тайминг</div>
+    <div class="nav-grid">
+        <div class="nav-card" onclick="nav('v_time')"><i>⏱️</i><span>Подача</span></div>
+    </div>
+    <footer>Developed by <br><b style="color:var(--gold)">Anvarov Timur Akramovich</b></footer>
 </div>
 
-<div id="v_vol" class="view">
-    <div class="card">
-        <h2 data-key="h_vol">Расчет объема НКТ</h2>
-        <label data-key="l_pipe_type">Тип трубы</label>
-        <select id="p_type" onchange="updatePipeData()">
-            <option value="60">НКТ 60 (вн. 50.3 мм)</option>
-            <option value="73" selected>НКТ 73 (вн. 62.0 мм)</option>
-            <option value="89">НКТ 89 (вн. 75.9 мм)</option>
-        </select>
-        <label data-key="l_h">Глубина (м)</label>
-        <input type="number" id="p_h" value="2000">
-        <button class="btn-exe" onclick="calcVol()" data-key="b_calc">Рассчитать</button>
-        <div class="res-zone">
-            <span class="res-val" id="r_vol">0.0 м³</span>
-        </div>
-    </div>
-    <div class="btn-back" onclick="home()" data-key="b_back">Назад</div>
-</div>
+<div id="v_kill" class="view"><div class="card"><h2>Глушение</h2><label>Рпласт (атм)</label><input type="number" id="k_p" value="200"><label>Нверт (м)</label><input type="number" id="k_h" value="2500"><button class="btn-exe" onclick="calcKill()">Расчитать плотность</button><div class="res-zone"><span class="res-val" id="r_kill">0.00 г/см³</span></div></div><div class="btn-back" onclick="home()">Назад</div></div>
 
-<div id="v_su" class="view">
-    <div class="card">
-        <h2 data-key="h_su">Параметры СУ и ПЭД</h2>
-        <label data-key="l_i_fact">Ток факт. (А)</label><input type="number" id="s_i_f" value="45">
-        <label data-key="l_i_nom">Ток номин. (А)</label><input type="number" id="s_i_n" value="50">
-        <button class="btn-exe" onclick="calcLoad()" data-key="b_calc">Проверить загрузку</button>
-        <div class="res-zone">
-            <span class="res-val" id="r_load">0%</span>
-            <span id="load_status" style="font-size:0.7rem; font-weight:bold;">---</span>
-        </div>
-    </div>
-    <div class="btn-back" onclick="home()" data-key="b_back">Назад</div>
-</div>
+<div id="v_ann" class="view"><div class="card"><h2>Затрубное пространство</h2><label>D колонны (мм)</label><input type="number" id="a_ec" value="146"><label>d НКТ (мм)</label><input type="number" id="a_nkt" value="73"><label>Длина (м)</label><input type="number" id="a_l" value="2000"><button class="btn-exe" onclick="calcAnn()">Объем м³</button><div class="res-zone"><span class="res-val" id="r_ann">0.0 м³</span></div></div><div class="btn-back" onclick="home()">Назад</div></div>
 
-<div id="qr-modal" onclick="this.style.display='none'">
-    <div id="qrcode"></div>
-    <p style="color:var(--gold); margin-top:15px; font-size:0.8rem;">SCAN TO SHARE</p>
-</div>
+<div id="v_weight" class="view"><div class="card"><h2>Вес в растворе</h2><label>Вес в воздухе (тн)</label><input type="number" id="w_v" value="50"><label>Плотность (г/см³)</label><input type="number" id="w_d" value="1.15"><button class="btn-exe" onclick="calcWeight()">Вес на крюке</button><div class="res-zone"><span class="res-val" id="r_weight">0.0 тн</span></div></div><div class="btn-back" onclick="home()">Назад</div></div>
+
+<div id="v_cable" class="view"><div class="card"><h2>Кабель ΔU</h2><input type="number" id="c_i" placeholder="Ток (А)"><input type="number" id="c_l" placeholder="Длина (м)"><select id="c_s"><option value="16">16</option><option value="25" selected>25</option><option value="35">35</option></select><button class="btn-exe" onclick="calcCable()">ОК</button><div class="res-zone"><span class="res-val" id="r_du">0 В</span></div></div><div class="btn-back" onclick="home()">Назад</div></div>
+
+<div id="v_su" class="view"><div class="card"><h2>Загрузка ПЭД</h2><input type="number" id="s_if" placeholder="I факт"><input type="number" id="s_in" placeholder="I номин"><button class="btn-exe" onclick="calcLoad()">ОК</button><div class="res-zone"><span class="res-val" id="r_load">0%</span></div></div><div class="btn-back" onclick="home()">Назад</div></div>
+
+<div id="v_grp" class="view"><div class="card"><h2>Мощность ГРП</h2><input type="number" id="g_q" placeholder="м3/мин"><input type="number" id="g_p" placeholder="МПа"><button class="btn-exe" onclick="calcGRP()">HP</button><div class="res-zone"><span class="res-val" id="r_grp">0 HP</span></div></div><div class="btn-back" onclick="home()">Назад</div></div>
+
+<div id="v_coil" class="view"><div class="card"><h2>Объем ГНКТ</h2><select id="co_d"><option value="1.5">1.5"</option><option value="1.75" selected>1.75"</option><option value="2.0">2.0"</option></select><input type="number" id="co_l" placeholder="м"><button class="btn-exe" onclick="calcCoil()">м³</button><div class="res-zone"><span class="res-val" id="r_coil">0 м³</span></div></div><div class="btn-back" onclick="home()">Назад</div></div>
+
+<div id="v_vol" class="view"><div class="card"><h2>Объем НКТ</h2><select id="p_t"><option value="60">60</option><option value="73" selected>73</option><option value="89">89</option></select><input type="number" id="p_h" placeholder="м"><button class="btn-exe" onclick="calcVol()">м³</button><div class="res-zone"><span class="res-val" id="r_vol">0 м³</span></div></div><div class="btn-back" onclick="home()">Назад</div></div>
+
+<div id="v_time" class="view"><div class="card"><h2>Подача</h2><input type="number" id="t_v" placeholder="м3"><input type="number" id="t_q" placeholder="м3/сут"><button class="btn-exe" onclick="calcTime()">часов</button><div class="res-zone"><span class="res-val" id="r_time">0 ч.</span></div></div><div class="btn-back" onclick="home()">Назад</div></div>
+
+<div id="modal" onclick="this.style.display='none'"><img src="icon_1024x1024.jpg" style="width:80px;border-radius:15px;border:2px solid var(--gold);margin-bottom:20px;"><h1 style="color:var(--gold);margin:0;">ATA ENTERPRISE</h1><p>Anvarov Timur Akramovich</p><p style="font-size:0.7rem;color:#555">Muravlenko / Yamal Sector</p></div>
+<div id="qr-modal" onclick="this.style.display='none'"><div id="qrcode"></div></div>
 
 <script>
-    const i18n = {
-        ru: {
-            g_elec: "Электротехника & СУ", g_prod: "Добыча & Скважина", m_cable: "Кабель & ΔU", m_su: "Станция СУ",
-            m_vol: "Объемы НКТ", m_time: "Время подачи", h_vol: "Расчет объема НКТ", l_pipe_type: "Тип трубы",
-            l_h: "Глубина (м)", b_calc: "Рассчитать", b_back: "Назад", h_su: "Параметры СУ и ПЭД",
-            l_i_fact: "Ток факт. (А)", l_i_nom: "Ток номин. (А)"
-        },
-        en: {
-            g_elec: "Electrical & Control", g_prod: "Production & Well", m_cable: "Cable & ΔU", m_su: "Control Station",
-            m_vol: "Tubing Volume", m_time: "Travel Time", h_vol: "Tubing Volume Calc", l_pipe_type: "Pipe Standard",
-            l_h: "Depth (m)", b_calc: "Calculate", b_back: "Back", h_su: "Motor Parameters",
-            l_i_fact: "Actual Current (A)", l_i_nom: "Nominal Current (A)"
-        }
-    };
-
-    let curLang = 'ru';
-    function toggleLang() {
-        curLang = (curLang === 'ru') ? 'en' : 'ru';
-        document.getElementById('langBtn').innerText = curLang.toUpperCase();
-        document.querySelectorAll('[data-key]').forEach(el => el.innerText = i18n[curLang][el.getAttribute('data-key')]);
-    }
-
-    function nav(id) {
-        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-    }
-    function home() { nav('dash'); }
-
-    function copyLink() {
-        navigator.clipboard.writeText(window.location.href).then(() => {
-            document.getElementById('copyBtn').innerText = "OK";
-            setTimeout(() => document.getElementById('copyBtn').innerText = "🔗", 2000);
-        });
-    }
-
-    function showQR() {
-        const m = document.getElementById('qr-modal');
-        const q = document.getElementById('qrcode');
-        q.innerHTML = "";
-        new QRCode(q, { text: window.location.href, width: 180, height: 180 });
-        m.style.display = "flex";
-    }
-
-    function calcVol() {
-        const h = parseFloat(document.getElementById('p_h').value);
-        const type = document.getElementById('p_type').value;
-        let d = (type === "60") ? 0.0503 : (type === "73") ? 0.062 : 0.0759;
-        let v = (Math.PI * Math.pow(d, 2) / 4) * h;
-        document.getElementById('r_vol').innerText = v.toFixed(2) + " м³";
-    }
-
-    function calcLoad() {
-        const f = parseFloat(document.getElementById('s_i_f').value);
-        const n = parseFloat(document.getElementById('s_i_n').value);
-        const load = (f / n) * 100;
-        const res = document.getElementById('r_load');
-        const stat = document.getElementById('load_status');
-        res.innerText = load.toFixed(1) + "%";
-        if(load > 100) { res.style.color = "var(--danger)"; stat.innerText = "OVERLOAD / ПЕРЕГРУЗ"; }
-        else { res.style.color = "#fff"; stat.innerText = "NORMAL / НОРМА"; }
-    }
+    function nav(id){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
+    function home(){nav('dash');}
+    function showAbout(){document.getElementById('modal').style.display='flex';}
+    function showQR(){document.getElementById('qr-modal').style.display='flex';document.getElementById('qrcode').innerHTML="";new QRCode(document.getElementById('qrcode'),{text:window.location.href,width:200,height:200});}
+    function copyLink(){navigator.clipboard.writeText(window.location.href);document.getElementById('copyBtn').innerText="OK";setTimeout(()=>document.getElementById('copyBtn').innerText="🔗",2000);}
+    
+    function calcKill(){const p=parseFloat(document.getElementById('k_p').value);const h=parseFloat(document.getElementById('k_h').value);document.getElementById('r_kill').innerText=(p*10.197/h*1.07).toFixed(2)+" г/см³";}
+    function calcAnn(){const D=parseFloat(document.getElementById('a_ec').value)/1000;const d=parseFloat(document.getElementById('a_nkt').value)/1000;const l=parseFloat(document.getElementById('a_l').value);document.getElementById('r_ann').innerText=(Math.PI*(Math.pow(D,2)-Math.pow(d,2))/4*l).toFixed(1)+" м³";}
+    function calcWeight(){const w=parseFloat(document.getElementById('w_v').value);const d=parseFloat(document.getElementById('w_d').value);document.getElementById('r_weight').innerText=(w*(1-d/7.85)).toFixed(1)+" тн";}
+    function calcCable(){const i=parseFloat(document.getElementById('c_i').value);const l=parseFloat(document.getElementById('c_l').value);const s=parseFloat(document.getElementById('c_s').value);document.getElementById('r_du').innerText=Math.round(1.732*i*l*0.0178/s)+" V";}
+    function calcLoad(){const f=parseFloat(document.getElementById('s_if').value);const n=parseFloat(document.getElementById('s_in').value);document.getElementById('r_load').innerText=(f/n*100).toFixed(1)+"%";}
+    function calcGRP(){const q=parseFloat(document.getElementById('g_q').value);const p=parseFloat(document.getElementById('g_p').value);document.getElementById('r_grp').innerText=Math.round(q*p*16.66*1.34)+" HP";}
+    function calcCoil(){const d=parseFloat(document.getElementById('co_d').value)*0.0254*0.82;const l=parseFloat(document.getElementById('co_l').value);document.getElementById('r_coil').innerText=(Math.PI*Math.pow(d,2)/4*l).toFixed(1)+" м³";}
+    function calcVol(){const h=parseFloat(document.getElementById('p_h').value);const t=document.getElementById('p_t').value;const d=(t==="60")?0.0503:(t==="73")?0.062:0.0759;document.getElementById('r_vol').innerText=(Math.PI*Math.pow(d,2)/4*h).toFixed(1)+" м³";}
+    function calcTime(){const v=parseFloat(document.getElementById('t_v').value);const q=parseFloat(document.getElementById('t_q').value);document.getElementById('r_time').innerText=(v/(q/24)).toFixed(1)+" ч.";}
 </script>
 </body>
 </html>
