@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ATA v38.0 | INDUSTRIAL</title>
+    <title>ATA v41.0 | INDUSTRIAL</title>
     <script src="https://cdn.jsdelivr.net/npm/davidshimjs-qrcodejs@0.0.2/qrcode.min.js"></script>
     <style>
         :root { --gold: #d4af37; --bg: #0b0e14; --panel: #1c2128; --border: #444c56; --text: #adbac7; }
@@ -15,7 +15,10 @@
         .card { background: var(--panel); border: 1px solid var(--border); border-radius: 4px; padding: 15px; margin-bottom: 12px; }
         .nav-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .nav-btn { background: var(--panel); border: 1px solid var(--border); border-radius: 4px; padding: 20px 5px; color: #fff; text-align: center; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; cursor: pointer; }
-        h3 { margin: 0 0 15px 0; font-size: 0.9rem; color: #fff; border-bottom: 1px solid var(--gold); padding-bottom: 5px; text-transform: uppercase; }
+        .header-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--gold); margin-bottom: 15px; padding-bottom: 5px; }
+        h3 { margin: 0; font-size: 0.9rem; color: #fff; text-transform: uppercase; }
+        .vnr-btn { background: #22272e; border: 1px solid var(--border); color: var(--text); padding: 5px 15px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; cursor: pointer; }
+        .vnr-btn.active { background: var(--gold); color: #000; border-color: #fff; }
         label { display: block; font-size: 0.75rem; color: #768390; margin-bottom: 4px; text-transform: uppercase; font-weight: bold; }
         input { width: 100%; background: #22272e; border: 1px solid var(--border); padding: 12px; border-radius: 4px; color: #fff; margin-bottom: 12px; font-size: 1rem; box-sizing: border-box; }
         .btn-exe { width: 100%; padding: 16px; border: none; border-radius: 4px; font-weight: 900; background: var(--gold); color: #000; text-transform: uppercase; }
@@ -26,7 +29,7 @@
 <body>
 
 <header>
-    <div class="logo">ATA v38.0</div>
+    <div class="logo">ATA v41.0</div>
     <button style="background:var(--gold); border:none; padding:8px 12px; border-radius:4px; font-weight:bold" onclick="nav('dash')">МЕНЮ</button>
 </header>
 
@@ -49,19 +52,27 @@
 
 <div id="v_params" class="view">
     <div class="card">
-        <h3>ПАРАМЕТРЫ ТМС</h3>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-            <div><label>Нд</label><input type="number" id="p_nd"></div>
-            <div><label>Рз</label><input type="number" id="p_rz"></div>
-            <div><label>Рб</label><input type="number" id="p_rb"></div>
-            <div><label>Рл</label><input type="number" id="p_rl"></div>
-            <div><label>F</label><input type="number" id="p_f"></div>
-            <div><label>З</label><input type="number" id="p_z"></div>
-            <div><label>Рпр</label><input type="number" id="p_ppr"></div>
-            <div><label>Тдв</label><input type="number" id="p_tdv"></div>
-            <div><label>Нст затр.</label><input type="number" id="p_nstz"></div>
-            <div><label>Нст нкт.</label><input type="number" id="p_nstn"></div>
+        <div class="header-row">
+            <h3>ПАРАМЕТРЫ ТМС</h3>
+            <div id="btnVNR" class="vnr-btn" onclick="this.classList.toggle('active')">ВНР</div>
         </div>
+        
+        <label>Время замера</label><input type="time" id="p_time">
+        
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div><label>Нд (м)</label><input type="number" id="p_nd"></div>
+            <div><label>Рз (атм)</label><input type="number" id="p_rz"></div>
+            <div><label>Рб (атм)</label><input type="number" id="p_rb"></div>
+            <div><label>Рл (атм)</label><input type="number" id="p_rl"></div>
+            <div><label>F (Гц)</label><input type="number" id="p_f"></div>
+            <div><label>I (А)</label><input type="number" id="p_i"></div>
+            <div><label>З (%)</label><input type="number" id="p_z"></div>
+            <div><label>Рпр (атм)</label><input type="number" id="p_ppr"></div>
+            <div><label>Тдв (°C)</label><input type="number" id="p_tdv"></div>
+            <div><label>Нст затр. (м)</label><input type="number" id="p_nstz"></div>
+            <div style="grid-column: span 2;"><label>Нст нкт. (м)</label><input type="number" id="p_nstn"></div>
+        </div>
+        <label>Проба (%) Н2О</label><input type="number" id="p_h2o">
         <button class="btn-exe" onclick="createReport()">СФОРМИРОВАТЬ</button>
     </div>
 </div>
@@ -73,17 +84,7 @@
         <label>Работа (мин)</label><input type="number" id="q_work">
         <label>Пауза (мин)</label><input type="number" id="q_stop">
         <button class="btn-exe" onclick="calcDebit()">РАССЧИТАТЬ</button>
-        <div class="res-box">Дебит за сутки:<br><b id="res_q" style="font-size:1.8rem;">0.0</b> м³</div>
-    </div>
-</div>
-
-<div id="v_glush" class="view">
-    <div class="card">
-        <h3>ГЛУШЕНИЕ</h3>
-        <label>P пласт. (атм)</label><input type="number" id="g_ppl">
-        <label>H верт. (м)</label><input type="number" id="g_h">
-        <button class="btn-exe" onclick="doGlush()">РАСЧЕТ</button>
-        <div class="res-box">Уд. вес ЖГ (K=1.1):<br><b id="res_g" style="font-size:1.8rem;">0.00</b></div>
+        <div class="res-box">Дебит за сутки:<br><b id="res_q" style="font-size:1.8rem;">0.0</b> м³/сут</div>
     </div>
 </div>
 
@@ -111,29 +112,30 @@
         document.getElementById('res_q').innerText = ((l / (w + s)) * 1.44).toFixed(2);
     }
 
-    function doGlush() {
-        const p = parseFloat(document.getElementById('g_ppl').value) || 0;
-        const h = parseFloat(document.getElementById('g_h').value) || 1;
-        document.getElementById('res_g').innerText = ((p * 1.1 * 10) / h).toFixed(2);
-    }
-
     function createReport() {
         const kp = document.getElementById('reg_kp').value || "-";
         const skv = document.getElementById('reg_skv').value || "-";
         let out = `СКВ: ${skv} (КП-${kp})\n`;
+        
+        if(document.getElementById('btnVNR').classList.contains('active')) {
+            out += `РЕЖИМ: ВНР\n`;
+        }
+
         const ids = [
-            ['Нд', 'p_nd'], ['Рз', 'p_rz'], ['Рб', 'p_rb'], ['Рл', 'p_rl'], 
-            ['F', 'p_f'], ['З', 'p_z'], ['Рпр', 'p_ppr'], ['Тдв', 'p_tdv'], 
-            ['Нст затр.', 'p_nstz'], ['Нст нкт.', 'p_nstn']
+            ['ВРЕМЯ', 'p_time', ''], ['Нд', 'p_nd', 'м'], ['Рз', 'p_rz', 'атм'], 
+            ['Рб', 'p_rb', 'атм'], ['Рл', 'p_rl', 'атм'], ['F', 'p_f', 'Гц'], 
+            ['I', 'p_i', 'А'], ['З', 'p_z', '%'], ['Рпр', 'p_ppr', 'атм'], 
+            ['Тдв', 'p_tdv', '°C'], ['Нст затр.', 'p_nstz', 'м'], 
+            ['Нст нкт.', 'p_nstn', 'м'], ['ПРОБА % Н2О', 'p_h2o', '%']
         ];
+        
         ids.forEach(item => {
             const val = document.getElementById(item[1]).value;
-            if(val) out += `${item[0]}: ${val}\n`;
+            if(val) out += `${item[0]}: ${val} ${item[2]}\n`;
         });
+
         const q = document.getElementById('res_q').innerText;
-        if(q !== "0.0") out += `ДЕБИТ: ${q} М3/СУТ\n`;
-        const g = document.getElementById('res_g').innerText;
-        if(g !== "0.00") out += `УД.ВЕС ЖГ: ${g}\n`;
+        if(q !== "0.0") out += `ДЕБИТ: ${q} м3/сут\n`;
 
         finalData = out;
         nav('v_report');
