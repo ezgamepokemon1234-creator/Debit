@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OIL & GAS CALCULATOR</title>
+
+<!-- PWA essentials – добавлено -->
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#1a3c34">
+
+<style> :root { --bg: #060a0f; --bg2: #0c1219; --panel: #0f1a24; --border: #1a3040; --gold: #c8952a; --gold2: #f0b940; --cyan: #00d4ff; --green: #00ff88; --red: #ff4455; --text: #b0c8d8; --muted: #3a5060; --white: #e8f4fc; } * { margin:0; padding:0; box-sizing:border-box; } body { background: var(--bg); color: var(--text); font-family: 'Trebuchet MS', 'Arial', sans-serif; min-height: 100vh; background-image: radial-gradient(ellipse at 10% 20%, rgba(200,149,42,0.06) 0%, transparent 40%), radial-gradient(ellipse at 90% 80%, rgba(0,212,255,0.04) 0%, transparent 40%), repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(26,48,64,0.1) 40px, rgba(26,48,64,0.1) 41px), repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(26,48,64,0.1) 40px, rgba(26,48,64,0.1) 41px); } header { text-align: center; padding: 20px 10px; background: linear-gradient(to bottom, var(--panel), var(--bg2)); border-bottom: 1px solid var(--border); } h1 { color: var(--cyan); font-size: 2.2em; margin: 0; text-shadow: 0 0 10px rgba(0,212,255,0.5); } .lang-switch { margin-top: 15px; } .lang-btn { background: var(--panel); border: 1px solid var(--border); color: var(--text); padding: 8px 16px; margin: 0 5px; border-radius: 20px; cursor: pointer; transition: all 0.3s; } .lang-btn.active { background: var(--cyan); color: #000; box-shadow: 0 0 15px rgba(0,212,255,0.6); } .container { max-width: 800px; margin: 30px auto; padding: 0 15px; } .card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); } h2 { color: var(--gold); margin-bottom: 15px; border-bottom: 1px solid var(--border); padding-bottom: 8px; } .input-group { margin-bottom: 18px; } label { display: block; margin-bottom: 6px; color: var(--muted); font-weight: bold; } input, select { width: 100%; padding: 12px; background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; color: var(--white); font-size: 1em; transition: border 0.3s; } input:focus, select:focus { outline: none; border-color: var(--cyan); box-shadow: 0 0 8px rgba(0,212,255,0.3); } button { background: linear-gradient(to right, var(--gold), var(--gold2)); border: none; color: #000; padding: 14px 28px; font-size: 1.1em; border-radius: 50px; cursor: pointer; width: 100%; margin-top: 15px; font-weight: bold; transition: all 0.3s; box-shadow: 0 4px 12px rgba(200,149,42,0.4); } button:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(200,149,42,0.6); } .result-box { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin-top: 25px; display: none; } .result-row { display: flex; justify-content: space-between; margin: 12px 0; padding: 8px 0; border-bottom: 1px solid var(--border); } .result-label { color: var(--muted); } .result-val { color: var(--white); font-weight: bold; } .visible { display: block !important; } .error { color: var(--red); text-align: center; margin-top: 10px; } footer { text-align: center; padding: 20px; color: var(--muted); font-size: 0.9em; border-top: 1px solid var(--border); margin-top: 40px; } </style>
+</head>
+<body>
+
+<header>
+  <h1>OIL & GAS CALCULATOR</h1>
+  <div class="lang-switch">
+    <button id="btn-ru" class="lang-btn active" onclick="setLang('ru')">RU</button>
+    <button id="btn-en" class="lang-btn" onclick="setLang('en')">EN</button>
+  </div>
+</header>
+
+<div class="container">
+  <!-- Здесь будут карточки расчётов, генерируемые JS -->
+</div>
+
+<footer>
+  <p>&copy; 2026 Oil & Gas Tools</p>
+</footer>
+
+<script>
+  let lang = 'ru';
+
+  const T = {
+    ru: {
+      badge: 'Калькулятор дебита нефти и газа',
+      sub: 'Простой онлайн-инструмент для расчёта параметров скважин',
+      err: 'Ошибка в расчётах. Проверьте введённые данные.',
+      // ... другие переводы, если они есть в твоём коде
+    },
+    en: {
+      badge: 'Oil & Gas Debit Calculator',
+      sub: 'Simple online tool for well production parameters calculation',
+      err: 'Calculation error. Check input data.',
+    }
+  };
+
+  function render() {
+    const container = document.querySelector('.container');
+    container.innerHTML = '';
+
+    // Пример карточки (добавь свои расчёты здесь, как в оригинале)
+    const card = createCard('Расчёт дебита по формуле Дюпюи', 'dupui');
+    container.appendChild(card);
+  }
+
+  function createCard(title, type) {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `<h2>${title}</h2>`;
+
+    // Добавь здесь свои input'ы и кнопку, как в оригинальном коде
+    // Пример:
+    const inputGroup = document.createElement('div');
+    inputGroup.className = 'input-group';
+    inputGroup.innerHTML = `
+      <label>Входные данные:</label>
+      <input type="number" id="input1" placeholder="Значение 1">
+    `;
+    card.appendChild(inputGroup);
+
+    const btn = document.createElement('button');
+    btn.textContent = 'Рассчитать';
+    card.appendChild(btn);
+
+    const resultBox = document.createElement('div');
+    resultBox.className = 'result-box';
+    card.appendChild(resultBox);
+
+    btn.onclick = () => {
+      // Твой код расчёта здесь
+      const value = document.getElementById('input1').value;
+      if (!value) {
+        resultBox.innerHTML = `<div class="error">${T[lang].err}</div>`;
+        return;
+      }
+      resultBox.className = 'result-box visible';
+      resultBox.innerHTML = `<div>Результат: ${value * 2}</div>`;
+    };
+
+    return card;
+  }
+
+  function setLang(l) {
+    lang = l;
+    document.getElementById('btn-ru').classList.toggle('active', l==='ru');
+    document.getElementById('btn-en').classList.toggle('active', l==='en');
+    render();
+  }
+
+  render();
+</script>
+
+<!-- PWA service worker registration – добавлено -->
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('./sw.js')
+        .then(reg => console.log('Service Worker зарегистрирован'))
+        .catch(err => console.log('Ошибка SW:', err));
+    });
+  }
+</script>
+
+</body>
+</html>
