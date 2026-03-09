@@ -3,32 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ATA v35.0 | PROFESSIONAL</title>
+    <title>ATA v38.0 | INDUSTRIAL</title>
     <script src="https://cdn.jsdelivr.net/npm/davidshimjs-qrcodejs@0.0.2/qrcode.min.js"></script>
     <style>
         :root { --gold: #d4af37; --bg: #0b0e14; --panel: #1c2128; --border: #444c56; --text: #adbac7; }
-        body { font-family: sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 20px; }
+        body { font-family: sans-serif; background: var(--bg); color: var(--text); margin: 0; }
         header { background: #000; border-bottom: 2px solid var(--gold); padding: 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }
-        .logo { font-size: 1rem; font-weight: bold; color: var(--gold); text-transform: uppercase; }
+        .logo { font-size: 1rem; font-weight: bold; color: var(--gold); }
         .view { display: none; padding: 15px; }
         .view.active { display: block !important; }
-        .nav-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .nav-btn { background: var(--panel); border: 1px solid var(--border); border-radius: 4px; padding: 22px 5px; color: #fff; text-align: center; cursor: pointer; text-transform: uppercase; font-size: 0.75rem; font-weight: 800; }
         .card { background: var(--panel); border: 1px solid var(--border); border-radius: 4px; padding: 15px; margin-bottom: 12px; }
-        h3 { margin-top: 0; font-size: 0.9rem; color: #fff; border-bottom: 1px solid var(--gold); padding-bottom: 8px; margin-bottom: 15px; text-transform: uppercase; }
-        label { display: block; font-size: 0.7rem; color: #768390; margin-bottom: 5px; text-transform: uppercase; font-weight: bold; }
+        .nav-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .nav-btn { background: var(--panel); border: 1px solid var(--border); border-radius: 4px; padding: 20px 5px; color: #fff; text-align: center; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; cursor: pointer; }
+        h3 { margin: 0 0 15px 0; font-size: 0.9rem; color: #fff; border-bottom: 1px solid var(--gold); padding-bottom: 5px; text-transform: uppercase; }
+        label { display: block; font-size: 0.75rem; color: #768390; margin-bottom: 4px; text-transform: uppercase; font-weight: bold; }
         input { width: 100%; background: #22272e; border: 1px solid var(--border); padding: 12px; border-radius: 4px; color: #fff; margin-bottom: 12px; font-size: 1rem; box-sizing: border-box; }
-        .btn-exe { width: 100%; padding: 16px; border: none; border-radius: 4px; font-weight: 900; background: var(--gold); color: #000; cursor: pointer; text-transform: uppercase; font-size: 0.9rem; }
-        .res-box { background: #000; border: 1px solid var(--gold); padding: 15px; border-radius: 4px; text-align: center; margin: 15px 0; }
-        .res-val { font-size: 1.8rem; font-weight: bold; color: #fff; }
+        .btn-exe { width: 100%; padding: 16px; border: none; border-radius: 4px; font-weight: 900; background: var(--gold); color: #000; text-transform: uppercase; }
+        .res-box { background: #000; border: 1px solid var(--gold); padding: 15px; border-radius: 4px; text-align: center; margin: 10px 0; }
         #qr-out { background: #fff; padding: 10px; display: inline-block; border-radius: 4px; margin: 15px 0; }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="logo">ATA v35.0</div>
-    <button style="background:var(--gold); color:#000; border:none; padding:8px 12px; border-radius:4px; font-weight:bold" onclick="nav('dash')">МЕНЮ</button>
+    <div class="logo">ATA v38.0</div>
+    <button style="background:var(--gold); border:none; padding:8px 12px; border-radius:4px; font-weight:bold" onclick="nav('dash')">МЕНЮ</button>
 </header>
 
 <div id="dash" class="view active">
@@ -40,10 +39,10 @@
     </div>
     <div class="nav-grid">
         <div class="nav-btn" onclick="nav('v_params')">ПАРАМЕТРЫ</div>
-        <div class="nav-btn" onclick="nav('v_debit')">ДЕБИТ (Л/ЦЫКЛ)</div>
+        <div class="nav-btn" onclick="nav('v_debit')">ДЕБИТ (Л/ЦИКЛ)</div>
         <div class="nav-btn" onclick="nav('v_tech')">ГРП / КОЙЛ</div>
         <div class="nav-btn" onclick="nav('v_glush')">ГЛУШЕНИЕ</div>
-        <div class="nav-btn" onclick="nav('v_ppd')">ППД</div>
+        <div class="nav-btn" onclick="nav('v_ppd')">ППД ПРИЕМ.</div>
         <div class="nav-btn" onclick="createReport()" style="background:var(--gold); color:#000;">ОТЧЕТ</div>
     </div>
 </div>
@@ -51,14 +50,18 @@
 <div id="v_params" class="view">
     <div class="card">
         <h3>ПАРАМЕТРЫ ТМС</h3>
-        <label>Нд (м)</label><input type="number" id="p_nd">
-        <label>Рз (атм)</label><input type="number" id="p_rz">
-        <label>Рб (атм)</label><input type="number" id="p_rb">
-        <label>Рл (атм)</label><input type="number" id="p_rl">
-        <label>Рпр (атм)</label><input type="number" id="p_ppr">
-        <label>Тдв (°C)</label><input type="number" id="p_tdv">
-        <label>Нст затр. (м)</label><input type="number" id="p_nstz">
-        <label>Нст нкт. (м)</label><input type="number" id="p_nstn">
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div><label>Нд</label><input type="number" id="p_nd"></div>
+            <div><label>Рз</label><input type="number" id="p_rz"></div>
+            <div><label>Рб</label><input type="number" id="p_rb"></div>
+            <div><label>Рл</label><input type="number" id="p_rl"></div>
+            <div><label>F</label><input type="number" id="p_f"></div>
+            <div><label>З</label><input type="number" id="p_z"></div>
+            <div><label>Рпр</label><input type="number" id="p_ppr"></div>
+            <div><label>Тдв</label><input type="number" id="p_tdv"></div>
+            <div><label>Нст затр.</label><input type="number" id="p_nstz"></div>
+            <div><label>Нст нкт.</label><input type="number" id="p_nstn"></div>
+        </div>
         <button class="btn-exe" onclick="createReport()">СФОРМИРОВАТЬ</button>
     </div>
 </div>
@@ -66,11 +69,11 @@
 <div id="v_debit" class="view">
     <div class="card">
         <h3>ЗАМЕР ДЕБИТА</h3>
-        <label>Слив за цикл (Литры)</label><input type="number" id="q_liters" placeholder="напр. 50">
-        <label>Работа (мин)</label><input type="number" id="q_work" placeholder="напр. 5">
-        <label>Пауза / Отстой (мин)</label><input type="number" id="q_stop" placeholder="напр. 10">
-        <button class="btn-exe" onclick="calcDebit()">РАССЧИТАТЬ М3/СУТ</button>
-        <div class="res-box">Дебит за сутки:<br><span id="res_q_final" class="res-val">0.0</span> м³</div>
+        <label>Слив за цикл (Литры)</label><input type="number" id="q_liters">
+        <label>Работа (мин)</label><input type="number" id="q_work">
+        <label>Пауза (мин)</label><input type="number" id="q_stop">
+        <button class="btn-exe" onclick="calcDebit()">РАССЧИТАТЬ</button>
+        <div class="res-box">Дебит за сутки:<br><b id="res_q" style="font-size:1.8rem;">0.0</b> м³</div>
     </div>
 </div>
 
@@ -79,22 +82,8 @@
         <h3>ГЛУШЕНИЕ</h3>
         <label>P пласт. (атм)</label><input type="number" id="g_ppl">
         <label>H верт. (м)</label><input type="number" id="g_h">
-        <button class="btn-exe" onclick="doGlush()">РАСЧЕТ ПЛОТНОСТИ</button>
-        <div class="res-box">Уд. вес ЖГ (K=1.1):<br><span id="res_g" class="res-val">0.00</span></div>
-    </div>
-</div>
-
-<div id="v_tech" class="view">
-    <div class="card">
-        <h3>ОБЪЕМЫ ГРП/КОЙЛ</h3>
-        <label>Глубина (м)</label><input type="number" id="t_h">
-        <label>Диаметр Э/К (мм)</label><input type="number" id="t_ek" value="168">
-        <label>Диаметр НКТ (мм)</label><input type="number" id="t_nkt" value="73">
-        <button class="btn-exe" onclick="doTech()">РАССЧИТАТЬ</button>
-        <div class="res-box">
-            V внутри: <span id="res_t1">0.0</span> м³<br>
-            V затруб: <span id="res_t2">0.0</span> м³
-        </div>
+        <button class="btn-exe" onclick="doGlush()">РАСЧЕТ</button>
+        <div class="res-box">Уд. вес ЖГ (K=1.1):<br><b id="res_g" style="font-size:1.8rem;">0.00</b></div>
     </div>
 </div>
 
@@ -102,29 +91,24 @@
     <div class="card" style="text-align:center;">
         <h3>ОТЧЕТ ГОТОВ</h3>
         <div id="qr-out"></div>
-        <button class="btn-exe" onclick="sendSys()">ОТПРАВИТЬ (WHATSAPP/TG)</button>
-        <button style="width:100%; border:none; background:none; color:var(--gold); margin-top:20px; font-weight:bold;" onclick="nav('dash')">← В МЕНЮ</button>
+        <button class="btn-exe" onclick="sendSys()">ОТПРАВИТЬ СООБЩЕНИЕМ</button>
+        <button style="width:100%; background:none; border:none; color:var(--gold); margin-top:20px; font-weight:bold;" onclick="nav('dash')">← В МЕНЮ</button>
     </div>
 </div>
 
 <script>
     let finalData = "";
-
     function nav(id) {
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-        const target = document.getElementById(id);
-        if(target) target.classList.add('active');
+        document.getElementById(id).classList.add('active');
         window.scrollTo(0,0);
     }
 
     function calcDebit() {
-        const L = parseFloat(document.getElementById('q_liters').value) || 0;
-        const Tw = parseFloat(document.getElementById('q_work').value) || 1;
-        const Ts = parseFloat(document.getElementById('q_stop').value) || 0;
-        
-        // Формула: (Литры / (Работа + Пауза)) * 1440 минут / 1000 (в м3)
-        const q_day = (L / (Tw + Ts)) * 1440 / 1000;
-        document.getElementById('res_q_final').innerText = q_day.toFixed(2);
+        const l = parseFloat(document.getElementById('q_liters').value) || 0;
+        const w = parseFloat(document.getElementById('q_work').value) || 1;
+        const s = parseFloat(document.getElementById('q_stop').value) || 0;
+        document.getElementById('res_q').innerText = ((l / (w + s)) * 1.44).toFixed(2);
     }
 
     function doGlush() {
@@ -133,39 +117,29 @@
         document.getElementById('res_g').innerText = ((p * 1.1 * 10) / h).toFixed(2);
     }
 
-    function doTech() {
-        const h = parseFloat(document.getElementById('t_h').value) || 0;
-        const v1 = (Math.PI * Math.pow((parseFloat(document.getElementById('t_nkt').value)-10)/1000, 2)/4)*h;
-        const v2 = (Math.PI * (Math.pow(parseFloat(document.getElementById('t_ek').value)/1000, 2) - Math.pow(parseFloat(document.getElementById('t_nkt').value)/1000, 2))/4)*h;
-        document.getElementById('res_t1').innerText = v1.toFixed(1);
-        document.getElementById('res_t2').innerText = v2.toFixed(1);
-    }
-
     function createReport() {
         const kp = document.getElementById('reg_kp').value || "-";
         const skv = document.getElementById('reg_skv').value || "-";
         let out = `СКВ: ${skv} (КП-${kp})\n`;
-        
-        // Собираем только нужные параметры в вашем порядке
-        const params = [
-            ['НД (М)', 'p_nd'], ['РЗ (АТМ)', 'p_rz'], ['РБ (АТМ)', 'p_rb'], 
-            ['РЛ (АТМ)', 'p_rl'], ['РПР (АТМ)', 'p_ppr'], ['ТДВ (С)', 'p_tdv'],
-            ['НСТ ЗАТР.', 'p_nstz'], ['НСТ НКТ.', 'p_nstn']
+        const ids = [
+            ['Нд', 'p_nd'], ['Рз', 'p_rz'], ['Рб', 'p_rb'], ['Рл', 'p_rl'], 
+            ['F', 'p_f'], ['З', 'p_z'], ['Рпр', 'p_ppr'], ['Тдв', 'p_tdv'], 
+            ['Нст затр.', 'p_nstz'], ['Нст нкт.', 'p_nstn']
         ];
-        
-        params.forEach(p => {
-            const val = document.getElementById(p[1]).value;
-            if(val) out += `${p[0]}: ${val}\n`;
+        ids.forEach(item => {
+            const val = document.getElementById(item[1]).value;
+            if(val) out += `${item[0]}: ${val}\n`;
         });
-
-        const q = document.getElementById('res_q_final').innerText;
+        const q = document.getElementById('res_q').innerText;
         if(q !== "0.0") out += `ДЕБИТ: ${q} М3/СУТ\n`;
+        const g = document.getElementById('res_g').innerText;
+        if(g !== "0.00") out += `УД.ВЕС ЖГ: ${g}\n`;
 
         finalData = out;
         nav('v_report');
-        const container = document.getElementById('qr-out');
-        container.innerHTML = "";
-        new QRCode(container, { text: out, width: 220, height: 220 });
+        const qrContainer = document.getElementById('qr-out');
+        qrContainer.innerHTML = "";
+        new QRCode(qrContainer, { text: out, width: 200, height: 200 });
     }
 
     async function sendSys() {
