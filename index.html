@@ -4,172 +4,159 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="author" content="Anvarov Timur Akramovich">
-    <title>ATA v45.0 | Anvarov T.A.</title>
-    <script src="https://cdn.jsdelivr.net/npm/davidshimjs-qrcodejs@0.0.2/qrcode.min.js"></script>
+    <title>ATA-1 PRO | ANVAROV T.A.</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
-        :root { --gold: #d4af37; --bg: #0b0e14; --panel: #1c2128; --border: #444c56; --text: #adbac7; --mic: #00e676; }
-        body { font-family: sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 60px; }
-        header { background: #000; border-bottom: 2px solid var(--gold); padding: 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }
-        .logo { font-size: 0.9rem; font-weight: bold; color: var(--gold); }
+        :root { --gold: #d4af37; --bg: #000000; --card: #111111; --ai: #00ff9d; --text: #ffffff; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 50px; }
+        header { border-bottom: 2px solid var(--gold); padding: 15px; text-align: center; background: #000; position: sticky; top: 0; z-index: 100; }
+        .ai-core { width: 90px; height: 90px; border: 4px solid var(--ai); border-radius: 50%; margin: 15px auto; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; box-shadow: 0 0 20px rgba(0,255,157,0.3); transition: 0.3s; }
+        .ai-core.listening { background: #ff3b30; border-color: #fff; box-shadow: 0 0 40px #ff3b30; }
         .view { display: none; padding: 15px; }
         .view.active { display: block !important; }
-        .card { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 15px; margin-bottom: 12px; }
-        .nav-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .nav-btn { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 22px 5px; color: #fff; text-align: center; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; cursor: pointer; }
-        label { display: block; font-size: 0.65rem; color: #8b949e; margin-bottom: 4px; text-transform: uppercase; font-weight: bold; }
-        input { width: 100%; background: #010409; border: 1px solid var(--border); padding: 12px; border-radius: 6px; color: #fff; margin-bottom: 10px; font-size: 1rem; box-sizing: border-box; }
-        .btn-exe { width: 100%; padding: 16px; border: none; border-radius: 8px; font-weight: 900; background: var(--gold); color: #000; text-transform: uppercase; }
-        .voice-bar { background: #1e2e26; border: 2px solid var(--mic); color: var(--mic); width: 100%; padding: 15px; border-radius: 12px; font-weight: bold; margin-bottom: 15px; display: flex; justify-content: center; align-items: center; gap: 10px; cursor: pointer; box-shadow: 0 0 10px rgba(0,230,118,0.2); }
-        footer { text-align: center; padding: 20px; font-size: 0.7rem; color: #555; border-top: 1px solid #222; margin-top: 20px; }
-        .res-box { background: #000; border: 1px solid var(--gold); padding: 15px; border-radius: 4px; text-align: center; margin: 10px 0; }
+        .card { background: var(--card); border: 1px solid #222; padding: 15px; border-radius: 15px; margin-bottom: 12px; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        input, select { width: 100%; background: #050505; border: 1px solid #333; padding: 14px; border-radius: 10px; color: var(--ai); font-size: 1.1rem; box-sizing: border-box; margin-bottom: 10px; }
+        label { font-size: 0.65rem; color: #777; text-transform: uppercase; font-weight: bold; display: block; margin-bottom: 4px; }
+        .btn-gold { width: 100%; background: var(--gold); color: #000; padding: 18px; border: none; border-radius: 12px; font-weight: 900; text-transform: uppercase; cursor: pointer; }
+        #qrcode { background: #fff; padding: 15px; display: inline-block; border-radius: 10px; margin: 15px 0; }
+        audio { width: 100%; height: 35px; filter: invert(1) hue-rotate(180deg); margin-top: 5px; }
+        .footer { text-align: center; font-size: 0.7rem; color: #444; margin: 20px 0; letter-spacing: 1px; }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="logo">ATA v45.0 | ANVAROV T.A.</div>
-    <button style="background:var(--gold); border:none; padding:8px 12px; border-radius:4px; font-weight:bold" onclick="nav('dash')">МЕНЮ</button>
+    <div style="font-weight: 900; color: var(--gold); letter-spacing: 2px;">ATA-1 PRO</div>
+    <div style="font-size: 0.6rem; color: #888;">DEVELOPED BY ANVAROV TIMUR AKRAMOVICH</div>
 </header>
 
-<div class="card" style="margin: 10px;">
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-        <div><label>ЦДНГ</label><input type="text" id="reg_cdng" placeholder="№"></div>
-        <div><label>БРИГАДА</label><input type="text" id="reg_br" placeholder="№"></div>
-        <div><label>КУСТ</label><input type="text" id="reg_kp" placeholder="№"></div>
-        <div><label>СКВАЖИНА</label><input type="text" id="reg_skv" placeholder="№"></div>
-    </div>
-</div>
-
 <div id="dash" class="view active">
-    <div class="voice-bar" onclick="startVoice()">🎤 ГОВОРИТЕ КОМАНДУ</div>
-    <div class="nav-grid">
-        <div class="nav-btn" onclick="nav('v_params')">ПАРАМЕТРЫ</div>
-        <div class="nav-btn" onclick="nav('v_debit')">ДЕБИТ (Л/ЦИКЛ)</div>
-        <div class="nav-btn" onclick="nav('v_glush')">ГЛУШЕНИЕ</div>
-        <div class="nav-btn" onclick="nav('v_tech')">ГРП / КОЙЛ</div>
-        <div class="nav-btn" onclick="createReport()" style="background:var(--gold); color:#000;">ОТЧЕТ</div>
-    </div>
-</div>
-
-<div id="v_params" class="view">
-    <div class="voice-bar" onclick="startVoice()">🎤 СЛУШАЮ ПАРАМЕТРЫ</div>
-    <div class="card">
-        <h3>ТМС / ЭЦН</h3>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-            <div><label>Нд (м)</label><input type="number" id="p_nd"></div>
-            <div><label>Рз (атм)</label><input type="number" id="p_rz"></div>
-            <div><label>Рб (атм)</label><input type="number" id="p_rb"></div>
-            <div><label>Рл (атм)</label><input type="number" id="p_rl"></div>
-            <div><label>F (Гц)</label><input type="number" id="p_f"></div>
-            <div><label>I (А)</label><input type="number" id="p_i"></div>
-            <div><label>З (%)</label><input type="number" id="p_z"></div>
-            <div><label>Рпр (атм)</label><input type="number" id="p_ppr"></div>
-            <div><label>Тдв (°C)</label><input type="number" id="p_tdv"></div>
-            <div><label>Нст (м)</label><input type="number" id="p_nstz"></div>
+    <div class="card" style="border-color: var(--ai); text-align: center;">
+        <div id="ai_status" style="font-size: 0.8rem; color: var(--ai); margin-bottom: 5px; font-weight: bold;">СИСТЕМА АКТИВНА</div>
+        <div class="ai-core" id="aiBtn" onclick="runAI()"><span style="font-size: 2rem;">🎙</span></div>
+        <div id="speech_log" style="font-style: italic; font-size: 0.7rem; color: #666; margin-bottom: 10px;">"Слушаю вас..."</div>
+        
+        <div style="border-top: 1px solid #222; padding-top: 10px;">
+            <label>РАДИОСТАНЦИЯ</label>
+            <select id="station-select" onchange="changeStation()">
+                <option value="https://dorognoe.hostingradio.ru:8000/radio">Дорожное Радио</option>
+                <option value="https://recordrussia.hostingradio.ru:8032/rock90128">Рекорд ROCK</option>
+                <option value="https://pub0302.global.audio/sa_msk">Авторадио</option>
+                <option value="https://ep128.hostingradio.ru:8030/ep128">Европа Плюс</option>
+            </select>
+            <audio id="main-audio" controls></audio>
         </div>
-        <label>ЭТП (А)</label><input type="number" id="load_i_etp">
-        <button class="btn-exe" onclick="createReport()">ГОТОВО</button>
+    </div>
+
+    <div class="grid-2">
+        <div class="card" onclick="nav('params')">📟 ПАРАМЕТРЫ</div>
+        <div class="card" onclick="nav('debit')">📊 ДЕБИТ</div>
+        <div class="card" onclick="makeReport()" style="grid-column: span 2; border-color: var(--gold); color: var(--gold); text-align: center; font-weight: bold;">🏁 СФОРМИРОВАТЬ QR-ОТЧЕТ</div>
     </div>
 </div>
 
-<div id="v_debit" class="view">
-    <div class="voice-bar" onclick="startVoice()">🎤 СЛУШАЮ ДЕБИТ</div>
+<div id="params" class="view">
     <div class="card">
-        <h3>ЗАМЕР ДЕБИТА</h3>
-        <label>Литры</label><input type="number" id="q_liters">
-        <label>Работа (мин)</label><input type="number" id="q_work">
-        <label>Пауза (мин)</label><input type="number" id="q_stop">
-        <button class="btn-exe" onclick="calcDebit()">РАСЧЕТ</button>
-        <div class="res-box">Дебит: <span id="res_q">0.0</span> м3/сут</div>
+        <h3 style="color:var(--gold); margin-top:0;">ВВОД ДАННЫХ</h3>
+        <div class="grid-2">
+            <div><label>КУСТ</label><input type="text" id="kust" placeholder="№"></div>
+            <div><label>СКВ</label><input type="text" id="skv" placeholder="№"></div>
+        </div>
+        <label>ТОК (А)</label><input type="number" id="tok">
+        <label>ДАВЛЕНИЕ ПРИЕМ (АТМ)</label><input type="number" id="ppr">
+        <label>ДИНАМИЧЕСКИЙ УРОВЕНЬ (М)</label><input type="number" id="nd">
+        <button class="btn-gold" onclick="nav('dash')">В МЕНЮ</button>
     </div>
 </div>
 
-<div id="v_report" class="view">
-    <div class="card" style="text-align:center;">
-        <h3>ОТЧЕТ СФОРМИРОВАН</h3>
-        <div id="qr-out" style="background:#fff; padding:10px; display:inline-block; margin:15px 0;"></div>
-        <button class="btn-exe" onclick="sendSys()">ОТПРАВИТЬ</button>
+<div id="report" class="view" style="text-align: center;">
+    <div class="card">
+        <h3 style="color:var(--ai);">QR-КОД ГОТОВ</h3>
+        <div id="qrcode"></div>
+        <div id="report_text" style="font-family: monospace; font-size: 0.8rem; text-align: left; background: #000; padding: 10px; border: 1px solid #333;"></div>
+        <button class="btn-gold" style="margin-top: 15px;" onclick="nav('dash')">НАЗАД</button>
     </div>
 </div>
 
-<footer>
-    РАЗРАБОТКА: ANVAROV TIMUR AKRAMOVICH<br>© 2026 DIGITAL OILFIELD SOLUTIONS
-</footer>
+<div class="footer">ANVAROV TIMUR AKRAMOVICH — 2026<br>INTELLIGENT OILFIELD SOLUTIONS</div>
 
 <script>
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.lang = 'ru-RU';
+    
+    function speak(t) {
+        window.speechSynthesis.cancel();
+        const m = new SpeechSynthesisUtterance(t);
+        m.lang = 'ru-RU';
+        window.speechSynthesis.speak(m);
+        document.getElementById('ai_status').innerText = t;
+    }
+
     function nav(id) {
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
         document.getElementById(id).classList.add('active');
-        window.scrollTo(0,0);
     }
 
-    function speak(text) {
-        const msg = new SpeechSynthesisUtterance();
-        msg.text = text; msg.lang = 'ru-RU';
-        window.speechSynthesis.speak(msg);
+    function changeStation() {
+        const player = document.getElementById('main-audio');
+        const selector = document.getElementById('station-select');
+        player.src = selector.value;
+        player.play();
+        speak("Включаю радио, Тимур Акрамович");
     }
 
-    function startVoice() {
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if(!SpeechRecognition) return alert("Голос не поддерживается");
-        const rec = new SpeechRecognition();
-        rec.lang = 'ru-RU';
+    function runAI() {
+        recognition.start();
+        document.getElementById('aiBtn').classList.add('listening');
+    }
+
+    recognition.onresult = (e) => {
+        const cmd = e.results[0][0].transcript.toLowerCase();
+        document.getElementById('speech_log').innerText = `"${cmd}"`;
+        const n = cmd.match(/\d+/g);
+
+        // Команды радио
+        if(cmd.includes("включи рок")) { 
+            document.getElementById('station-select').value = "https://recordrussia.hostingradio.ru:8032/rock90128"; 
+            changeStation(); 
+        }
+        else if(cmd.includes("включи дорогу")) { 
+            document.getElementById('station-select').value = "https://dorognoe.hostingradio.ru:8000/radio"; 
+            changeStation(); 
+        }
+        // Навигация и ввод
+        else if (cmd.includes("отчет")) { makeReport(); speak("Ваш QR-код готов"); }
+        else if (cmd.includes("параметр")) { nav('params'); speak("Открыла параметры"); }
+        else if (n) {
+            if (cmd.includes("куст")) { document.getElementById('kust').value = n[0]; speak("Куст " + n[0]); }
+            else if (cmd.includes("скважин")) { document.getElementById('skv').value = n[0]; speak("Скважина " + n[0]); }
+            else if (cmd.includes("ток")) { document.getElementById('tok').value = n[0]; speak("Ток " + n[0]); }
+            else if (cmd.includes("прием")) { document.getElementById('ppr').value = n[0]; speak("Прием " + n[0]); }
+        } else {
+            speak("Повторите, я не расслышала");
+        }
+    };
+
+    recognition.onend = () => document.getElementById('aiBtn').classList.remove('listening');
+
+    function makeReport() {
+        const data = `ANVAROV T.A. REPORT\nKP: ${document.getElementById('kust').value}\nSKV: ${document.getElementById('skv').value}\nI: ${document.getElementById('tok').value}A\nPpr: ${document.getElementById('ppr').value}atm\nNd: ${document.getElementById('nd').value}m`;
         
-        document.querySelectorAll('.voice-bar').forEach(b => b.innerText = "🔴 СЛУШАЮ...");
+        document.getElementById('report_text').innerText = data;
+        document.getElementById("qrcode").innerHTML = "";
         
-        rec.onresult = (e) => {
-            const text = e.results[0][0].transcript.toLowerCase();
-            const val = text.match(/\d+/);
-
-            // ЛОГИКА НАВИГАЦИИ
-            if(text.includes("параметр")) { nav('v_params'); speak("Открываю параметры"); return; }
-            if(text.includes("дебит")) { nav('v_debit'); speak("Перехожу в дебит"); return; }
-            if(text.includes("меню") || text.includes("назад")) { nav('dash'); speak("Главное меню"); return; }
-            if(text.includes("отчет")) { createReport(); speak("Создаю отчет"); return; }
-
-            // ЛОГИКА ВВОДА ДАННЫХ
-            if(val) {
-                let v = val[0];
-                if(text.includes("динамический") || text.includes("нд") || text.includes("уровень")) { document.getElementById('p_nd').value = v; speak("Динамический " + v); }
-                else if(text.includes("затруб") || text.includes("рб")) { document.getElementById('p_rb').value = v; speak("Затрубное " + v); }
-                else if(text.includes("буфер") || text.includes("рз")) { document.getElementById('p_rz').value = v; speak("Буферное " + v); }
-                else if(text.includes("линейное") || text.includes("рл")) { document.getElementById('p_rl').value = v; speak("Линейное " + v); }
-                else if(text.includes("прием") || text.includes("рпр")) { document.getElementById('p_ppr').value = v; speak("Прием " + v); }
-                else if(text.includes("частота") || text.includes("герц")) { document.getElementById('p_f').value = v; speak("Частота " + v); }
-                else if(text.includes("ток") || text.includes("ампер")) { document.getElementById('p_i').value = v; speak("Ток " + v); }
-                else if(text.includes("загрузка") || text.includes("зв")) { document.getElementById('p_z').value = v; speak("Загрузка " + v); }
-                else if(text.includes("литр")) { document.getElementById('q_liters').value = v; speak("Литры " + v); }
-                else { speak("Не поняла параметр " + text); }
-            } else {
-                speak("Не услышала цифру");
-            }
-        };
-        rec.onend = () => { document.querySelectorAll('.voice-bar').forEach(b => b.innerText = "🎤 НАЖМИТЕ И ГОВОРИТЕ"); };
-        rec.start();
-    }
-
-    function createReport() {
-        let out = `🏢 ЦДНГ-${document.getElementById('reg_cdng').value} | Бр-${document.getElementById('reg_br').value}\n📍 КП-${document.getElementById('reg_kp').value} | СКВ: ${document.getElementById('reg_skv').value}\n`;
-        const ids = [['Нд','p_nd','м'],['Рз','p_rz','атм'],['Рб','p_rb','атм'],['Рл','p_rl','атм'],['F','p_f','Гц'],['I','p_i','А'],['З','p_z','%'],['Рпр','p_ppr','атм']];
-        ids.forEach(i => { if(document.getElementById(i[1]).value) out += `${i[0]}: ${document.getElementById(i[1]).value} ${i[2]}\n`; });
+        new QRCode(document.getElementById("qrcode"), {
+            text: data,
+            width: 200,
+            height: 200,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+        });
         
-        const i_w = parseFloat(document.getElementById('p_i').value);
-        const i_e = parseFloat(document.getElementById('load_i_etp').value);
-        if(i_w && i_e) out += `📈 ЗАГРУЗКА: ${((i_w/i_e)*100).toFixed(1)}%\n`;
-
-        finalData = out;
-        nav('v_report');
-        document.getElementById("qr-out").innerHTML = "";
-        new QRCode(document.getElementById("qr-out"), { text: out, width: 200, height: 200 });
+        nav('report');
     }
-
-    function calcDebit() {
-        const l = parseFloat(document.getElementById('q_liters').value) || 0;
-        const t = (parseFloat(document.getElementById('q_work').value) || 1) + (parseFloat(document.getElementById('q_stop').value) || 0);
-        document.getElementById('res_q').innerText = ((l/t)*1.44).toFixed(2);
-    }
-
-    async function sendSys() { if (navigator.share) await navigator.share({ text: finalData }); }
 
     window.onload = () => {
         document.querySelectorAll('input').forEach(el => {
