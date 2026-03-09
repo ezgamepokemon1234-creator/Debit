@@ -4,99 +4,199 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="author" content="Anvarov Timur Akramovich">
-    <link rel="icon" type="image/jpeg" href="icon_1024x1024.jpg">
-    <link rel="apple-touch-icon" href="icon_1024x1024.jpg">
-    <title>ATA Enterprise OS</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <title>ATA PRO v1.0</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root { --gold: #d4af37; --bg: #05080a; --panel: #0d1117; --border: #30363d; --accent: #58a6ff; --text: #c9d1d9; --danger: #ff4444; --success: #238636; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 50px; }
+        :root { --gold: #d4af37; --bg: #05080a; --panel: #0d1117; --border: #30363d; --text: #c9d1d9; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 60px; -webkit-user-select: none; }
         header { background: #000; border-bottom: 2px solid var(--gold); padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }
-        .brand { display: flex; align-items: center; gap: 10px; cursor: pointer; }
-        .brand img { width: 35px; height: 35px; border-radius: 5px; border: 1px solid var(--gold); }
-        .logo-text { font-size: 1.5rem; letter-spacing: 2px; color: var(--gold); font-weight: 900; }
-        .h-btn { background: var(--panel); border: 1px solid var(--gold); color: var(--gold); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.75rem; font-weight: bold; }
-        .view { display: none; padding: 15px; animation: fadeIn 0.3s; }
+        .logo-text { font-size: 1.6rem; letter-spacing: 3px; color: var(--gold); font-weight: 900; }
+        .btn-h { background: var(--panel); border: 1px solid var(--gold); color: var(--gold); padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.75rem; }
+        .view { display: none; padding: 15px; animation: fadeIn 0.2s; }
         .view.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .group-label { padding: 15px 5px 5px; font-size: 0.7rem; text-transform: uppercase; color: var(--gold); letter-spacing: 2px; font-weight: bold; border-bottom: 1px solid #222; margin-bottom: 10px; }
-        .nav-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-        .nav-card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 20px 10px; text-align: center; cursor: pointer; }
-        .nav-card i { display: block; font-size: 1.8rem; margin-bottom: 8px; color: var(--gold); }
-        .nav-card span { font-size: 0.7rem; font-weight: bold; text-transform: uppercase; }
-        .card { background: var(--panel); border-radius: 15px; padding: 18px; border: 1px solid var(--border); margin-bottom: 15px; }
-        h2 { color: var(--gold); font-size: 0.9rem; text-transform: uppercase; margin: 0 0 15px 0; border-left: 4px solid var(--gold); padding-left: 10px; }
-        label { display: block; font-size: 0.65rem; color: #8b949e; margin-bottom: 5px; text-transform: uppercase; }
-        input, select { width: 100%; background: #010409; border: 1px solid var(--border); padding: 12px; border-radius: 8px; color: #fff; font-size: 1rem; margin-bottom: 15px; box-sizing: border-box; }
-        .btn-exe { width: 100%; padding: 16px; background: linear-gradient(135deg, var(--gold), #b08d2b); border: none; border-radius: 10px; color: #000; font-weight: 900; text-transform: uppercase; cursor: pointer; }
-        .btn-back { width: 100%; padding: 12px; background: transparent; border: 1px solid #333; color: #888; border-radius: 10px; cursor: pointer; text-align: center; text-transform: uppercase; font-size: 0.8rem; margin-top: 10px; }
-        .res-zone { background: rgba(88, 166, 255, 0.05); border: 1px solid var(--accent); padding: 15px; border-radius: 10px; text-align: center; margin-top: 10px; }
-        .res-val { display: block; font-size: 1.8rem; font-weight: 900; color: #fff; }
-        footer { text-align: center; font-size: 0.6rem; color: #444; padding: 20px 0; border-top: 1px solid #111; }
-        #modal, #qr-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
-        #qrcode { background: #fff; padding: 15px; border-radius: 10px; }
+        .group-label { padding: 15px 5px 5px; font-size: 0.65rem; text-transform: uppercase; color: var(--gold); border-bottom: 1px solid #222; margin-bottom: 10px; letter-spacing: 1.5px; }
+        .nav-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .nav-card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 20px 5px; text-align: center; cursor: pointer; position: relative; overflow: hidden; }
+        .nav-card i { display: block; font-size: 1.6rem; margin-bottom: 8px; color: var(--gold); }
+        .nav-card span { font-size: 0.6rem; font-weight: bold; text-transform: uppercase; display: block; }
+        .card { background: var(--panel); border-radius: 16px; padding: 20px; border: 1px solid var(--border); margin-bottom: 15px; }
+        h2 { color: var(--gold); font-size: 0.8rem; text-transform: uppercase; margin: 0 0 18px 0; border-left: 4px solid var(--gold); padding-left: 12px; }
+        label { display: block; font-size: 0.6rem; color: #8b949e; margin-bottom: 6px; text-transform: uppercase; }
+        input, select { width: 100%; background: #010409; border: 1px solid var(--border); padding: 14px; border-radius: 10px; color: #fff; font-size: 1rem; margin-bottom: 15px; box-sizing: border-box; outline: none; }
+        input:focus { border-color: var(--gold); }
+        .btn-exe { width: 100%; padding: 18px; background: linear-gradient(135deg, var(--gold), #b08d2b); border: none; border-radius: 12px; color: #000; font-weight: 900; text-transform: uppercase; cursor: pointer; }
+        .res-zone { background: rgba(212, 175, 55, 0.05); border: 1px solid var(--gold); padding: 15px; border-radius: 12px; text-align: center; margin: 15px 0; }
+        .res-val { display: block; font-size: 1.8rem; font-weight: 900; color: #fff; line-height: 1.2; }
+        .btn-back { width: 100%; padding: 14px; background: transparent; border: 1px solid #333; color: #888; border-radius: 10px; margin-top: 10px; text-align: center; cursor: pointer; text-transform: uppercase; font-size: 0.7rem; }
+        canvas { background: #000; border-radius: 12px; margin-top: 15px; border: 1px solid #222; }
+        footer { text-align: center; font-size: 0.5rem; color: #444; padding: 30px 0; letter-spacing: 1px; }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="brand" onclick="showAbout()"><img src="icon_1024x1024.jpg" alt="АТА"><div class="logo-text">АТА</div></div>
-    <div style="display: flex; gap: 8px;"><button class="h-btn" onclick="showQR()">QR</button><button class="h-btn" onclick="copyLink()" id="copyBtn">🔗</button></div>
+    <div class="logo-text">ΛTΛ</div>
+    <div style="display:flex; gap:8px">
+        <button class="btn-h" onclick="toggleLang()" id="lBtn">ENG</button>
+        <button class="btn-h" onclick="nav('dash')">MENU</button>
+    </div>
 </header>
 
 <div id="dash" class="view active">
-    <div class="group-label">Электротехника</div>
+    <div class="group-label" data-ru="Контроль Режима" data-en="Production Control">Контроль Режима</div>
     <div class="nav-grid">
-        <div class="nav-card" onclick="nav('v_cable')"><i>🔌</i><span>Кабель</span></div>
-        <div class="nav-card" onclick="nav('v_su')"><i>⚡</i><span>ПЭД</span></div>
+        <div class="nav-card" onclick="nav('v_zamer')"><i>📊</i><span data-ru="Замер ПКВ" data-en="Test Cycle">Замер ПКВ</span></div>
     </div>
-    <div class="group-label">ГРП & Койл</div>
+    <div class="group-label" data-ru="Скважина" data-en="Wellbore">Скважина</div>
     <div class="nav-grid">
-        <div class="nav-card" onclick="nav('v_grp')"><i>💥</i><span>ГРП</span></div>
-        <div class="nav-card" onclick="nav('v_coil')"><i>🌀</i><span>ГНКТ</span></div>
+        <div class="nav-card" onclick="nav('v_kill')"><i>💧</i><span data-ru="Глушение" data-en="Well Kill">Глушение</span></div>
+        <div class="nav-card" onclick="nav('v_ann')"><i>⭕</i><span data-ru="Затруб" data-en="Annulus">Затруб</span></div>
+        <div class="nav-card" onclick="nav('v_vol')"><i>📏</i><span data-ru="Объем НКТ" data-en="Tubing Vol">Объем НКТ</span></div>
+        <div class="nav-card" onclick="nav('v_weight')"><i>⚖️</i><span data-ru="Вес" data-en="Hook Weight">Вес</span></div>
     </div>
-    <div class="group-label">Скважина & Глушение</div>
+    <div class="group-label" data-ru="Энергия и ГРП" data-en="Power & Frac">Энергия и ГРП</div>
     <div class="nav-grid">
-        <div class="nav-card" onclick="nav('v_kill')"><i>💧</i><span>Глушение</span></div>
-        <div class="nav-card" onclick="nav('v_ann')"><i>⭕</i><span>Затруб</span></div>
-        <div class="nav-card" onclick="nav('v_vol')"><i>📏</i><span>НКТ</span></div>
-        <div class="nav-card" onclick="nav('v_weight')"><i>⚖️</i><span>Вес</span></div>
+        <div class="nav-card" onclick="nav('v_cable')"><i>🔌</i><span data-ru="Кабель" data-en="Cable">Кабель</span></div>
+        <div class="nav-card" onclick="nav('v_grp')"><i>💥</i><span data-ru="ГРП HP" data-en="Frac HP">ГРП HP</span></div>
     </div>
-    <div class="group-label">Тайминг</div>
-    <div class="nav-grid">
-        <div class="nav-card" onclick="nav('v_time')"><i>⏱️</i><span>Подача</span></div>
-    </div>
-    <footer>Developed by <br><b style="color:var(--gold)">Anvarov Timur Akramovich</b></footer>
+    <footer>ANVAROV TIMUR AKRAMOVICH | ATA v1.0</footer>
 </div>
 
-<div id="v_kill" class="view"><div class="card"><h2>Глушение</h2><label>Рпласт (атм)</label><input type="number" id="k_p" value="200"><label>Нверт (м)</label><input type="number" id="k_h" value="2500"><button class="btn-exe" onclick="calcKill()">ОК</button><div class="res-zone"><span class="res-val" id="r_kill">0.00 г/см³</span></div></div><div class="btn-back" onclick="home()">Назад</div></div>
-<div id="v_ann" class="view"><div class="card"><h2>Затруб</h2><label>D колонны (мм)</label><input type="number" id="a_ec" value="146"><label>d НКТ (мм)</label><input type="number" id="a_nkt" value="73"><label>Длина (м)</label><input type="number" id="a_l" value="2000"><button class="btn-exe" onclick="calcAnn()">ОК</button><div class="res-zone"><span class="res-val" id="r_ann">0.0 м³</span></div></div><div class="btn-back" onclick="home()">Назад</div></div>
-<div id="v_weight" class="view"><div class="card"><h2>Вес</h2><label>Воздух (тн)</label><input type="number" id="w_v" value="50"><label>Плотность (г/см³)</label><input type="number" id="w_d" value="1.15"><button class="btn-exe" onclick="calcWeight()">ОК</button><div class="res-zone"><span class="res-val" id="r_weight">0.0 тн</span></div></div><div class="btn-back" onclick="home()">Назад</div></div>
-<div id="v_cable" class="view"><div class="card"><h2>Кабель</h2><input type="number" id="c_i" placeholder="Ток (А)"><input type="number" id="c_l" placeholder="Длина (м)"><select id="c_s"><option value="16">16</option><option value="25" selected>25</option><option value="35">35</option></select><button class="btn-exe" onclick="calcCable()">ОК</button><div class="res-zone"><span class="res-val" id="r_du">0 В</span></div></div><div class="btn-back" onclick="home()">Назад</div></div>
-<div id="v_su" class="view"><div class="card"><h2>ПЭД</h2><input type="number" id="s_if" placeholder="I факт"><input type="number" id="s_in" placeholder="I номин"><button class="btn-exe" onclick="calcLoad()">ОК</button><div class="res-zone"><span class="res-val" id="r_load">0%</span></div></div><div class="btn-back" onclick="home()">Назад</div></div>
-<div id="v_grp" class="view"><div class="card"><h2>ГРП</h2><input type="number" id="g_q" placeholder="м3/мин"><input type="number" id="g_p" placeholder="МПа"><button class="btn-exe" onclick="calcGRP()">ОК</button><div class="res-zone"><span class="res-val" id="r_grp">0 HP</span></div></div><div class="btn-back" onclick="home()">Назад</div></div>
-<div id="v_coil" class="view"><div class="card"><h2>ГНКТ</h2><select id="co_d"><option value="1.5">1.5"</option><option value="1.75" selected>1.75"</option><option value="2.0">2.0"</option></select><input type="number" id="co_l" placeholder="м"><button class="btn-exe" onclick="calcCoil()">ОК</button><div class="res-zone"><span class="res-val" id="r_coil">0 м³</span></div></div><div class="btn-back" onclick="home()">Назад</div></div>
-<div id="v_vol" class="view"><div class="card"><h2>НКТ</h2><select id="p_t"><option value="60">60</option><option value="73" selected>73</option><option value="89">89</option></select><input type="number" id="p_h" placeholder="м"><button class="btn-exe" onclick="calcVol()">ОК</button><div class="res-zone"><span class="res-val" id="r_vol">0 м³</span></div></div><div class="btn-back" onclick="home()">Назад</div></div>
-<div id="v_time" class="view"><div class="card"><h2>Подача</h2><input type="number" id="t_v" placeholder="м3"><input type="number" id="t_q" placeholder="м3/сут"><button class="btn-exe" onclick="calcTime()">ОК</button><div class="res-zone"><span class="res-val" id="r_time">0 ч.</span></div></div><div class="btn-back" onclick="home()">Назад</div></div>
+<div id="v_zamer" class="view">
+    <div class="card">
+        <h2 data-ru="Замер дебита" data-en="Production Test">Замер дебита</h2>
+        <select id="z_mode" onchange="toggleZ()"><option value="pkv">PKV / Cycle Mode</option><option value="const">Constant Mode</option></select>
+        <label data-ru="Объем (м³)" data-en="Volume (m³)">Объем (м³)</label><input type="number" id="z_v" value="12" oninput="save()">
+        <label id="lbl_t" data-ru="Откачка (ч)" data-en="Pump (h)">Откачка (ч)</label><input type="number" id="z_t" value="3" oninput="save()">
+        <div id="pkv_box"><label data-ru="Накопление (ч)" data-en="Buildup (h)">Накопление (ч)</label><input type="number" id="z_tnak" value="5" oninput="save()"></div>
+        <button class="btn-exe" onclick="runZ()" data-ru="Рассчитать" data-en="Calculate">ОК</button>
+        <div class="res-zone"><span class="res-val" id="res_z">0.0</span><small>m³/сут</small></div>
+        <canvas id="cycleChart"></canvas>
+    </div>
+    <div class="btn-back" onclick="nav('dash')">BACK</div>
+</div>
 
-<div id="modal" onclick="this.style.display='none'"><img src="icon_1024x1024.jpg" style="width:80px;border-radius:15px;border:2px solid var(--gold);margin-bottom:20px;"><h1 style="color:var(--gold);margin:0;">ATA ENTERPRISE</h1><p>Anvarov Timur Akramovich</p></div>
-<div id="qr-modal" onclick="this.style.display='none'"><div id="qrcode"></div></div>
+<div id="v_kill" class="view">
+    <div class="card">
+        <h2 data-ru="Глушение" data-en="Well Kill">Глушение</h2>
+        <label data-ru="Рпласт (атм)" data-en="Pres (atm)">Рпласт (атм)</label><input type="number" id="k_p" value="180" oninput="save()">
+        <label data-ru="Н верт (м)" data-en="TVD (m)">Н верт (м)</label><input type="number" id="k_h" value="2400" oninput="save()">
+        <button class="btn-exe" onclick="runK()">OK</button>
+        <div class="res-zone"><span class="res-val" id="res_k">0.00</span>g/cm³</div>
+    </div>
+    <div class="btn-back" onclick="nav('dash')">BACK</div>
+</div>
+
+<div id="v_ann" class="view">
+    <div class="card">
+        <h2 data-ru="Затруб" data-en="Annulus">Затруб</h2>
+        <label data-ru="Колонна (мм)" data-en="Casing (mm)">Колонна (мм)</label>
+        <select id="a_d" onchange="save()"><option value="0.130">146 (ст. 8мм)</option><option value="0.150">168 (ст. 9мм)</option><option value="0.159">178 (ст. 9.5мм)</option></select>
+        <label data-ru="НКТ (мм)" data-en="Tubing (mm)">НКТ (мм)</label>
+        <select id="a_n" onchange="save()"><option value="0.060">60</option><option value="0.073" selected>73</option><option value="0.089">89</option></select>
+        <label data-ru="Глубина (м)" data-en="MD (m)">Глубина (м)</label><input type="number" id="a_l" value="2000" oninput="save()">
+        <button class="btn-exe" onclick="runA()">OK</button>
+        <div class="res-zone"><span class="res-val" id="res_a">0.0</span>m³</div>
+    </div>
+    <div class="btn-back" onclick="nav('dash')">BACK</div>
+</div>
+
+<div id="v_cable" class="view">
+    <div class="card">
+        <h2 data-ru="Кабель" data-en="Cable Drop">Кабель</h2>
+        <label data-ru="Ток (А)" data-en="Amps (A)">Ток (А)</label><input type="number" id="c_i" value="45" oninput="save()">
+        <label data-ru="Длина (м)" data-en="Length (m)">Длина (м)</label><input type="number" id="c_l" value="2500" oninput="save()">
+        <label data-ru="Сечение" data-en="Cable Size">Сечение</label>
+        <select id="c_s" onchange="save()"><option value="16">16</option><option value="25" selected>25</option><option value="35">35</option></select>
+        <button class="btn-exe" onclick="runC()">OK</button>
+        <div class="res-zone"><span class="res-val" id="res_c">0</span>V</div>
+    </div>
+    <div class="btn-back" onclick="nav('dash')">BACK</div>
+</div>
 
 <script>
-    function nav(id){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
-    function home(){nav('dash');}
-    function showAbout(){document.getElementById('modal').style.display='flex';}
-    function showQR(){document.getElementById('qr-modal').style.display='flex';document.getElementById('qrcode').innerHTML="";new QRCode(document.getElementById('qrcode'),{text:window.location.href,width:200,height:200});}
-    function copyLink(){navigator.clipboard.writeText(window.location.href);document.getElementById('copyBtn').innerText="OK";setTimeout(()=>document.getElementById('copyBtn').innerText="🔗",2000);}
-    function calcKill(){const p=parseFloat(document.getElementById('k_p').value);const h=parseFloat(document.getElementById('k_h').value);document.getElementById('r_kill').innerText=(p*10.197/h*1.07).toFixed(2)+" г/см³";}
-    function calcAnn(){const D=parseFloat(document.getElementById('a_ec').value)/1000;const d=parseFloat(document.getElementById('a_nkt').value)/1000;const l=parseFloat(document.getElementById('a_l').value);document.getElementById('r_ann').innerText=(Math.PI*(Math.pow(D,2)-Math.pow(d,2))/4*l).toFixed(1)+" м³";}
-    function calcWeight(){const w=parseFloat(document.getElementById('w_v').value);const d=parseFloat(document.getElementById('w_d').value);document.getElementById('r_weight').innerText=(w*(1-d/7.85)).toFixed(1)+" тн";}
-    function calcCable(){const i=parseFloat(document.getElementById('c_i').value);const l=parseFloat(document.getElementById('c_l').value);const s=parseFloat(document.getElementById('c_s').value);document.getElementById('r_du').innerText=Math.round(1.732*i*l*0.0178/s)+" V";}
-    function calcLoad(){const f=parseFloat(document.getElementById('s_if').value);const n=parseFloat(document.getElementById('s_in').value);document.getElementById('r_load').innerText=(f/n*100).toFixed(1)+"%";}
-    function calcGRP(){const q=parseFloat(document.getElementById('g_q').value);const p=parseFloat(document.getElementById('g_p').value);document.getElementById('r_grp').innerText=Math.round(q*p*16.66*1.34)+" HP";}
-    function calcCoil(){const d=parseFloat(document.getElementById('co_d').value)*0.0254*0.82;const l=parseFloat(document.getElementById('co_l').value);document.getElementById('r_coil').innerText=(Math.PI*Math.pow(d,2)/4*l).toFixed(1)+" м³";}
-    function calcVol(){const h=parseFloat(document.getElementById('p_h').value);const t=document.getElementById('p_t').value;const d=(t==="60")?0.0503:(t==="73")?0.062:0.0759;document.getElementById('r_vol').innerText=(Math.PI*Math.pow(d,2)/4*h).toFixed(1)+" м³";}
-    function calcTime(){const v=parseFloat(document.getElementById('t_v').value);const q=parseFloat(document.getElementById('t_q').value);document.getElementById('r_time').innerText=(v/(q/24)).toFixed(1)+" ч.";}
+    let currLang = 'RU';
+    let myChart;
+
+    // Автоматическое сохранение и загрузка
+    function save() {
+        const inputs = document.querySelectorAll('input, select');
+        inputs.forEach(i => localStorage.setItem(i.id, i.value));
+    }
+
+    function load() {
+        const inputs = document.querySelectorAll('input, select');
+        inputs.forEach(i => {
+            const val = localStorage.getItem(i.id);
+            if (val) i.value = val;
+        });
+    }
+
+    function toggleLang() {
+        currLang = currLang === 'RU' ? 'EN' : 'RU';
+        document.getElementById('lBtn').innerText = currLang === 'RU' ? 'ENG' : 'РУС';
+        document.querySelectorAll('[data-ru]').forEach(el => {
+            el.innerText = currLang === 'RU' ? el.getAttribute('data-ru') : el.getAttribute('data-en');
+        });
+        toggleZ();
+    }
+
+    function nav(id){
+        document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        window.scrollTo(0,0);
+    }
+
+    function toggleZ(){
+        const p = document.getElementById('z_mode').value === 'pkv';
+        document.getElementById('pkv_box').style.display = p ? 'block' : 'none';
+        const lbl = document.getElementById('lbl_t');
+        lbl.innerText = p ? (currLang==='RU' ? "Откачка (ч)" : "Pump (h)") : (currLang==='RU' ? "Замер (ч)" : "Test (h)");
+    }
+
+    function runZ(){
+        const v = parseFloat(document.getElementById('z_v').value);
+        const t = parseFloat(document.getElementById('z_t').value);
+        const n = document.getElementById('z_mode').value === 'pkv' ? parseFloat(document.getElementById('z_tnak').value) : 0;
+        document.getElementById('res_z').innerText = (v / (t + n) * 24).toFixed(1);
+        drawChart(n, t);
+    }
+
+    function drawChart(nak, otk) {
+        const ctx = document.getElementById('cycleChart').getContext('2d');
+        if(myChart) myChart.destroy();
+        const labels = []; const data = [];
+        for(let i=0; i<=nak; i++) { labels.push('B'+i); data.push(i*(100/nak)); }
+        for(let i=1; i<=otk; i++) { labels.push('P'+i); data.push(100-(i*(100/otk))); }
+        myChart = new Chart(ctx, {
+            type:'line',
+            data:{ labels, datasets:[{ label:'Lvl', data, borderColor:'#d4af37', fill:true, backgroundColor:'rgba(212,175,55,0.1)', tension:0.4, borderWidth:2, pointRadius:0 }] },
+            options:{ scales:{ y:{beginAtZero:true, max:100, grid:{color:'#222'}}, x:{grid:{display:false}} }, plugins:{legend:{display:false}} }
+        });
+    }
+
+    function runK(){
+        const p=parseFloat(document.getElementById('k_p').value);
+        const h=parseFloat(document.getElementById('k_h').value);
+        document.getElementById('res_k').innerText=(p*10.197/h*1.07).toFixed(2);
+    }
+
+    function runA(){
+        const D=parseFloat(document.getElementById('a_d').value);
+        const d=parseFloat(document.getElementById('a_n').value);
+        const l=parseFloat(document.getElementById('a_l').value);
+        document.getElementById('res_a').innerText=(Math.PI*(D*D-d*d)/4*l).toFixed(1);
+    }
+
+    function runC(){
+        const i=parseFloat(document.getElementById('c_i').value);
+        const l=parseFloat(document.getElementById('c_l').value);
+        const s=parseFloat(document.getElementById('c_s').value);
+        document.getElementById('res_c').innerText=Math.round(1.732*i*l*0.0178/s);
+    }
+
+    window.onload = () => { load(); toggleZ(); };
 </script>
 </body>
 </html>
