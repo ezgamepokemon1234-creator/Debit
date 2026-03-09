@@ -3,34 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ATA v44.0 | VOICE+</title>
+    <meta name="author" content="Anvarov Timur Akramovich">
+    <title>ATA v45.0 | Anvarov T.A.</title>
     <script src="https://cdn.jsdelivr.net/npm/davidshimjs-qrcodejs@0.0.2/qrcode.min.js"></script>
     <style>
         :root { --gold: #d4af37; --bg: #0b0e14; --panel: #1c2128; --border: #444c56; --text: #adbac7; --mic: #00e676; }
-        body { font-family: sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 40px; }
+        body { font-family: sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 60px; }
         header { background: #000; border-bottom: 2px solid var(--gold); padding: 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }
-        .logo { font-size: 1rem; font-weight: bold; color: var(--gold); }
+        .logo { font-size: 0.9rem; font-weight: bold; color: var(--gold); }
         .view { display: none; padding: 15px; }
         .view.active { display: block !important; }
         .card { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 15px; margin-bottom: 12px; }
         .nav-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .nav-btn { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 22px 5px; color: #fff; text-align: center; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; cursor: pointer; }
-        .header-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--gold); margin-bottom: 15px; padding-bottom: 5px; }
-        h3 { margin: 0; font-size: 0.9rem; color: #fff; text-transform: uppercase; }
         label { display: block; font-size: 0.65rem; color: #8b949e; margin-bottom: 4px; text-transform: uppercase; font-weight: bold; }
         input { width: 100%; background: #010409; border: 1px solid var(--border); padding: 12px; border-radius: 6px; color: #fff; margin-bottom: 10px; font-size: 1rem; box-sizing: border-box; }
         .btn-exe { width: 100%; padding: 16px; border: none; border-radius: 8px; font-weight: 900; background: var(--gold); color: #000; text-transform: uppercase; }
-        .vnr-btn { background: #22272e; border: 1px solid var(--border); color: var(--text); padding: 5px 15px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; }
-        .vnr-btn.active { background: var(--gold); color: #000; border-color: #fff; }
-        .voice-bar { background: #1e2e26; border: 1px solid var(--mic); color: var(--mic); width: 100%; padding: 12px; border-radius: 8px; font-weight: bold; margin-bottom: 15px; display: flex; justify-content: center; align-items: center; gap: 10px; cursor: pointer; }
-        #qr-out { background: #fff; padding: 10px; display: inline-block; border-radius: 4px; margin: 15px 0; }
+        .voice-bar { background: #1e2e26; border: 2px solid var(--mic); color: var(--mic); width: 100%; padding: 15px; border-radius: 12px; font-weight: bold; margin-bottom: 15px; display: flex; justify-content: center; align-items: center; gap: 10px; cursor: pointer; box-shadow: 0 0 10px rgba(0,230,118,0.2); }
+        footer { text-align: center; padding: 20px; font-size: 0.7rem; color: #555; border-top: 1px solid #222; margin-top: 20px; }
         .res-box { background: #000; border: 1px solid var(--gold); padding: 15px; border-radius: 4px; text-align: center; margin: 10px 0; }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="logo">ATA v44.0 <span style="color:#fff">VOICE+</span></div>
+    <div class="logo">ATA v45.0 | ANVAROV T.A.</div>
     <button style="background:var(--gold); border:none; padding:8px 12px; border-radius:4px; font-weight:bold" onclick="nav('dash')">МЕНЮ</button>
 </header>
 
@@ -44,21 +41,20 @@
 </div>
 
 <div id="dash" class="view active">
-    <div class="voice-bar" onclick="startVoice()">🎤 ГОВОРЯЩИЙ ПОМОЩНИК</div>
+    <div class="voice-bar" onclick="startVoice()">🎤 ГОВОРИТЕ КОМАНДУ</div>
     <div class="nav-grid">
         <div class="nav-btn" onclick="nav('v_params')">ПАРАМЕТРЫ</div>
         <div class="nav-btn" onclick="nav('v_debit')">ДЕБИТ (Л/ЦИКЛ)</div>
         <div class="nav-btn" onclick="nav('v_glush')">ГЛУШЕНИЕ</div>
         <div class="nav-btn" onclick="nav('v_tech')">ГРП / КОЙЛ</div>
-        <div class="nav-btn" onclick="nav('v_ppd')">ППД ПРИЕМ.</div>
         <div class="nav-btn" onclick="createReport()" style="background:var(--gold); color:#000;">ОТЧЕТ</div>
     </div>
 </div>
 
 <div id="v_params" class="view">
-    <div class="voice-bar" onclick="startVoice()">🎤 ГОВОРЯЩИЙ ПОМОЩНИК</div>
+    <div class="voice-bar" onclick="startVoice()">🎤 СЛУШАЮ ПАРАМЕТРЫ</div>
     <div class="card">
-        <div class="header-row"><h3>ТМС / ЭЦН</h3><div id="btnVNR" class="vnr-btn" onclick="this.classList.toggle('active')">ВНР</div></div>
+        <h3>ТМС / ЭЦН</h3>
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
             <div><label>Нд (м)</label><input type="number" id="p_nd"></div>
             <div><label>Рз (атм)</label><input type="number" id="p_rz"></div>
@@ -69,43 +65,36 @@
             <div><label>З (%)</label><input type="number" id="p_z"></div>
             <div><label>Рпр (атм)</label><input type="number" id="p_ppr"></div>
             <div><label>Тдв (°C)</label><input type="number" id="p_tdv"></div>
-            <div><label>Нст затр (м)</label><input type="number" id="p_nstz"></div>
+            <div><label>Нст (м)</label><input type="number" id="p_nstz"></div>
         </div>
-        <label>ЭТП / НОМИНАЛ (А)</label><input type="number" id="load_i_etp" placeholder="Для расчета загрузки">
+        <label>ЭТП (А)</label><input type="number" id="load_i_etp">
         <button class="btn-exe" onclick="createReport()">ГОТОВО</button>
     </div>
 </div>
 
 <div id="v_debit" class="view">
-    <div class="voice-bar" onclick="startVoice()">🎤 ГОВОРЯЩИЙ ПОМОЩНИК</div>
+    <div class="voice-bar" onclick="startVoice()">🎤 СЛУШАЮ ДЕБИТ</div>
     <div class="card">
         <h3>ЗАМЕР ДЕБИТА</h3>
-        <label>Слив за цикл (Литры)</label><input type="number" id="q_liters">
+        <label>Литры</label><input type="number" id="q_liters">
         <label>Работа (мин)</label><input type="number" id="q_work">
         <label>Пауза (мин)</label><input type="number" id="q_stop">
-        <button class="btn-exe" onclick="calcDebit()">РАССЧИТАТЬ</button>
-        <div class="res-box">Дебит сутки: <br><span id="res_q" style="font-size:2rem; font-weight:bold;">0.0</span> м³/сут</div>
-    </div>
-</div>
-
-<div id="v_glush" class="view">
-    <div class="voice-bar" onclick="startVoice()">🎤 ГОВОРЯЩИЙ ПОМОЩНИК</div>
-    <div class="card">
-        <h3>ГЛУШЕНИЕ</h3>
-        <label>P пласт. (атм)</label><input type="number" id="g_ppl">
-        <label>H верт. (м)</label><input type="number" id="g_h">
-        <button class="btn-exe" onclick="doGlush()">РАСЧЕТ</button>
-        <div class="res-box">Плотность: <br><span id="res_g" style="font-size:2rem; font-weight:bold;">0.00</span></div>
+        <button class="btn-exe" onclick="calcDebit()">РАСЧЕТ</button>
+        <div class="res-box">Дебит: <span id="res_q">0.0</span> м3/сут</div>
     </div>
 </div>
 
 <div id="v_report" class="view">
     <div class="card" style="text-align:center;">
-        <h3>ОТЧЕТ ГОТОВ</h3>
-        <div id="qr-out"></div>
+        <h3>ОТЧЕТ СФОРМИРОВАН</h3>
+        <div id="qr-out" style="background:#fff; padding:10px; display:inline-block; margin:15px 0;"></div>
         <button class="btn-exe" onclick="sendSys()">ОТПРАВИТЬ</button>
     </div>
 </div>
+
+<footer>
+    РАЗРАБОТКА: ANVAROV TIMUR AKRAMOVICH<br>© 2026 DIGITAL OILFIELD SOLUTIONS
+</footer>
 
 <script>
     function nav(id) {
@@ -131,58 +120,53 @@
         rec.onresult = (e) => {
             const text = e.results[0][0].transcript.toLowerCase();
             const val = text.match(/\d+/);
+
+            // ЛОГИКА НАВИГАЦИИ
+            if(text.includes("параметр")) { nav('v_params'); speak("Открываю параметры"); return; }
+            if(text.includes("дебит")) { nav('v_debit'); speak("Перехожу в дебит"); return; }
+            if(text.includes("меню") || text.includes("назад")) { nav('dash'); speak("Главное меню"); return; }
+            if(text.includes("отчет")) { createReport(); speak("Создаю отчет"); return; }
+
+            // ЛОГИКА ВВОДА ДАННЫХ
             if(val) {
-                let found = false;
-                if(text.includes("динамический") || text.includes("нд")) { document.getElementById('p_nd').value = val[0]; speak("Динамический " + val[0]); found=true; }
-                else if(text.includes("затрубное") || text.includes("рб")) { document.getElementById('p_rb').value = val[0]; speak("Затруб " + val[0]); found=true; }
-                else if(text.includes("буферное") || text.includes("рз")) { document.getElementById('p_rz').value = val[0]; speak("Буфер " + val[0]); found=true; }
-                else if(text.includes("линейное") || text.includes("рл")) { document.getElementById('p_rl').value = val[0]; speak("Линейное " + val[0]); found=true; }
-                else if(text.includes("прием") || text.includes("рпр")) { document.getElementById('p_ppr').value = val[0]; speak("Прием " + val[0]); found=true; }
-                else if(text.includes("частота")) { document.getElementById('p_f').value = val[0]; speak("Частота " + val[0]); found=true; }
-                else if(text.includes("ток")) { document.getElementById('p_i').value = val[0]; speak("Ток " + val[0]); found=true; }
-                else if(text.includes("дебит")) { document.getElementById('q_liters').value = val[0]; speak("Дебит " + val[0]); found=true; }
-                
-                if(!found) speak("Не поняла параметр");
+                let v = val[0];
+                if(text.includes("динамический") || text.includes("нд") || text.includes("уровень")) { document.getElementById('p_nd').value = v; speak("Динамический " + v); }
+                else if(text.includes("затруб") || text.includes("рб")) { document.getElementById('p_rb').value = v; speak("Затрубное " + v); }
+                else if(text.includes("буфер") || text.includes("рз")) { document.getElementById('p_rz').value = v; speak("Буферное " + v); }
+                else if(text.includes("линейное") || text.includes("рл")) { document.getElementById('p_rl').value = v; speak("Линейное " + v); }
+                else if(text.includes("прием") || text.includes("рпр")) { document.getElementById('p_ppr').value = v; speak("Прием " + v); }
+                else if(text.includes("частота") || text.includes("герц")) { document.getElementById('p_f').value = v; speak("Частота " + v); }
+                else if(text.includes("ток") || text.includes("ампер")) { document.getElementById('p_i').value = v; speak("Ток " + v); }
+                else if(text.includes("загрузка") || text.includes("зв")) { document.getElementById('p_z').value = v; speak("Загрузка " + v); }
+                else if(text.includes("литр")) { document.getElementById('q_liters').value = v; speak("Литры " + v); }
+                else { speak("Не поняла параметр " + text); }
+            } else {
+                speak("Не услышала цифру");
             }
         };
-        rec.onend = () => { document.querySelectorAll('.voice-bar').forEach(b => b.innerText = "🎤 ГОВОРЯЩИЙ ПОМОЩНИК"); };
+        rec.onend = () => { document.querySelectorAll('.voice-bar').forEach(b => b.innerText = "🎤 НАЖМИТЕ И ГОВОРИТЕ"); };
         rec.start();
     }
 
     function createReport() {
-        const cdng = document.getElementById('reg_cdng').value;
-        const br = document.getElementById('reg_br').value;
-        const kp = document.getElementById('reg_kp').value;
-        const skv = document.getElementById('reg_skv').value;
+        let out = `🏢 ЦДНГ-${document.getElementById('reg_cdng').value} | Бр-${document.getElementById('reg_br').value}\n📍 КП-${document.getElementById('reg_kp').value} | СКВ: ${document.getElementById('reg_skv').value}\n`;
+        const ids = [['Нд','p_nd','м'],['Рз','p_rz','атм'],['Рб','p_rb','атм'],['Рл','p_rl','атм'],['F','p_f','Гц'],['I','p_i','А'],['З','p_z','%'],['Рпр','p_ppr','атм']];
+        ids.forEach(i => { if(document.getElementById(i[1]).value) out += `${i[0]}: ${document.getElementById(i[1]).value} ${i[2]}\n`; });
         
-        let out = `🏢 ЦДНГ-${cdng} | Бр-${br}\n📍 КП-${kp} | СКВ: ${skv}\n`;
-        if(document.getElementById('btnVNR').classList.contains('active')) out += `⚡ РЕЖИМ: ВНР\n`;
-        
-        const ids = [
-            ['Нд', 'p_nd', 'м'], ['Рз', 'p_rz', 'атм'], ['Рб', 'p_rb', 'атм'], 
-            ['Рл', 'p_rl', 'атм'], ['F', 'p_f', 'Гц'], ['I', 'p_i', 'А'], 
-            ['З', 'p_z', '%'], ['Рпр', 'p_ppr', 'атм'], ['Тдв', 'p_tdv', '°C']
-        ];
-        
-        ids.forEach(item => {
-            const val = document.getElementById(item[1]).value;
-            if(val) out += `${item[0]}: ${val} ${item[2]}\n`;
-        });
-
-        const i_work = parseFloat(document.getElementById('p_i').value);
-        const i_etp = parseFloat(document.getElementById('load_i_etp').value);
-        if(i_work && i_etp) out += `📈 ЗАГРУЗКА: ${((i_work/i_etp)*100).toFixed(1)}%\n`;
+        const i_w = parseFloat(document.getElementById('p_i').value);
+        const i_e = parseFloat(document.getElementById('load_i_etp').value);
+        if(i_w && i_e) out += `📈 ЗАГРУЗКА: ${((i_w/i_e)*100).toFixed(1)}%\n`;
 
         finalData = out;
         nav('v_report');
         document.getElementById("qr-out").innerHTML = "";
-        new QRCode(document.getElementById("qr-out"), { text: out, width: 220, height: 220 });
+        new QRCode(document.getElementById("qr-out"), { text: out, width: 200, height: 200 });
     }
 
     function calcDebit() {
         const l = parseFloat(document.getElementById('q_liters').value) || 0;
-        const w = (parseFloat(document.getElementById('q_work').value) || 1) + (parseFloat(document.getElementById('q_stop').value) || 0);
-        document.getElementById('res_q').innerText = ((l / w) * 1.44).toFixed(2);
+        const t = (parseFloat(document.getElementById('q_work').value) || 1) + (parseFloat(document.getElementById('q_stop').value) || 0);
+        document.getElementById('res_q').innerText = ((l/t)*1.44).toFixed(2);
     }
 
     async function sendSys() { if (navigator.share) await navigator.share({ text: finalData }); }
