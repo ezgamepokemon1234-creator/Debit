@@ -4,145 +4,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ΛTΛ Oil Engineering</title>
+    <link rel="manifest" href="manifest.json">
     <style>
-        :root {
-            --neon-blue: #d4af37; /* Изменил на золотой под цвет иконки */
-            --dark-bg: #0b111a;
-            --card-bg: #161d27;
-            --text-gray: #b0b0b0;
-        }
-
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: var(--dark-bg);
-            color: white;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-
-        .calc-container {
-            background: var(--card-bg);
-            padding: 30px;
-            border-radius: 24px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
-            width: 90%;
-            max-width: 420px;
-            border: 1px solid #2a3441;
-            position: relative;
-        }
-
-        .header { text-align: center; margin-bottom: 25px; }
-        .brand-logo {
-            font-size: 2.8rem;
-            font-weight: bold;
-            letter-spacing: 10px;
-            color: var(--neon-blue);
-            margin-bottom: 5px;
-        }
-
-        .author-box {
-            text-align: center;
-            font-size: 0.7rem;
-            color: var(--text-gray);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 20px;
-            border-top: 1px solid #2a3441;
-            padding-top: 10px;
-        }
-
-        .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
-        .full-width { grid-column: span 2; }
-        
-        label { font-size: 0.7rem; color: var(--text-gray); margin-bottom: 5px; display: block; }
-        input {
-            width: 100%;
-            background: #0b111a;
-            border: 1px solid #3d4755;
-            padding: 12px;
-            border-radius: 10px;
-            color: white;
-            box-sizing: border-box;
-        }
-
-        button {
-            width: 100%;
-            padding: 18px;
-            background: linear-gradient(135deg, #d4af37 0%, #a68a2d 100%);
-            border: none;
-            border-radius: 12px;
-            color: #000;
-            font-weight: bold;
-            cursor: pointer;
-            text-transform: uppercase;
-        }
-
-        .results {
-            margin-top: 25px;
-            padding: 15px;
-            background: rgba(0,0,0,0.3);
-            border-radius: 12px;
-        }
-
-        .res-item { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9rem; }
-        .res-val { color: var(--neon-blue); font-weight: bold; }
+        :root { --neon-gold: #d4af37; --dark-bg: #0b111a; --card-bg: #161d27; --text-gray: #b0b0b0; }
+        body { font-family: sans-serif; background-color: var(--dark-bg); color: white; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .calc-container { background: var(--card-bg); padding: 25px; border-radius: 24px; width: 90%; max-width: 400px; border: 1px solid #2a3441; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
+        .brand-logo { text-align: center; font-size: 2.5rem; letter-spacing: 8px; color: var(--neon-gold); font-weight: bold; }
+        .author { text-align: center; font-size: 0.7rem; color: var(--text-gray); margin: 15px 0; border-top: 1px solid #2a3441; padding-top: 10px; }
+        .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+        .full { grid-column: span 2; }
+        label { font-size: 0.7rem; color: var(--text-gray); display: block; margin-bottom: 4px; }
+        input { width: 100%; background: #0b111a; border: 1px solid #3d4755; padding: 12px; border-radius: 10px; color: white; box-sizing: border-box; }
+        button { width: 100%; padding: 16px; background: linear-gradient(135deg, #d4af37, #a68a2d); border: none; border-radius: 12px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        .results { margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 12px; border-left: 4px solid var(--neon-gold); }
+        .res-item { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.85rem; }
+        .res-val { color: var(--neon-gold); font-weight: bold; }
     </style>
 </head>
 <body>
-
 <div class="calc-container">
-    <div class="header">
-        <div class="brand-logo">ΛTΛ</div>
-        <div class="sub-title" style="color:var(--text-gray); font-size:0.8rem;">OIL & GAS CALCULATOR</div>
-    </div>
-
-    <div class="author-box">
-        Created by: Anvarov Timur Akramovich
-    </div>
-
+    <div class="brand-logo">ΛTΛ</div>
+    <div class="author">Created by: Anvarov Timur Akramovich</div>
     <div class="input-grid">
-        <div class="input-group full-width">
-            <label>Коэффициент продуктивности</label>
-            <input type="number" id="k_prod" placeholder="10.5">
-        </div>
-        <div class="input-group">
-            <label>P пластовое (МПа)</label>
-            <input type="number" id="p_res" placeholder="20">
-        </div>
-        <div class="input-group">
-            <label>P забойное (МПа)</label>
-            <input type="number" id="p_well" placeholder="12">
-        </div>
+        <div class="full"><label>К-т продуктивности (м³/сут/МПа)</label><input type="number" id="k" placeholder="10.5"></div>
+        <div><label>P пласт. (МПа)</label><input type="number" id="pr" placeholder="22"></div>
+        <div><label>P забой. (МПа)</label><input type="number" id="pw" placeholder="15"></div>
+        <div><label>Обводненность (%)</label><input type="number" id="wc" placeholder="15"></div>
+        <div><label>Плотность (кг/м³)</label><input type="number" id="dens" placeholder="850"></div>
     </div>
-
-    <button onclick="calculate()">Выполнить расчет</button>
-
+    <button onclick="calc()">Выполнить расчет</button>
     <div class="results">
-        <div class="res-item"><span>Дебит жидкости:</span> <span id="q_liq" class="res-val">0.00</span></div>
+        <div class="res-item"><span>Жидкость (Qж):</span> <span id="qj" class="res-val">0.00</span></div>
+        <div class="res-item"><span>Нефть (Qн):</span> <span id="qn" class="res-val">0.00</span></div>
+        <div class="res-item"><span>Масса (т/сут):</span> <span id="qm" class="res-val">0.00</span></div>
     </div>
 </div>
-
 <script>
-    function calculate() {
-        const k = parseFloat(document.getElementById('k_prod').value);
-        const pr = parseFloat(document.getElementById('p_res').value);
-        const pw = parseFloat(document.getElementById('p_well').value);
-        
-        if (k && pr && pw) {
-            const res = k * (pr - pw);
-            document.getElementById('q_liq').innerText = res.toFixed(2) + " м³/сут";
-        } else {
-            alert("Заполните данные");
-        }
+function calc() {
+    const k=parseFloat(document.getElementById('k').value), pr=parseFloat(document.getElementById('pr').value), pw=parseFloat(document.getElementById('pw').value), wc=parseFloat(document.getElementById('wc').value)||0, d=parseFloat(document.getElementById('dens').value)||850;
+    if(k && pr && pw) {
+        const qj = k*(pr-pw), qn = qj*(1-(wc/100)), qm = (qn*d)/1000;
+        document.getElementById('qj').innerText = qj.toFixed(2) + " м³";
+        document.getElementById('qn').innerText = qn.toFixed(2) + " м³";
+        document.getElementById('qm').innerText = qm.toFixed(2) + " т";
     }
-
-    // Регистрация PWA
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js');
-    }
+}
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
 </script>
 </body>
 </html>
