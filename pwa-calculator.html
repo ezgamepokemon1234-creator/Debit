@@ -2,178 +2,146 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ΛTΛ Oil & Gas Ultimate System</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="icon" type="image/png" href="icon_1024x1024.png">
+    <link rel="apple-touch-icon" href="icon_1024x1024.png">
+    <title>ΛTΛ Enterprise OS</title>
     <style>
-        :root { --gold: #d4af37; --bg: #05080a; --card: #10141a; --border: #1e252e; --input: #080a0d; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #e0e0e0; margin: 0; padding: 10px; overflow-x: hidden; }
-        .header { text-align: center; padding: 20px 0; border-bottom: 2px solid var(--gold); margin-bottom: 10px; }
-        .brand { font-size: 3rem; letter-spacing: 15px; color: var(--gold); font-weight: bold; margin: 0; }
-        .author { font-size: 0.7rem; letter-spacing: 2px; opacity: 0.6; margin-top: 5px; }
+        :root { --gold: #d4af37; --bg: #05080a; --panel: #0d1117; --border: #30363d; --accent: #58a6ff; --text: #c9d1d9; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; }
         
-        /* Навигация */
-        .tabs { display: flex; overflow-x: auto; gap: 8px; padding: 10px 0; scrollbar-width: none; }
-        .tabs::-webkit-scrollbar { display: none; }
-        .tab-btn { background: var(--card); border: 1px solid var(--border); color: #fff; padding: 12px 20px; border-radius: 10px; cursor: pointer; white-space: nowrap; transition: 0.3s; }
-        .tab-btn.active { border-color: var(--gold); color: var(--gold); box-shadow: 0 0 10px rgba(212, 175, 55, 0.2); }
+        /* Брендированный хедер с твоим лого */
+        header { 
+            background: #000; 
+            border-bottom: 2px solid var(--gold); 
+            padding: 10px 20px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            position: sticky; 
+            top: 0; 
+            z-index: 100; 
+        }
+        .brand-container { display: flex; align-items: center; gap: 12px; }
+        .brand-icon { width: 40px; height: 40px; border-radius: 8px; border: 1px solid var(--gold); }
+        .logo-text { font-size: 1.5rem; letter-spacing: 5px; color: var(--gold); font-weight: 900; }
         
-        /* Секции */
-        .section { display: none; background: var(--card); padding: 20px; border-radius: 20px; border: 1px solid var(--border); animation: fadeIn 0.4s; }
-        .section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .full { grid-column: span 2; }
-        label { display: block; font-size: 0.7rem; color: #888; margin-bottom: 4px; padding-left: 5px; }
-        input { width: 100%; background: var(--input); border: 1px solid #2a3441; padding: 12px; border-radius: 10px; color: #fff; box-sizing: border-box; font-size: 1rem; }
-        
-        button.main-calc { width: 100%; padding: 16px; background: linear-gradient(135deg, var(--gold), #a68a2d); border: none; border-radius: 12px; font-weight: bold; margin-top: 15px; cursor: pointer; color: #000; text-transform: uppercase; }
-        
-        /* Результаты */
-        .res-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
-        .res-item { background: rgba(212,175,55,0.05); border: 1px solid rgba(212,175,55,0.2); padding: 12px; border-radius: 12px; text-align: center; }
-        .res-item span { display: block; font-size: 0.65rem; color: #aaa; margin-bottom: 5px; }
-        .res-item b { color: var(--gold); font-size: 1.1rem; }
+        .lang-switch { background: var(--panel); border: 1px solid var(--gold); color: var(--gold); padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; }
 
-        canvas { background: #0d1117; border-radius: 15px; margin-top: 20px; width: 100% !important; }
+        .group-label { padding: 15px 15px 5px; font-size: 0.7rem; text-transform: uppercase; color: #666; letter-spacing: 2px; font-weight: bold; }
+        .nav-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 15px 15px; }
+        .nav-card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 18px 10px; text-align: center; cursor: pointer; transition: 0.2s; }
+        .nav-card:active { transform: scale(0.95); background: #161b22; }
+        .nav-card i { display: block; font-size: 1.4rem; margin-bottom: 6px; color: var(--gold); }
+        .nav-card span { font-size: 0.6rem; font-weight: 800; text-transform: uppercase; }
+
+        .view { display: none; padding: 15px; animation: fadeIn 0.3s; }
+        .view.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .card { background: var(--panel); border-radius: 15px; padding: 18px; border: 1px solid var(--border); margin-bottom: 12px; }
+        h2 { color: var(--gold); font-size: 0.8rem; text-transform: uppercase; margin: 0 0 15px 0; border-left: 3px solid var(--gold); padding-left: 10px; }
+        
+        label { display: block; font-size: 0.6rem; color: #8b949e; margin-bottom: 4px; text-transform: uppercase; }
+        input, select { width: 100%; background: #010409; border: 1px solid var(--border); padding: 12px; border-radius: 8px; color: #fff; font-size: 1rem; margin-bottom: 12px; }
+        
+        .btn-exe { width: 100%; padding: 16px; background: linear-gradient(135deg, var(--gold), #b08d2b); border: none; border-radius: 10px; color: #000; font-weight: 900; text-transform: uppercase; cursor: pointer; }
+        .btn-back { width: 100%; padding: 12px; background: transparent; border: 1px solid #333; color: #555; border-radius: 10px; margin-top: 10px; cursor: pointer; }
+
+        .res-zone { background: rgba(88, 166, 255, 0.05); border: 1px solid var(--accent); padding: 15px; border-radius: 10px; margin-top: 15px; text-align: center; }
+        .res-val { display: block; font-size: 1.6rem; font-weight: 900; color: #fff; }
     </style>
 </head>
 <body>
 
-<div class="header">
-    <p class="brand">ΛTΛ</p>
-    <div class="author">ANVAROV TIMUR AKRAMOVICH | OILFIELD OS</div>
-</div>
-
-<div class="tabs">
-    <button class="tab-btn active" onclick="openTab(event, 'ext')">Добыча</button>
-    <button class="tab-btn" onclick="openTab(event, 'kill')">Глушение</button>
-    <button class="tab-btn" onclick="openTab(event, 'elec')">Энерго</button>
-    <button class="tab-btn" onclick="openTab(event, 'drill')">Бурение/КРС</button>
-    <button class="tab-btn" onclick="openTab(event, 'grp_coil')">ГРП/ГНКТ</button>
-</div>
-
-<div id="ext" class="section active">
-    <div class="grid">
-        <div class="full"><label>К-т прод. (м3/сут/МПа)</label><input type="number" id="k" value="12"></div>
-        <div><label>P пласт (МПа)</label><input type="number" id="pr" value="22"></div>
-        <div><label>P забой (МПа)</label><input type="number" id="pw" value="14"></div>
-        <div><label>Обводн-ть (%)</label><input type="number" id="wc" value="25"></div>
-        <div><label>Плотность (кг/м3)</label><input type="number" id="dens" value="840"></div>
+<header>
+    <div class="brand-container">
+        <img src="icon_1024x1024.png" alt="ATA" class="brand-icon">
+        <div class="logo-text">ΛTΛ</div>
     </div>
-    <button class="main-calc" onclick="calcExt()">АНАЛИЗ ДЕБИТА И IPR</button>
-    <div class="res-grid">
-        <div class="res-item"><span>Q жидк.</span><b id="qj">0</b>м3</div>
-        <div class="res-item"><span>Q нефти</span><b id="qn">0</b>м3/сут</div>
-        <div class="res-item" style="grid-column: span 2;"><span>Дебит массы</span><b id="qm">0</b>т/сут</div>
-    </div>
-    <canvas id="iprChart"></canvas>
-</div>
+    <button class="lang-switch" onclick="toggleLang()" id="langBtn">EN</button>
+</header>
 
-<div id="kill" class="section">
-    <div class="grid">
-        <div class="full"><label>Глубина по вертикали (м)</label><input type="number" id="h_v" value="2800"></div>
-        <div><label>P пласт (МПа)</label><input type="number" id="ppl_k" value="25"></div>
-        <div><label>Коэф. запаса</label><input type="number" id="kz" value="1.1"></div>
+<div id="dash" class="view active">
+    <div class="group-label" data-key="g_elec">Электротехнический блок</div>
+    <div class="nav-grid">
+        <div class="nav-card" onclick="nav('v_su')"><i>⚡</i><span data-key="m_su">Станция СУ</span></div>
+        <div class="nav-card" onclick="nav('v_cable')"><i>🔌</i><span data-key="m_cable">Кабель & ΔU</span></div>
     </div>
-    <button class="main-calc" onclick="calcKill()">РАСЧЕТ ПЛОТНОСТИ ЖГ</button>
-    <div class="res-grid">
-        <div class="res-item" style="grid-column: span 2;"><span>Плотность ЖГ</span><b id="rho_k">0</b>кг/м3</div>
+
+    <div class="group-label" data-key="g_prod">Добыча & Вывод на режим</div>
+    <div class="nav-grid">
+        <div class="nav-card" onclick="nav('v_time')"><i>⏱️</i><span data-key="m_time">Время подачи</span></div>
+        <div class="nav-card" onclick="nav('v_vnr')"><i>📈</i><span data-key="m_vnr">Режим / QHP</span></div>
+    </div>
+    
+    <div class="group-label" data-key="g_serv">Сервисные расчеты</div>
+    <div class="nav-grid">
+        <div class="nav-card" onclick="nav('v_pipe')"><i>📏</i><span data-key="m_pipe">Объемы / ЗКП</span></div>
+        <div class="nav-card" onclick="nav('v_kill')"><i>🛡️</i><span data-key="m_kill">Глушение</span></div>
     </div>
 </div>
 
-<div id="elec" class="section">
-    <div class="grid">
-        <div class="full"><label>Напряжение (В)</label><input type="number" id="u" value="1200"></div>
-        <div><label>Ток (А)</label><input type="number" id="i_a" value="50"></div>
-        <div><label>cos φ</label><input type="number" id="cos_f" value="0.85"></div>
+<div id="v_time" class="view">
+    <div class="card">
+        <h2 data-key="h_time">Время подачи жидкости</h2>
+        <label data-key="l_depth">Глубина спуска (м)</label>
+        <input type="number" id="t_h" value="2500">
+        <label data-key="l_q">Дебит (м³/сут)</label>
+        <input type="number" id="t_q" value="50">
+        <button class="btn-exe" onclick="calcTime()" data-key="b_calc">Рассчитать</button>
+        <div class="res-zone">
+            <span class="res-val" id="r_time">0.0</span>
+            <span style="font-size:0.7rem" data-key="r_hours">Часов до устья</span>
+        </div>
     </div>
-    <button class="main-calc" onclick="calcElec()">РАСЧЕТ МОЩНОСТИ ЭЦН</button>
-    <div class="res-grid">
-        <div class="res-item" style="grid-column: span 2;"><span>Мощность (P)</span><b id="p_kw">0</b>кВт</div>
-    </div>
-</div>
-
-<div id="drill" class="section">
-    <div class="grid">
-        <div class="full"><label>Объем скважины (м3)</label><input type="number" id="v_well" value="45"></div>
-        <div><label>Подача насоса (л/с)</label><input type="number" id="q_pump" value="15"></div>
-        <div><label>Кол-во циклов</label><input type="number" id="cycles" value="1.5"></div>
-    </div>
-    <button class="main-calc" onclick="calcDrill()">РАСЧЕТ ПРОМЫВКИ</button>
-    <div class="res-grid">
-        <div class="res-item" style="grid-column: span 2;"><span>Время цикла</span><b id="t_cycle">0</b>мин</div>
-    </div>
-</div>
-
-<div id="grp_coil" class="section">
-    <div class="grid">
-        <div class="full"><label>Длина ГНКТ (м)</label><input type="number" id="l_c" value="3200"></div>
-        <div><label>Вес 1м (кг)</label><input type="number" id="w_m" value="4.8"></div>
-        <div><label>Плотность ЖГ</label><input type="number" id="rho_f" value="1050"></div>
-    </div>
-    <button class="main-calc" onclick="calcCoil()">РАСЧЕТ ГНКТ</button>
-    <div class="res-grid">
-        <div class="res-item" style="grid-column: span 2;"><span>Вес на крюке (плавучесть)</span><b id="w_h">0</b>тн</div>
-    </div>
+    <button class="btn-back" onclick="home()" data-key="b_back">Назад</button>
 </div>
 
 <script>
-let myChart;
-function openTab(evt, name) {
-    let i, x, btn;
-    x = document.getElementsByClassName("section");
-    for (i = 0; i < x.length; i++) x[i].classList.remove("active");
-    btn = document.getElementsByClassName("tab-btn");
-    for (i = 0; i < btn.length; i++) btn[i].classList.remove("active");
-    document.getElementById(name).classList.add("active");
-    evt.currentTarget.classList.add("active");
-}
+    const i18n = {
+        ru: {
+            g_elec: "Электротехнический блок", g_prod: "Добыча & Вывод на режим", g_serv: "Сервисные расчеты",
+            m_su: "Станция СУ", m_cable: "Кабель & ΔU", m_time: "Время подачи", m_vnr: "Режим / QHP",
+            m_pipe: "Объемы / ЗКП", m_kill: "Глушение", h_time: "Время подачи жидкости",
+            l_depth: "Глубина спуска (м)", l_q: "Дебит (м³/сут)", b_calc: "Рассчитать", b_back: "Назад",
+            r_hours: "Часов до устья"
+        },
+        en: {
+            g_elec: "Electrical Block", g_prod: "Production & Ramp-up", g_serv: "Service Calculations",
+            m_su: "Control Station", m_cable: "Cable & ΔU", m_time: "Travel Time", m_vnr: "Mode / QHP",
+            m_pipe: "Volumes / Annulus", m_kill: "Well Kill", h_time: "Fluid Travel Time",
+            l_depth: "Pump Depth (m)", l_q: "Flow Rate (m³/day)", b_calc: "Calculate", b_back: "Back",
+            r_hours: "Hours to Surface"
+        }
+    };
 
-function calcExt() {
-    const k=parseFloat(document.getElementById('k').value), pr=parseFloat(document.getElementById('pr').value),
-          pw=parseFloat(document.getElementById('pw').value), wc=parseFloat(document.getElementById('wc').value),
-          d=parseFloat(document.getElementById('dens').value);
-    const qj = k*(pr-pw), qn = qj*(1-wc/100), qm = (qn*d)/1000;
-    document.getElementById('qj').innerText = qj.toFixed(2);
-    document.getElementById('qn').innerText = qn.toFixed(2);
-    document.getElementById('qm').innerText = qm.toFixed(2);
-    
-    const ctx = document.getElementById('iprChart').getContext('2d');
-    const labels = [], data = [];
-    for(let p=0; p<=pr; p+=pr/10) { labels.push(p.toFixed(1)); data.push((k*(pr-p)).toFixed(2)); }
-    if(myChart) myChart.destroy();
-    myChart = new Chart(ctx, {
-        type: 'line',
-        data: { labels: labels.reverse(), datasets: [{ label: 'IPR Кривая (ΛTΛ)', data: data.reverse(), borderColor: '#d4af37', backgroundColor: 'rgba(212,175,55,0.1)', fill: true, tension: 0.3 }] },
-        options: { scales: { y: { grid: {color:'#1e252e'}, ticks: {color:'#888'} }, x: { grid: {color:'#1e252e'}, ticks: {color:'#888'} } }, plugins: { legend: { labels: {color:'#fff'} } } }
-    });
-}
+    let curLang = 'ru';
 
-function calcKill() {
-    const h=parseFloat(document.getElementById('h_v').value), p=parseFloat(document.getElementById('ppl_k').value), s=parseFloat(document.getElementById('kz').value);
-    const rho = (p * 10.197 / h) * s * 1000;
-    document.getElementById('rho_k').innerText = Math.round(rho);
-}
+    function toggleLang() {
+        curLang = curLang === 'ru' ? 'en' : 'ru';
+        document.getElementById('langBtn').innerText = curLang === 'ru' ? 'EN' : 'RU';
+        document.querySelectorAll('[data-key]').forEach(el => {
+            el.innerText = i18n[curLang][el.getAttribute('data-key')];
+        });
+    }
 
-function calcElec() {
-    const u=parseFloat(document.getElementById('u').value), i=parseFloat(document.getElementById('i_a').value), c=parseFloat(document.getElementById('cos_f').value);
-    document.getElementById('p_kw').innerText = (1.73 * u * i * c / 1000).toFixed(2);
-}
+    function nav(id) {
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        window.scrollTo(0,0);
+    }
 
-function calcDrill() {
-    const v=parseFloat(document.getElementById('v_well').value), q=parseFloat(document.getElementById('q_pump').value), cy=parseFloat(document.getElementById('cycles').value);
-    document.getElementById('t_cycle').innerText = (v * 1000 / q / 60 * cy).toFixed(1);
-}
+    function home() { nav('dash'); }
 
-function calcCoil() {
-    const l=parseFloat(document.getElementById('l_c').value), w=parseFloat(document.getElementById('w_m').value), rf=parseFloat(document.getElementById('rho_f').value);
-    const kb = 1 - (rf / 7850);
-    document.getElementById('w_h').innerText = (l * w * kb / 1000).toFixed(2);
-}
-
-window.onload = calcExt;
+    function calcTime() {
+        const h = parseFloat(document.getElementById('t_h').value);
+        const q = parseFloat(document.getElementById('t_q').value);
+        // Упрощенный расчет: объем НКТ 73мм ~ 3 л/м. 
+        // Время (ч) = (Глубина * Объем_м) / (Дебит_сут / 24)
+        const time = (h * 3.1) / (q * 1000 / 24);
+        document.getElementById('r_time').innerText = time.toFixed(1);
+    }
 </script>
 </body>
 </html>
