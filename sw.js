@@ -1,4 +1,4 @@
-const CACHE = 'debit-v1';
+const CACHE = 'debit-v2';
 const FILES = ['/', '/index.html'];
 
 self.addEventListener('install', e => {
