@@ -1,0 +1,24 @@
+{
+  "name": "Oil & Gas Calculator",
+  "short_name": "OilGasCalc",
+  "description": "Калькулятор дебита нефти и газа для скважин. Простой онлайн-расчёт параметров добычи.",
+  "start_url": "./oilgas-calculator.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1a3c34",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "https://via.placeholder.com/192x192/1a3c34/ffffff?text=OGC",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://via.placeholder.com/512x512/1a3c34/ffffff?text=OGC",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
