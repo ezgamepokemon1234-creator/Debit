@@ -4,166 +4,653 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="author" content="Anvarov Timur Akramovich">
-    <title>ATA v46.0 | ANVAROV T.A.</title>
-    <script src="https://cdn.jsdelivr.net/npm/davidshimjs-qrcodejs@0.0.2/qrcode.min.js"></script>
+    <title>ATA v47.0 | ANVAROV T.A.</title>
     <style>
-        :root { --gold: #d4af37; --bg: #0b0e14; --panel: #1c2128; --border: #444c56; --text: #adbac7; --mic: #ff3b30; }
-        body { font-family: sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 60px; }
-        header { background: #000; border-bottom: 2px solid var(--gold); padding: 12px; text-align: center; position: sticky; top: 0; z-index: 1000; }
-        .logo { font-size: 0.85rem; font-weight: 900; color: var(--gold); text-transform: uppercase; }
-        .view { display: none; padding: 15px; }
-        .view.active { display: block !important; }
-        .card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 15px; margin-bottom: 12px; }
-        .nav-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .nav-btn { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 25px 5px; color: #fff; text-align: center; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; cursor: pointer; }
-        label { display: block; font-size: 0.65rem; color: #8b949e; margin-bottom: 4px; text-transform: uppercase; }
-        input { width: 100%; background: #010409; border: 1px solid var(--border); padding: 14px; border-radius: 8px; color: #fff; margin-bottom: 10px; font-size: 1.1rem; box-sizing: border-box; }
-        .voice-bar { background: #1a1a1a; border: 2px solid var(--gold); color: #fff; width: 100%; padding: 18px; border-radius: 15px; font-weight: bold; margin-bottom: 15px; text-align: center; cursor: pointer; transition: 0.3s; }
-        .voice-bar.listening { background: var(--mic); border-color: #fff; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
-        footer { text-align: center; padding: 25px; font-size: 0.65rem; color: #555; text-transform: uppercase; letter-spacing: 1px; }
-        .btn-exe { width: 100%; padding: 18px; border: none; border-radius: 10px; font-weight: 900; background: var(--gold); color: #000; text-transform: uppercase; }
-        #qr-out { background: #fff; padding: 10px; border-radius: 8px; display: inline-block; }
+        :root {
+            --gold: #d4af37;
+            --gold2: #f0cc5a;
+            --bg: #0b0e14;
+            --panel: #1c2128;
+            --panel2: #242b35;
+            --border: #444c56;
+            --text: #adbac7;
+            --mic: #ff3b30;
+            --green: #3fb950;
+            --cyan: #58a6ff;
+            --red: #f85149;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Courier New', monospace; background: var(--bg); color: var(--text); padding-bottom: 70px; }
+        
+        header { background: #000; border-bottom: 2px solid var(--gold); padding: 10px 15px; position: sticky; top: 0; z-index: 1000; display: flex; align-items: center; justify-content: space-between; }
+        .logo { font-size: 0.75rem; font-weight: 900; color: var(--gold); letter-spacing: 2px; }
+        .header-info { font-size: 0.65rem; color: #555; text-align: right; }
+        
+        .well-bar { background: var(--panel); border-bottom: 1px solid var(--border); padding: 8px 15px; display: flex; gap: 10px; align-items: center; }
+        .well-bar label { font-size: 0.6rem; color: #555; display: block; margin-bottom: 2px; }
+        .well-bar input { background: #010409; border: 1px solid var(--border); color: var(--gold); font-family: 'Courier New', monospace; font-size: 0.9rem; font-weight: 900; padding: 6px 10px; border-radius: 6px; width: 80px; }
+        .well-tag { font-size: 0.6rem; color: #555; }
+
+        .view { display: none; padding: 12px; }
+        .view.active { display: block; }
+
+        .card { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 14px; margin-bottom: 10px; }
+        .card-title { font-size: 0.65rem; color: var(--gold); letter-spacing: 2px; font-weight: 900; margin-bottom: 12px; border-bottom: 1px solid #2d3748; padding-bottom: 8px; }
+
+        label { display: block; font-size: 0.6rem; color: #8b949e; margin-bottom: 3px; letter-spacing: 1px; }
+        input[type=number], input[type=text], select {
+            width: 100%; background: #010409; border: 1px solid var(--border);
+            padding: 12px; border-radius: 7px; color: #fff; margin-bottom: 8px;
+            font-size: 1rem; font-family: 'Courier New', monospace;
+            -moz-appearance: textfield;
+        }
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; }
+        input:focus, select:focus { border-color: var(--gold); outline: none; }
+        select option { background: #1c2128; }
+
+        .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+
+        .nav-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .nav-btn {
+            background: var(--panel2); border: 1px solid var(--border); border-radius: 10px;
+            padding: 20px 8px; color: #fff; text-align: center; font-size: 0.65rem;
+            font-weight: 900; letter-spacing: 1px; cursor: pointer;
+            font-family: 'Courier New', monospace; transition: 0.2s;
+        }
+        .nav-btn:active { background: #2d3748; }
+        .nav-btn .icon { font-size: 1.5rem; display: block; margin-bottom: 6px; }
+        .nav-btn.gold { background: var(--gold); color: #000; border-color: var(--gold); }
+
+        .btn { width: 100%; padding: 15px; border: none; border-radius: 8px; font-weight: 900; font-family: 'Courier New', monospace; font-size: 0.8rem; letter-spacing: 2px; cursor: pointer; margin-bottom: 8px; transition: 0.2s; }
+        .btn-gold { background: var(--gold); color: #000; }
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+        .btn-green { background: #1a3a1a; border: 1px solid var(--green); color: var(--green); }
+
+        .result-box { background: #010409; border: 1px solid var(--gold); border-radius: 8px; padding: 12px; margin-top: 8px; }
+        .result-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #1e2530; }
+        .result-row:last-child { border-bottom: none; }
+        .result-label { font-size: 0.6rem; color: #8b949e; }
+        .result-val { font-size: 0.9rem; font-weight: 900; color: var(--gold2); }
+        .result-val.green { color: var(--green); }
+        .result-val.red { color: var(--red); }
+        .result-val.cyan { color: var(--cyan); }
+        .result-val.blue { color: #4dabf7; }
+        .result-val.orange { color: #ff9f43; }
+
+        .report-text { background: #010409; border: 1px solid var(--border); border-radius: 8px; padding: 12px; font-size: 0.7rem; white-space: pre-wrap; margin: 10px 0; color: var(--text); max-height: 300px; overflow-y: auto; }
+        .back-btn { display: flex; align-items: center; gap: 6px; color: var(--gold); font-size: 0.7rem; margin-bottom: 12px; cursor: pointer; background: none; border: none; font-family: 'Courier New', monospace; }
+        footer { text-align: center; padding: 20px; font-size: 0.6rem; color: #333; letter-spacing: 2px; }
+        .divider { height: 1px; background: var(--border); margin: 12px 0; }
+        .section-label { font-size: 0.6rem; color: #555; letter-spacing: 2px; margin-bottom: 8px; }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="logo">DEVELOPER: ANVAROV TIMUR AKRAMOVICH</div>
+    <div class="logo">⬡ ATA v47.0</div>
+    <div class="header-info">ANVAROV T.A.<br>OIL & GAS FIELD</div>
 </header>
 
-<div class="card" style="margin: 10px; border-color: var(--gold);">
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-        <div><label>КУСТ</label><input type="text" id="reg_kp"></div>
-        <div><label>СКВ</label><input type="text" id="reg_skv"></div>
-    </div>
+<div class="well-bar">
+    <div><label>КУСТ</label><input type="text" id="reg_kp" placeholder="КП-"></div>
+    <div><label>СКВАЖИНА</label><input type="text" id="reg_skv" placeholder="№"></div>
+    <div style="flex:1; text-align:right;"><div class="well-tag" id="well_display">КП-__ СКВ-__</div></div>
 </div>
 
 <div id="dash" class="view active">
-    <div class="voice-bar" id="mainMic" onclick="startVoice()">🎤 НАЖМИ И ГОВОРИ КОМАНДУ</div>
     <div class="nav-grid">
-        <div class="nav-btn" onclick="nav('v_params')">ПАРАМЕТРЫ ТМС</div>
-        <div class="nav-btn" onclick="nav('v_debit')">ДЕБИТ</div>
-        <div class="nav-btn" onclick="nav('v_glush')">ГЛУШЕНИЕ</div>
-        <div class="nav-btn" onclick="createReport()" style="background:var(--gold); color:#000;">ОТЧЕТ</div>
+        <div class="nav-btn" onclick="nav('v_params')"><span class="icon">📊</span>ПАРАМЕТРЫ<br>СКВАЖИНЫ</div>
+        <div class="nav-btn" onclick="nav('v_debit')"><span class="icon">💧</span>ДЕБИТ<br>ЗАМЕР</div>
+        <div class="nav-btn" onclick="nav('v_glush')"><span class="icon">🔧</span>ГЛУШЕНИЕ<br>РАСЧЁТ</div>
+        <div class="nav-btn" onclick="nav('v_uezn')"><span class="icon">⚡</span>УЭЦН<br>РАСЧЁТ</div>
+        <div class="nav-btn" onclick="nav('v_nkt')"><span class="icon">🔩</span>НКТ<br>ОБЪЁМ</div>
+        <div class="nav-btn" onclick="nav('v_pvt')"><span class="icon">🧪</span>PVT<br>ФЛЮИДЫ</div>
+        <div class="nav-btn" onclick="nav('v_press')"><span class="icon">🌡️</span>ДАВЛЕНИЕ<br>УРОВНИ</div>
+        <div class="nav-btn" onclick="openQuickShare()" style="background:#1a2a1a;border-color:#3fb950;color:#3fb950;"><span class="icon">📤</span>ОТПРАВИТЬ<br>ПАРАМЕТРЫ</div>
     </div>
 </div>
 
 <div id="v_params" class="view">
-    <div class="voice-bar" onclick="startVoice()">🎤 ГОВОРИ ПАРАМЕТРЫ</div>
+    <button class="back-btn" onclick="nav('dash')">← МЕНЮ</button>
     <div class="card">
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-            <div><label>Нд (м)</label><input type="number" id="p_nd"></div>
-            <div><label>Рз (атм)</label><input type="number" id="p_rz"></div>
-            <div><label>Рб (атм)</label><input type="number" id="p_rb"></div>
-            <div><label>Рл (атм)</label><input type="number" id="p_rl"></div>
-            <div><label>F (Гц)</label><input type="number" id="p_f"></div>
-            <div><label>I (А)</label><input type="number" id="p_i"></div>
-            <div><label>З (%)</label><input type="number" id="p_z"></div>
-            <div><label>Рпр (атм)</label><input type="number" id="p_ppr"></div>
+        <div class="card-title">ПАРАМЕТРЫ СКВАЖИНЫ</div>
+        <div class="grid2">
+            <div><label>Нд (м)</label><input type="number" id="p_nd" placeholder="0"></div>
+            <div><label>Рз (атм)</label><input type="number" id="p_rz" placeholder="0"></div>
+            <div><label>Рб (атм)</label><input type="number" id="p_rb" placeholder="0"></div>
+            <div><label>Рл (атм)</label><input type="number" id="p_rl" placeholder="0"></div>
+            <div><label>Рпр (атм)</label><input type="number" id="p_ppr" placeholder="0"></div>
+            <div><label>F (Гц)</label><input type="number" id="p_f" placeholder="50"></div>
+            <div><label>I (А)</label><input type="number" id="p_i" placeholder="0"></div>
+            <div><label>З (%)</label><input type="number" id="p_z" placeholder="0"></div>
+            <div><label>Тдв. (°C)</label><input type="number" id="p_tdv" placeholder="0"></div>
+            <div><label>Замер Q (м³)</label><input type="number" id="p_qm3" placeholder="0"></div>
         </div>
-        <button class="btn-exe" onclick="nav('dash')">В МЕНЮ</button>
+        <div class="divider"></div>
+        <div class="section-label">СТАТИЧЕСКИЕ УРОВНИ</div>
+        <div class="grid2">
+            <div><label>Нст зат. (м)</label><input type="number" id="p_nst_zat" placeholder="0"></div>
+            <div><label>Нст нкт. (м)</label><input type="number" id="p_nst_nkt" placeholder="0"></div>
+            <div><label>Глубина скв. (м)</label><input type="number" id="p_depth" placeholder="0"></div>
+        </div>
+        <button class="btn btn-gold" onclick="calcParams()">⚙ РАССЧИТАТЬ</button>
+        <div id="res_params" style="display:none" class="result-box"></div>
+        <div class="divider"></div>
+        <button class="btn btn-outline" onclick="nav('dash')">← В МЕНЮ</button>
     </div>
 </div>
 
 <div id="v_debit" class="view">
-    <div class="voice-bar" onclick="startVoice()">🎤 ГОВОРИ ДЕБИТ</div>
+    <button class="back-btn" onclick="nav('dash')">← МЕНЮ</button>
     <div class="card">
-        <label>Литры</label><input type="number" id="q_liters">
-        <label>Работа (мин)</label><input type="number" id="q_work">
-        <button class="btn-exe" onclick="nav('dash')">В МЕНЮ</button>
+        <div class="card-title">ПРЯМОЙ ЗАМЕР</div>
+        <div class="grid2">
+            <div><label>ОБЪЁМ (л)</label><input type="number" id="q_liters" placeholder="0"></div>
+            <div><label>ВРЕМЯ РАБОТЫ (мин)</label><input type="number" id="q_work" placeholder="0"></div>
+        </div>
+        <button class="btn btn-gold" onclick="calcDebit()">⚙ РАССЧИТАТЬ</button>
+        <div id="res_debit" style="display:none" class="result-box"></div>
     </div>
+    <div class="card">
+        <div class="card-title">РЕЖИМ ПКВ</div>
+        <div class="grid2">
+            <div><label>ОБЪЁМ ЗА ЦИКЛ (л)</label><input type="number" id="pkv_vol" placeholder="0"></div>
+            <div><label>РАБОТА (мин)</label><input type="number" id="pkv_work" placeholder="0"></div>
+            <div><label>ПРОСТОЙ (мин)</label><input type="number" id="pkv_off" placeholder="0"></div>
+        </div>
+        <button class="btn btn-gold" onclick="calcPKV()">⚙ РАССЧИТАТЬ ПКВ</button>
+        <div id="res_pkv" style="display:none" class="result-box"></div>
+    </div>
+    <div class="card">
+        <div class="card-title">ОБВОДНЁННОСТЬ → ТОННЫ</div>
+        <div class="grid2">
+            <div><label>ДЕБИТ ЖИДКОСТИ (м³/сут)</label><input type="number" id="wc_q" placeholder="0"></div>
+            <div><label>ОБВОДНЁННОСТЬ (%)</label><input type="number" id="wc_wc" placeholder="0"></div>
+            <div><label>ПЛОТН. НЕФТИ (кг/м³)</label><input type="number" id="wc_ro" placeholder="870"></div>
+            <div><label>ПЛОТН. ВОДЫ (кг/м³)</label><input type="number" id="wc_rw" placeholder="1010"></div>
+        </div>
+        <button class="btn btn-gold" onclick="calcWatercut()">⚙ РАССЧИТАТЬ</button>
+        <div id="res_wc" style="display:none" class="result-box"></div>
+    </div>
+    <div class="card" style="border-color:#4dabf7;">
+        <div class="card-title" style="color:#4dabf7;">💧 ЗАМЕР % ВОДЫ ПО ПРОБЕ</div>
+        <div class="section-label">H воды × 100% / H жидкости = % воды</div>
+        <div class="grid2">
+            <div><label>H жидкости (см) — 100%</label><input type="number" id="probe_hl" placeholder="0" step="0.1"></div>
+            <div><label>H воды (см)</label><input type="number" id="probe_hw" placeholder="0" step="0.1"></div>
+        </div>
+        <button class="btn" style="background:#4dabf7;color:#000;width:100%;padding:15px;border:none;border-radius:8px;font-weight:900;font-family:'Courier New',monospace;font-size:0.8rem;letter-spacing:2px;cursor:pointer;" onclick="calcProbe()">⚙ РАССЧИТАТЬ %</button>
+        <div id="res_probe" style="display:none" class="result-box"></div>
+    </div>
+    <div class="card" style="border-color:#ff9f43;">
+        <div class="card-title" style="color:#ff9f43;">🛢 ТОНН НЕФТИ В СУТКИ</div>
+        <div class="grid2">
+            <div><label>ДЕБИТ ЖИДКОСТИ (м³/сут)</label><input type="number" id="ton_q" placeholder="0"></div>
+            <div><label>% ВОДЫ (из пробы)</label><input type="number" id="ton_wc" placeholder="0" step="0.1"></div>
+        </div>
+        <div>
+            <label>ПЛОТНОСТЬ НЕФТИ (кг/м³)</label>
+            <select id="ton_ro_sel" onchange="onRoSelect()">
+                <option value="">— выбери из таблицы —</option>
+                <optgroup label="ЛЁГКАЯ (до 870)">
+                    <option value="800">800 — сверхлёгкая (API >45°)</option>
+                    <option value="820">820 — лёгкая (API ~41°)</option>
+                    <option value="830">830 — лёгкая (API ~39°)</option>
+                    <option value="840">840 — лёгкая (API ~37°)</option>
+                    <option value="850">850 — лёгкая (API ~35°)</option>
+                    <option value="860">860 — лёгкая (API ~33°)</option>
+                </optgroup>
+                <optgroup label="СРЕДНЯЯ (870–920)">
+                    <option value="870">870 — средняя (API ~31°)</option>
+                    <option value="880">880 — средняя (API ~29°)</option>
+                    <option value="890">890 — средняя (API ~27°)</option>
+                    <option value="900">900 — средняя (API ~25°)</option>
+                    <option value="910">910 — средняя (API ~23°)</option>
+                    <option value="920">920 — средняя (API ~22°)</option>
+                </optgroup>
+                <optgroup label="ТЯЖЁЛАЯ (920+)">
+                    <option value="930">930 — тяжёлая (API ~20°)</option>
+                    <option value="940">940 — тяжёлая (API ~19°)</option>
+                    <option value="950">950 — тяжёлая (API ~17°)</option>
+                    <option value="960">960 — тяжёлая (API ~16°)</option>
+                    <option value="980">980 — тяжёлая (API ~13°)</option>
+                    <option value="1000">1000 — битуминозная (API ~10°)</option>
+                </optgroup>
+                <option value="0">✏ ВВЕСТИ ВРУЧНУЮ</option>
+            </select>
+        </div>
+        <div id="ton_manual_row" style="display:none; margin-top:-4px;">
+            <label>ПЛОТНОСТЬ ВРУЧНУЮ (кг/м³)</label>
+            <input type="number" id="ton_ro_manual" placeholder="870">
+        </div>
+        <button class="btn" style="background:#ff9f43;color:#000;width:100%;padding:15px;border:none;border-radius:8px;font-weight:900;font-family:'Courier New',monospace;font-size:0.8rem;letter-spacing:2px;cursor:pointer;margin-top:8px;" onclick="calcTonnes()">⚙ ТОНН НЕФТИ</button>
+        <div id="res_ton" style="display:none" class="result-box"></div>
+    </div>
+    <button class="btn btn-outline" onclick="nav('dash')">← В МЕНЮ</button>
 </div>
 
-<div id="v_report" class="view">
-    <div class="card" style="text-align:center;">
-        <div id="qr-out"></div>
-        <button class="btn-exe" style="margin-top:20px;" onclick="sendSys()">ОТПРАВИТЬ СООБЩЕНИЕМ</button>
-        <button class="btn-exe" style="background:none; color:var(--gold);" onclick="nav('dash')">НАЗАД</button>
+<div id="v_glush" class="view">
+    <button class="back-btn" onclick="nav('dash')">← МЕНЮ</button>
+    <div class="card">
+        <div class="card-title">ОБЪЁМ ЖИДКОСТИ ГЛУШЕНИЯ</div>
+        <div class="grid2">
+            <div><label>ГЛУБИНА НКТ (м)</label><input type="number" id="g_hnkt" placeholder="0"></div>
+            <div><label>ВН. ДИАМЕТР НКТ (мм)</label><input type="number" id="g_dnkt" placeholder="62"></div>
+            <div><label>ГЛУБИНА СКВАЖИНЫ (м)</label><input type="number" id="g_hskv" placeholder="0"></div>
+            <div><label>ВН. ДИАМЕТР ОК (мм)</label><input type="number" id="g_dok" placeholder="130"></div>
+        </div>
+        <button class="btn btn-gold" onclick="calcGlushVol()">⚙ ОБЪЁМ</button>
+        <div id="res_gvol" style="display:none" class="result-box"></div>
     </div>
+    <div class="card">
+        <div class="card-title">ПЛОТНОСТЬ РАСТВОРА ГЛУШЕНИЯ</div>
+        <div class="grid2">
+            <div><label>ПЛАСТОВОЕ ДАВЛ. (атм)</label><input type="number" id="g_ppl" placeholder="0"></div>
+            <div><label>ГЛУБИНА ПЛАСТА (м)</label><input type="number" id="g_hpl" placeholder="0"></div>
+            <div><label>КОЭФФ. ЗАПАСА (1.05-1.10)</label><input type="number" id="g_kz" placeholder="1.07" step="0.01"></div>
+        </div>
+        <button class="btn btn-gold" onclick="calcGlushDens()">⚙ ПЛОТНОСТЬ</button>
+        <div id="res_gdens" style="display:none" class="result-box"></div>
+    </div>
+    <div class="card">
+        <div class="card-title">ПРОКАЧКА КОЛЛЕКТОРА</div>
+        <div class="section-label">(Lкол. × 8 л) + 500 л / 1000 = м³</div>
+        <div class="grid2">
+            <div><label>Lкол. — ДЛИНА КОЛЛЕКТОРА (м)</label><input type="number" id="kol_l" placeholder="0"></div>
+        </div>
+        <button class="btn btn-gold" onclick="calcKol()">⚙ РАССЧИТАТЬ</button>
+        <div id="res_kol" style="display:none" class="result-box"></div>
+    </div>
+    <button class="btn btn-outline" onclick="nav('dash')">← В МЕНЮ</button>
 </div>
 
-<footer>
-    Designed & Coded by Anvarov T.A. &copy; 2026
-</footer>
+<div id="v_uezn" class="view">
+    <button class="back-btn" onclick="nav('dash')">← МЕНЮ</button>
+    <div class="card">
+        <div class="card-title">ИЗМЕНЕНИЕ ДЕБИТА ПРИ ЧАСТОТЕ (ЧРП)</div>
+        <div class="grid2">
+            <div><label>ТЕКУЩАЯ ЧАСТОТА f1 (Гц)</label><input type="number" id="vsd_f1" placeholder="50"></div>
+            <div><label>НОВАЯ ЧАСТОТА f2 (Гц)</label><input type="number" id="vsd_f2" placeholder="50"></div>
+            <div><label>ПОДАЧА Q1 (м³/сут)</label><input type="number" id="vsd_q1" placeholder="0"></div>
+            <div><label>НАПОР H1 (м)</label><input type="number" id="vsd_h1" placeholder="0"></div>
+            <div><label>МОЩНОСТЬ P1 (кВт)</label><input type="number" id="vsd_p1" placeholder="0"></div>
+        </div>
+        <button class="btn btn-gold" onclick="calcVSD()">⚙ РАССЧИТАТЬ ЧРП</button>
+        <div id="res_vsd" style="display:none" class="result-box"></div>
+    </div>
+    <div class="card">
+        <div class="card-title">РАБОЧАЯ ЗОНА УЭЦН</div>
+        <div class="grid2">
+            <div><label>НОМИН. ПОДАЧА Qном (м³/сут)</label><input type="number" id="esp_qnom" placeholder="0"></div>
+            <div><label>ТЕКУЩИЙ ДЕБИТ Q (м³/сут)</label><input type="number" id="esp_q" placeholder="0"></div>
+        </div>
+        <button class="btn btn-gold" onclick="calcESPZone()">⚙ ЗОНА УЭЦН</button>
+        <div id="res_espzone" style="display:none" class="result-box"></div>
+    </div>
+    <div class="card">
+        <div class="card-title">КПД НАСОСНОЙ УСТАНОВКИ</div>
+        <div class="grid2">
+            <div><label>ДЕБИТ Q (м³/сут)</label><input type="number" id="eff_q" placeholder="0"></div>
+            <div><label>НАПОР H (м)</label><input type="number" id="eff_h" placeholder="0"></div>
+            <div><label>ПЛОТНОСТЬ (кг/м³)</label><input type="number" id="eff_ro" placeholder="900"></div>
+            <div><label>МОЩНОСТЬ ПЭД (кВт)</label><input type="number" id="eff_p" placeholder="0"></div>
+        </div>
+        <button class="btn btn-gold" onclick="calcEff()">⚙ КПД</button>
+        <div id="res_eff" style="display:none" class="result-box"></div>
+    </div>
+    <div class="card">
+        <div class="card-title">ПОТЕРЯ НАПРЯЖЕНИЯ</div>
+        <div class="section-label">ΔU = ρ × I × L / S</div>
+        <div class="grid2">
+            <div>
+                <label>МАТЕРИАЛ КАБЕЛЯ</label>
+                <select id="udrop_mat">
+                    <option value="0.0175">Медь (ρ = 0.0175)</option>
+                    <option value="0.028">Алюминий (ρ = 0.028)</option>
+                    <option value="0.03">УЭЦН кабель (ρ ≈ 0.030)</option>
+                </select>
+            </div>
+            <div><label>ТОК I (А)</label><input type="number" id="udrop_i" placeholder="0"></div>
+            <div><label>ДЛИНА L (м)</label><input type="number" id="udrop_l" placeholder="0"></div>
+            <div><label>СЕЧЕНИЕ S (мм²)</label><input type="number" id="udrop_s" placeholder="16"></div>
+            <div><label>НАПРЯЖЕНИЕ ИСТОЧНИКА (В)</label><input type="number" id="udrop_u0" placeholder="380"></div>
+        </div>
+        <button class="btn btn-gold" onclick="calcUdrop()">⚙ РАССЧИТАТЬ ΔU</button>
+        <div id="res_udrop" style="display:none" class="result-box"></div>
+    </div>
+    <button class="btn btn-outline" onclick="nav('dash')">← В МЕНЮ</button>
+</div>
+
+<div id="v_nkt" class="view">
+    <button class="back-btn" onclick="nav('dash')">← МЕНЮ</button>
+    <div class="card">
+        <div class="card-title">ОБЪЁМ КОЛОННЫ НКТ</div>
+        <div>
+            <label>ТИПОРАЗМЕР НКТ (ГОСТ 633-80)</label>
+            <select id="nkt_size">
+                <option value="25">33×4 — Dвн=25мм</option>
+                <option value="32">42×5 — Dвн=32мм</option>
+                <option value="40">48×4 — Dвн=40мм</option>
+                <option value="50.3">60×5 — Dвн=50.3мм</option>
+                <option value="62" selected>73×5.5 — Dвн=62мм</option>
+                <option value="59">73×7 — Dвн=59мм</option>
+                <option value="76">89×6.5 — Dвн=76мм</option>
+                <option value="73">89×8 — Dвн=73мм</option>
+                <option value="89">102×6.5 — Dвн=89мм</option>
+                <option value="100">114×7 — Dвн=100мм</option>
+                <option value="0">ВРУЧНУЮ</option>
+            </select>
+        </div>
+        <div id="nkt_manual_row" style="display:none">
+            <label>ВН. ДИАМЕТР (мм)</label>
+            <input type="number" id="nkt_manual" placeholder="0">
+        </div>
+        <div class="grid2">
+            <div><label>ВЕРХ НКТ (м)</label><input type="number" id="nkt_top" placeholder="0"></div>
+            <div><label>НИЗ НКТ (м)</label><input type="number" id="nkt_bot" placeholder="0"></div>
+        </div>
+        <button class="btn btn-gold" onclick="calcNKT()">⚙ РАССЧИТАТЬ</button>
+        <div id="res_nkt" style="display:none" class="result-box"></div>
+    </div>
+    <button class="btn btn-outline" onclick="nav('dash')">← В МЕНЮ</button>
+</div>
+
+<div id="v_pvt" class="view">
+    <button class="back-btn" onclick="nav('dash')">← МЕНЮ</button>
+    <div class="card">
+        <div class="card-title">Z-ФАКТОР ГАЗА</div>
+        <div class="grid2">
+            <div><label>ДАВЛЕНИЕ P (МПа)</label><input type="number" id="z_p" placeholder="0"></div>
+            <div><label>ТЕМПЕРАТУРА T (°C)</label><input type="number" id="z_t" placeholder="0"></div>
+            <div><label>ПС. ДАВЛЕНИЕ Pc (МПа)</label><input type="number" id="z_pc" placeholder="4.6"></div>
+            <div><label>ПС. ТЕМП. Tc (°C)</label><input type="number" id="z_tc" placeholder="-82"></div>
+        </div>
+        <button class="btn btn-gold" onclick="calcZ()">⚙ Z-ФАКТОР</button>
+        <div id="res_z" style="display:none" class="result-box"></div>
+    </div>
+    <div class="card">
+        <div class="card-title">ПЛОТНОСТЬ ГАЗА</div>
+        <div class="grid2">
+            <div><label>МОЛ. МАССА M (г/моль)</label><input type="number" id="gd_m" placeholder="16"></div>
+            <div><label>ДАВЛЕНИЕ P (атм)</label><input type="number" id="gd_p" placeholder="1"></div>
+            <div><label>ТЕМПЕРАТУРА T (°C)</label><input type="number" id="gd_t" placeholder="20"></div>
+            <div><label>Z-ФАКТОР</label><input type="number" id="gd_z" placeholder="1" step="0.01"></div>
+        </div>
+        <button class="btn btn-gold" onclick="calcGasDens()">⚙ ПЛОТНОСТЬ</button>
+        <div id="res_gd" style="display:none" class="result-box"></div>
+    </div>
+    <button class="btn btn-outline" onclick="nav('dash')">← В МЕНЮ</button>
+</div>
+
+<div id="v_press" class="view">
+    <button class="back-btn" onclick="nav('dash')">← МЕНЮ</button>
+    <div class="card">
+        <div class="card-title">ГИДРОСТАТИЧЕСКОЕ ДАВЛЕНИЕ</div>
+        <div class="grid2">
+            <div><label>ГЛУБИНА (м)</label><input type="number" id="hs_h" placeholder="0"></div>
+            <div><label>ПЛОТНОСТЬ (кг/м³)</label><input type="number" id="hs_ro" placeholder="900"></div>
+        </div>
+        <button class="btn btn-gold" onclick="calcHydro()">⚙ ДАВЛЕНИЕ</button>
+        <div id="res_hs" style="display:none" class="result-box"></div>
+    </div>
+    <div class="card">
+        <div class="card-title">ЗАБОЙНОЕ ДАВЛЕНИЕ</div>
+        <div class="grid2">
+            <div><label>УСТЬЕВОЕ ДАВЛ. (атм)</label><input type="number" id="bhp_pu" placeholder="0"></div>
+            <div><label>ГЛУБИНА (м)</label><input type="number" id="bhp_h" placeholder="0"></div>
+            <div><label>ПЛОТНОСТЬ ФЛЮИДА (кг/м³)</label><input type="number" id="bhp_ro" placeholder="900"></div>
+            <div><label>ПОТЕРИ НА ТРЕНИЕ (атм)</label><input type="number" id="bhp_fr" placeholder="0"></div>
+        </div>
+        <button class="btn btn-gold" onclick="calcBHP()">⚙ РЗАБ</button>
+        <div id="res_bhp" style="display:none" class="result-box"></div>
+    </div>
+    <div class="card">
+        <div class="card-title">СТАТИЧЕСКИЙ УРОВЕНЬ → РПЛ</div>
+        <div class="grid2">
+            <div><label>СТАТ. УРОВЕНЬ Нст (м)</label><input type="number" id="nst_h" placeholder="0"></div>
+            <div><label>ГЛУБИНА СКВАЖИНЫ (м)</label><input type="number" id="nst_hskv" placeholder="0"></div>
+            <div><label>ПЛОТНОСТЬ ЖИДКОСТИ (кг/м³)</label><input type="number" id="nst_ro" placeholder="900"></div>
+            <div><label>УСТЬЕВОЕ ДАВЛ. (атм)</label><input type="number" id="nst_pu" placeholder="0"></div>
+        </div>
+        <button class="btn btn-gold" onclick="calcNST()">⚙ РПЛ</button>
+        <div id="res_nst" style="display:none" class="result-box"></div>
+    </div>
+    <button class="btn btn-outline" onclick="nav('dash')">← В МЕНЮ</button>
+</div>
+
+<div id="v_quickshare" class="view">
+    <button class="back-btn" onclick="nav('dash')">← МЕНЮ</button>
+    <div class="card">
+        <div class="card-title">📤 БЫСТРАЯ ОТПРАВКА ПАРАМЕТРОВ</div>
+        <div class="section-label">ПРЕДПРОСМОТР</div>
+        <div class="report-text" id="qs_preview" style="max-height:200px;"></div>
+        <div class="divider"></div>
+        <div class="section-label">ОТПРАВИТЬ ЧЕРЕЗ</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+            <button class="btn btn-gold" onclick="quickShareWA()">💬 WhatsApp</button>
+            <button class="btn" style="background:#229ED9;color:#fff;" onclick="quickShareTG()">✈️ Telegram</button>
+            <button class="btn" style="background:#005FF9;color:#fff;" onclick="quickShareMax()">💙 Макс</button>
+            <button class="btn btn-green" onclick="quickShareEmail()">📧 Email</button>
+            <button class="btn btn-outline" onclick="quickShareCopy()">📋 Копировать</button>
+        </div>
+        <div id="qs_copied" style="display:none;text-align:center;color:var(--green);font-size:0.75rem;padding:8px;">✓ СКОПИРОВАНО!</div>
+    </div>
+    <button class="btn btn-outline" onclick="nav('dash')">← В МЕНЮ</button>
+</div>
+
+<footer>DESIGNED & CODED BY ANVAROV T.A. © 2026</footer>
 
 <script>
-    let finalData = "";
-    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-    recognition.lang = 'ru-RU';
-    recognition.interimResults = false;
-
-    function nav(id) {
-        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-    }
-
-    function speak(text) {
-        const msg = new SpeechSynthesisUtterance(text);
-        msg.lang = 'ru-RU';
-        window.speechSynthesis.speak(msg);
-    }
-
-    function startVoice() {
-        try { recognition.start(); } catch(e) {}
-        document.querySelectorAll('.voice-bar').forEach(b => {
-            b.classList.add('listening');
-            b.innerText = "🔴 СЛУШАЮ...";
-        });
-    }
-
-    recognition.onresult = (event) => {
-        const text = event.results[0][0].transcript.toLowerCase();
-        const val = text.match(/\d+/);
-        
-        // Навигация
-        if(text.includes("параметр")) { nav('v_params'); speak("Открываю параметры"); }
-        else if(text.includes("дебит")) { nav('v_debit'); speak("Захожу в дебит"); }
-        else if(text.includes("отчет")) { createReport(); speak("Сделала отчет"); }
-        
-        // Ввод данных
-        if(val) {
-            let n = val[0];
-            if(text.includes("нд") || text.includes("уровень")) { document.getElementById('p_nd').value = n; speak("Нд " + n); }
-            else if(text.includes("буфер") || text.includes("рз")) { document.getElementById('p_rz').value = n; speak("Буфер " + n); }
-            else if(text.includes("затруб") || text.includes("рб")) { document.getElementById('p_rb').value = n; speak("Затруб " + n); }
-            else if(text.includes("линия") || text.includes("линейное")) { document.getElementById('p_rl').value = n; speak("Линия " + n); }
-            else if(text.includes("прием") || text.includes("рпр")) { document.getElementById('p_ppr').value = n; speak("Прием " + n); }
-            else if(text.includes("частота") || text.includes("герц")) { document.getElementById('p_f').value = n; speak("Частота " + n); }
-            else if(text.includes("ток")) { document.getElementById('p_i').value = n; speak("Ток " + n); }
-            else if(text.includes("загрузка")) { document.getElementById('p_z').value = n; speak("Загрузка " + n); }
-            else if(text.includes("литр")) { document.getElementById('q_liters').value = n; speak("Литры " + n); }
-        }
-    };
-
-    recognition.onend = () => {
-        document.querySelectorAll('.voice-bar').forEach(b => {
-            b.classList.remove('listening');
-            b.innerText = "🎤 НАЖМИ И ГОВОРИ";
-        });
-    };
-
-    function createReport() {
-        let out = `АНВАРОВ Т.А. | ОТЧЕТ\nКП-${document.getElementById('reg_kp').value} СКВ-${document.getElementById('reg_skv').value}\n`;
-        const ids = [['Нд','p_nd'],['Рз','p_rz'],['Рб','p_rb'],['Рл','p_rl'],['F','p_f'],['I','p_i'],['З','p_z'],['Рпр','p_ppr']];
-        ids.forEach(i => {
-            let v = document.getElementById(i[1]).value;
-            if(v) out += `${i[0]}: ${v}\n`;
-        });
-        finalData = out;
-        nav('v_report');
-        document.getElementById("qr-out").innerHTML = "";
-        new QRCode(document.getElementById("qr-out"), { text: out, width: 200, height: 200 });
-    }
-
-    async function sendSys() { if (navigator.share) await navigator.share({ text: finalData }); }
-
-    window.onload = () => {
-        document.querySelectorAll('input').forEach(el => {
-            el.value = localStorage.getItem('ata_' + el.id) || el.value;
-            el.oninput = () => localStorage.setItem('ata_' + el.id, el.value);
-        });
-    };
+function nav(id) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo(0,0);
+}
+function showResults(id, rows) {
+    const box = document.getElementById(id);
+    box.style.display = 'block';
+    box.innerHTML = rows.map(r => `<div class="result-row"><span class="result-label">${r[0]}</span><span class="result-val ${r[2]||''}">${r[1]}</span></div>`).join('');
+}
+document.getElementById('reg_kp').addEventListener('input', updateWell);
+document.getElementById('reg_skv').addEventListener('input', updateWell);
+function updateWell() {
+    const kp = document.getElementById('reg_kp').value || '__';
+    const skv = document.getElementById('reg_skv').value || '__';
+    document.getElementById('well_display').textContent = `КП-${kp} СКВ-${skv}`;
+}
+document.getElementById('nkt_size').addEventListener('change', function() {
+    document.getElementById('nkt_manual_row').style.display = this.value == '0' ? 'block' : 'none';
+});
+function calcParams() {
+    const nd = +document.getElementById('p_nd').value;
+    const nst_zat = +document.getElementById('p_nst_zat').value;
+    const nst_nkt = +document.getElementById('p_nst_nkt').value;
+    const f = +document.getElementById('p_f').value || 50;
+    const z = +document.getElementById('p_z').value;
+    const tdv = +document.getElementById('p_tdv').value;
+    const rows = [];
+    const nst = nst_zat || nst_nkt;
+    if(nd && nst) { const depr = (nst - nd) * 900 * 9.81 / 1e6 * 10.197; rows.push(['Депрессия (атм)', depr.toFixed(1), depr > 0 ? 'green' : 'red']); }
+    if(nst_zat && nst_nkt) { const diff = nst_zat - nst_nkt; rows.push(['Нст зат. — Нст нкт.', diff.toFixed(0) + ' м', diff > 0 ? 'cyan' : 'green']); }
+    if(f) { const fRatio = f / 50; rows.push(['Коэфф. f/50Гц', fRatio.toFixed(3), f < 45 ? 'cyan' : f > 55 ? 'red' : 'green']); }
+    if(z) { const status = z < 75 ? 'НЕДОГРУЗ' : z > 105 ? 'ПЕРЕГРУЗ' : 'НОРМА'; const cls = z < 75 ? 'cyan' : z > 105 ? 'red' : 'green'; rows.push(['Загрузка ПЭД', z + '%', cls]); rows.push(['Статус', status, cls]); }
+    if(tdv) { const cls = tdv > 130 ? 'red' : tdv > 110 ? 'gold' : 'green'; rows.push(['Тдв.', tdv + ' °C', cls]); }
+    if(rows.length) showResults('res_params', rows);
+}
+function calcProbe() {
+    const hl = +document.getElementById('probe_hl').value;
+    const hw = +document.getElementById('probe_hw').value;
+    if(!hl || !hw) return alert('Введи высоты жидкости и воды');
+    if(hw > hl) return alert('Высота воды не может быть больше жидкости');
+    const wc = hw * 100 / hl; const oil = 100 - wc;
+    let status, cls;
+    if(wc < 30) { status = 'МАЛООБВОДНЁННАЯ'; cls = 'green'; }
+    else if(wc < 70) { status = 'СРЕДНЕОБВОДНЁННАЯ'; cls = 'orange'; }
+    else if(wc < 90) { status = 'ВЫСОКООБВОДНЁННАЯ'; cls = 'red'; }
+    else { status = 'ПРЕДЕЛЬНАЯ ОБВОДНЁННОСТЬ'; cls = 'red'; }
+    showResults('res_probe', [['H жидкости', hl.toFixed(1) + ' см — 100%'],['H воды', hw.toFixed(1) + ' см'],['💧 ВОДА', wc.toFixed(1) + '%', 'blue'],['🛢 НЕФТЬ', oil.toFixed(1) + '%', 'orange'],['Статус', status, cls]]);
+}
+function onRoSelect() { document.getElementById('ton_manual_row').style.display = document.getElementById('ton_ro_sel').value === '0' ? 'block' : 'none'; }
+function calcTonnes() {
+    const Q = +document.getElementById('ton_q').value;
+    const wc = +document.getElementById('ton_wc').value;
+    const selVal = document.getElementById('ton_ro_sel').value;
+    let ro = selVal === '0' ? +document.getElementById('ton_ro_manual').value : +selVal;
+    if(!Q) return alert('Введи дебит жидкости');
+    if(!ro) return alert('Выбери или введи плотность нефти');
+    const qOil = Q * (1 - wc / 100); const tOil = qOil * ro / 1000; const tWater = Q * (wc/100) * 1010 / 1000;
+    showResults('res_ton', [['Дебит нефти', qOil.toFixed(2) + ' м³/сут'],['НЕФТЬ т/сут', tOil.toFixed(2), 'green'],['НЕФТЬ т/мес', (tOil * 30).toFixed(1), 'gold'],['Вода т/сут', tWater.toFixed(2)]]);
+}
+function calcDebit() {
+    const V = +document.getElementById('q_liters').value; const t = +document.getElementById('q_work').value;
+    if(!V || !t) return alert('Введи объём и время');
+    const day = V / t * 1440 / 1000;
+    showResults('res_debit', [['л/мин', (V/t).toFixed(2)],['м³/сут', day.toFixed(2), 'green'],['барр/сут', (day/0.159).toFixed(1)],['т/сут (~870)', (day*0.87).toFixed(2)]]);
+}
+function calcPKV() {
+    const vc = +document.getElementById('pkv_vol').value; const tw = +document.getElementById('pkv_work').value; const ts = +document.getElementById('pkv_off').value;
+    if(!vc || !tw || !ts) return alert('Введи все данные');
+    const cyc = tw + ts; const day = vc * (1440 / cyc) / 1000;
+    showResults('res_pkv', [['КПД работы', (tw/cyc*100).toFixed(1) + '%'],['Циклов/сут', (1440/cyc).toFixed(1)],['Дебит', day.toFixed(2) + ' м³/сут', 'green']]);
+}
+function calcWatercut() {
+    const Q = +document.getElementById('wc_q').value; const wc = +document.getElementById('wc_wc').value;
+    const ro = +document.getElementById('wc_ro').value || 870; const rw = +document.getElementById('wc_rw').value || 1010;
+    if(!Q) return alert('Введи дебит');
+    const qo = Q*(1-wc/100); const qw = Q*wc/100;
+    showResults('res_wc', [['Нефть м³/сут', qo.toFixed(2), 'green'],['Нефть т/сут', (qo*ro/1000).toFixed(2), 'gold'],['Вода м³/сут', qw.toFixed(2)],['Вода т/сут', (qw*rw/1000).toFixed(2)]]);
+}
+function calcKol() {
+    const L = +document.getElementById('kol_l').value;
+    if(!L) return alert('Введи длину коллектора');
+    const liters = L * 8 + 500;
+    showResults('res_kol', [['Lкол. × 8 л', (L*8).toFixed(0) + ' л'],['+ 500 л', '500 л'],['ИТОГО', liters.toFixed(0) + ' л', 'green'],['ИТОГО м³', (liters/1000).toFixed(3) + ' м³', 'gold']]);
+}
+function calcGlushVol() {
+    const hnkt = +document.getElementById('g_hnkt').value; const dnkt = +document.getElementById('g_dnkt').value / 1000;
+    const hskv = +document.getElementById('g_hskv').value; const dok = +document.getElementById('g_dok').value / 1000;
+    if(!hnkt || !hskv) return alert('Введи глубины');
+    const vNKT = Math.PI/4 * dnkt*dnkt * hnkt;
+    const vAnn = Math.PI/4 * (dok*dok - (dnkt+0.007)*(dnkt+0.007)) * hskv;
+    const vT = vNKT + vAnn;
+    showResults('res_gvol', [['Объём НКТ', (vNKT*1000).toFixed(1) + ' л'],['Объём затруб.', (vAnn*1000).toFixed(1) + ' л'],['ИТОГО', (vT*1000).toFixed(0) + ' л', 'green'],['С запасом +20%', (vT*1.2*1000).toFixed(0) + ' л', 'gold']]);
+}
+function calcGlushDens() {
+    const ppl = +document.getElementById('g_ppl').value; const hpl = +document.getElementById('g_hpl').value; const kz = +document.getElementById('g_kz').value || 1.07;
+    if(!ppl || !hpl) return alert('Введи давление и глубину');
+    const rho = ppl * kz * 1e5 / (9.81 * hpl);
+    showResults('res_gdens', [['Мин. плотность', rho.toFixed(0) + ' кг/м³'],['Рекомендуемая', (Math.ceil(rho/10)*10) + ' кг/м³', 'green'],['Тип', rho < 1000 ? 'Пресная вода' : rho < 1200 ? 'Рассол' : 'Утяжелённый', 'cyan']]);
+}
+function calcUdrop() {
+    const rho = +document.getElementById('udrop_mat').value; const I = +document.getElementById('udrop_i').value;
+    const L = +document.getElementById('udrop_l').value; const S = +document.getElementById('udrop_s').value;
+    const U0 = +document.getElementById('udrop_u0').value || 380;
+    if(!I || !L || !S) return alert('Введи ток, длину и сечение');
+    const dU = rho * I * L / S; const dU3 = dU * Math.sqrt(3);
+    const Uost = U0 - dU3; const pct = dU3 / U0 * 100;
+    const cls = pct > 10 ? 'red' : pct > 5 ? 'gold' : 'green';
+    showResults('res_udrop', [['ΔU однофазное', dU.toFixed(2) + ' В'],['ΔU трёхфазное', dU3.toFixed(2) + ' В', cls],['Потеря %', pct.toFixed(2) + '%', cls],['Uост. на ПЭД', Uost.toFixed(1) + ' В', Uost < 320 ? 'red' : 'green'],['Допуск до 5%', pct <= 5 ? 'НОРМА ✓' : 'ПРЕВЫШЕНИЕ ✗', pct <= 5 ? 'green' : 'red']]);
+}
+function calcVSD() {
+    const f1 = +document.getElementById('vsd_f1').value || 50; const f2 = +document.getElementById('vsd_f2').value;
+    const q1 = +document.getElementById('vsd_q1').value; const h1 = +document.getElementById('vsd_h1').value; const p1 = +document.getElementById('vsd_p1').value;
+    if(!f2) return alert('Введи новую частоту');
+    const k = f2/f1;
+    showResults('res_vsd', [['Коэфф. f2/f1', k.toFixed(4)],['НОВАЯ ПОДАЧА Q2', (q1*k).toFixed(2) + ' м³/сут', 'green'],['НОВЫЙ НАПОР H2', (h1*k*k).toFixed(1) + ' м'],['НОВАЯ МОЩНОСТЬ P2', (p1*k*k*k).toFixed(2) + ' кВт'],['Изм. дебита', ((k-1)*100).toFixed(1) + '%', k > 1 ? 'green' : 'cyan']]);
+}
+function calcESPZone() {
+    const qnom = +document.getElementById('esp_qnom').value; const q = +document.getElementById('esp_q').value;
+    if(!qnom || !q) return alert('Введи данные');
+    const ql = qnom*0.75; const qr = qnom*1.2;
+    let zone, cls;
+    if(q < ql) { zone = 'ЛЕВАЯ — ПЕРЕГРУЗ ПЭД'; cls = 'red'; }
+    else if(q > qr) { zone = 'ПРАВАЯ — КАВИТАЦИЯ'; cls = 'red'; }
+    else { zone = 'РАБОЧАЯ ЗОНА — НОРМА'; cls = 'green'; }
+    showResults('res_espzone', [['Левая граница', ql.toFixed(1) + ' м³/сут'],['Правая граница', qr.toFixed(1) + ' м³/сут'],['Текущий дебит', q.toFixed(1) + ' м³/сут'],['ЗОНА', zone, cls]]);
+}
+function calcEff() {
+    const Q = +document.getElementById('eff_q').value; const H = +document.getElementById('eff_h').value;
+    const ro = +document.getElementById('eff_ro').value || 900; const P = +document.getElementById('eff_p').value;
+    if(!Q || !H || !P) return alert('Введи все данные');
+    const Pg = ro * 9.81 * H * Q / 86400 / 1000; const eff = Pg / P * 100;
+    showResults('res_eff', [['Гидравл. мощность', Pg.toFixed(2) + ' кВт'],['КПД системы', eff.toFixed(1) + '%', eff > 50 ? 'green' : eff > 35 ? 'gold' : 'red'],['Потери', (P-Pg).toFixed(2) + ' кВт']]);
+}
+function calcNKT() {
+    let d = +document.getElementById('nkt_size').value;
+    if(d === 0) d = +document.getElementById('nkt_manual').value;
+    const top = +document.getElementById('nkt_top').value || 0; const bot = +document.getElementById('nkt_bot').value;
+    if(!d || !bot) return alert('Введи данные');
+    const r = d/2000; const vol = Math.PI * r * r * (bot - top);
+    showResults('res_nkt', [['Длина колонны', (bot-top).toFixed(0) + ' м'],['Объём НКТ', (vol*1000).toFixed(1) + ' л', 'green'],['Объём НКТ', vol.toFixed(4) + ' м³']]);
+}
+function calcZ() {
+    const P = +document.getElementById('z_p').value; const T = +document.getElementById('z_t').value + 273.15;
+    const Pc = +document.getElementById('z_pc').value || 4.6; const Tc = +document.getElementById('z_tc').value + 273.15;
+    if(!P) return alert('Введи давление');
+    const Pr = P/Pc; const Tr = T/Tc;
+    const Z = 1 + (0.083 - 0.422/Math.pow(Tr,1.6))/Tr * Pr + (0.139 - 0.172/Math.pow(Tr,4.2))/Tr * Pr*Pr;
+    showResults('res_z', [['Приведённое P', Pr.toFixed(3)],['Приведённая T', Tr.toFixed(3)],['Z-ФАКТОР', Z.toFixed(4), 'green']]);
+}
+function calcGasDens() {
+    const M = +document.getElementById('gd_m').value || 16; const P = +document.getElementById('gd_p').value;
+    const T = +document.getElementById('gd_t').value + 273.15; const Z = +document.getElementById('gd_z').value || 1;
+    if(!P) return alert('Введи давление');
+    const rho = M * P * 101325 / (Z * 8.314 * T);
+    showResults('res_gd', [['Плотность газа', rho.toFixed(3) + ' кг/м³', 'green'],['Отн. плотность', (rho/1.204).toFixed(3) + ' (воздух=1)']]);
+}
+function calcHydro() {
+    const h = +document.getElementById('hs_h').value; const ro = +document.getElementById('hs_ro').value || 900;
+    if(!h) return alert('Введи глубину');
+    const P = ro * 9.81 * h / 101325;
+    showResults('res_hs', [['Давление (атм)', P.toFixed(2), 'green'],['Давление (МПа)', (P*0.101325).toFixed(3)],['Градиент', (P/h*100).toFixed(2) + ' атм/100м']]);
+}
+function calcBHP() {
+    const Pu = +document.getElementById('bhp_pu').value || 0; const h = +document.getElementById('bhp_h').value;
+    const ro = +document.getElementById('bhp_ro').value || 900; const fr = +document.getElementById('bhp_fr').value || 0;
+    if(!h) return alert('Введи глубину');
+    const Pbhp = Pu + ro*9.81*h/101325 - fr;
+    showResults('res_bhp', [['РЗАБ (атм)', Pbhp.toFixed(1), 'green'],['РЗАБ (МПа)', (Pbhp*0.101325).toFixed(3)]]);
+}
+function calcNST() {
+    const nst = +document.getElementById('nst_h').value; const hskv = +document.getElementById('nst_hskv').value;
+    const ro = +document.getElementById('nst_ro').value || 900; const pu = +document.getElementById('nst_pu').value || 0;
+    if(!nst || !hskv) return alert('Введи уровни');
+    const Pplas = pu + ro * 9.81 * (hskv - nst) / 101325;
+    showResults('res_nst', [['Столб жидкости', (hskv-nst).toFixed(0) + ' м'],['РПЛ (атм)', Pplas.toFixed(1), 'green'],['РПЛ (МПа)', (Pplas*0.101325).toFixed(3)]]);
+}
+function buildReportText() {
+    const kp = document.getElementById('reg_kp').value || '--';
+    const skv = document.getElementById('reg_skv').value || '--';
+    let out = `═══════════════════════════\nАНВАРОВ Т.А. | ОТЧЁТ\nКП-${kp}  СКВ-${skv}\n${new Date().toLocaleDateString('ru-RU')}  ${new Date().toLocaleTimeString('ru-RU')}\n═══════════════════════════\n`;
+    const params = [['Нд','p_nd','м'],['Рз','p_rz','атм'],['Рб','p_rb','атм'],['Рл','p_rl','атм'],['F','p_f','Гц'],['I','p_i','А'],['З','p_z','%'],['Рпр','p_ppr','атм'],['Нст зат.','p_nst_zat','м'],['Нст нкт.','p_nst_nkt','м'],['Глубина','p_depth','м'],['Тдв.','p_tdv','°C'],['Замер Q','p_qm3','м³']];
+    let hp = params.some(p => document.getElementById(p[1]).value);
+    if(hp) { out += '\n📊 ПАРАМЕТРЫ:\n'; params.forEach(p => { const v = document.getElementById(p[1]).value; if(v) out += `  ${p[0]}: ${v} ${p[2]}\n`; }); }
+    const ql = document.getElementById('q_liters').value; const qt = document.getElementById('q_work').value;
+    if(ql && qt) { const day = ql/qt*1440/1000; out += `\n💧 ДЕБИТ:\n  ${day.toFixed(2)} м³/сут  |  ${(day/0.159).toFixed(1)} барр/сут\n`; }
+    out += `\n═══════════════════════════\nATA v47.0 | ANVAROV T.A.\n`;
+    return out;
+}
+let finalData = '';
+function getQuickText() { return buildReportText(); }
+function openQuickShare() { document.getElementById('qs_preview').textContent = buildReportText(); nav('v_quickshare'); }
+function copyToClipboard(text) {
+    try { const ta = document.createElement('textarea'); ta.value = text; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.focus(); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); } catch(e) {}
+}
+function quickShareWA() { window.open('https://wa.me/?text=' + encodeURIComponent(getQuickText()), '_blank'); }
+function quickShareTG() { window.open('https://t.me/share/url?url=&text=' + encodeURIComponent(getQuickText()), '_blank'); }
+function quickShareEmail() {
+    const kp = document.getElementById('reg_kp').value || '--'; const skv = document.getElementById('reg_skv').value || '--';
+    window.location.href = 'mailto:?subject=' + encodeURIComponent('Параметры КП-'+kp+' СКВ-'+skv+' | ATA') + '&body=' + encodeURIComponent(getQuickText());
+}
+function quickShareCopy() { copyToClipboard(getQuickText()); const el = document.getElementById('qs_copied'); el.style.display='block'; setTimeout(()=>el.style.display='none',2000); }
+function quickShareMax() { copyToClipboard(getQuickText()); const el = document.getElementById('qs_copied'); el.textContent='✓ СКОПИРОВАНО! Открой Макс и вставь'; el.style.display='block'; setTimeout(()=>{el.style.display='none';el.textContent='✓ СКОПИРОВАНО!';},4000); }
+window.onload = () => {
+    document.querySelectorAll('input, select').forEach(el => {
+        if(el.id) { const s = localStorage.getItem('ata_'+el.id); if(s !== null) el.value = s; el.addEventListener('input', () => localStorage.setItem('ata_'+el.id, el.value)); }
+    });
+    updateWell();
+};
 </script>
 </body>
 </html>
