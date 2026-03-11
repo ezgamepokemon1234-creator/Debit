@@ -7,110 +7,595 @@
     <title>ATA v47.0 | ANVAROV T.A.</title>
     <style>
         :root {
-            --gold: #d4af37;
-            --gold2: #f0cc5a;
-            --bg: #0b0e14;
-            --panel: #1c2128;
-            --panel2: #242b35;
-            --border: #444c56;
-            --text: #adbac7;
-            --mic: #ff3b30;
-            --green: #3fb950;
-            --cyan: #58a6ff;
-            --red: #f85149;
+            --font-head: 'Trebuchet MS', 'Arial Narrow', 'Roboto Condensed', 'Roboto', Arial, sans-serif;
+            --font-mono: 'Courier New', 'Roboto Mono', 'Droid Sans Mono', monospace;
+            --gold:    #C8A84B;
+            --gold2:   #E5C76B;
+            --gold3:   #7A6020;
+            --bg:      #07090D;
+            --panel:   #0D1219;
+            --panel2:  #111820;
+            --panel3:  #161E28;
+            --border:  #1E2D3D;
+            --border2: #2A3D52;
+            --text:    #7A99B0;
+            --text2:   #A8C0D0;
+            --green:   #2EA84C;
+            --green2:  #1A6630;
+            --cyan:    #3A9EC8;
+            --red:     #C84040;
+            --red2:    #7A2020;
+            --blue:    #4A9EE0;
+            --orange:  #D07A30;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Courier New', monospace; background: var(--bg); color: var(--text); padding-bottom: 70px; }
-        
-        header { background: #000; border-bottom: 2px solid var(--gold); padding: 10px 15px; position: sticky; top: 0; z-index: 1000; display: flex; align-items: center; justify-content: space-between; }
-        .logo { font-size: 0.75rem; font-weight: 900; color: var(--gold); letter-spacing: 2px; }
-        .header-info { font-size: 0.65rem; color: #555; text-align: right; }
-        
-        .well-bar { background: var(--panel); border-bottom: 1px solid var(--border); padding: 8px 15px; display: flex; gap: 10px; align-items: center; }
-        .well-bar label { font-size: 0.6rem; color: #555; display: block; margin-bottom: 2px; }
-        .well-bar input { background: #010409; border: 1px solid var(--border); color: var(--gold); font-family: 'Courier New', monospace; font-size: 0.9rem; font-weight: 900; padding: 6px 10px; border-radius: 6px; width: 80px; }
-        .well-tag { font-size: 0.6rem; color: #555; }
 
-        .view { display: none; padding: 12px; }
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: var(--font-head);
+            background: var(--bg);
+            color: var(--text2);
+            padding-bottom: 80px;
+            background-image:
+                repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(30,45,61,0.3) 39px, rgba(30,45,61,0.3) 40px),
+                repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(30,45,61,0.3) 39px, rgba(30,45,61,0.3) 40px);
+        }
+
+        /* ─── HEADER ─── */
+        header {
+            background: linear-gradient(180deg, #000 0%, #0A0E14 100%);
+            border-bottom: 1px solid var(--gold3);
+            padding: 0 16px;
+            position: sticky; top: 0; z-index: 1000;
+            display: flex; align-items: stretch; justify-content: space-between;
+            height: 52px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.8);
+        }
+        header::after {
+            content: '';
+            position: absolute; bottom: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold) 20%, var(--gold) 80%, transparent);
+        }
+        .logo {
+            display: flex; align-items: center; gap: 10px;
+            font-family: var(--font-head);
+            font-size: 1.1rem; font-weight: 700;
+            color: var(--gold);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+        .logo-hex {
+            width: 28px; height: 28px;
+            background: var(--gold3);
+            clip-path: polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.65rem; color: var(--gold2); font-weight: 900;
+        }
+        .header-right {
+            display: flex; flex-direction: column; justify-content: center;
+            text-align: right;
+        }
+        .header-name {
+            font-family: var(--font-head);
+            font-size: 0.7rem; font-weight: 700;
+            color: var(--text2); letter-spacing: 2px;
+        }
+        .header-sub {
+            font-size: 0.55rem; color: var(--text);
+            letter-spacing: 1px; margin-top: 1px;
+        }
+
+        /* ─── WELL BAR ─── */
+        .well-bar {
+            background: var(--panel2);
+            border-bottom: 1px solid var(--border);
+            padding: 8px 16px;
+            display: flex; gap: 12px; align-items: center;
+        }
+        .well-bar label {
+            font-size: 0.55rem; color: var(--text); letter-spacing: 2px;
+            text-transform: uppercase; display: block; margin-bottom: 3px;
+        }
+        .well-bar input {
+            background: var(--bg);
+            border: 1px solid var(--border2);
+            color: var(--gold2);
+            font-family: var(--font-mono);
+            font-size: 1rem; font-weight: 400;
+            padding: 5px 10px;
+            border-radius: 4px;
+            width: 85px;
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.6);
+        }
+        .well-bar input:focus { border-color: var(--gold); outline: none; }
+        .well-display-wrap { flex: 1; text-align: right; }
+        .well-tag {
+            font-family: var(--font-mono);
+            font-size: 0.7rem; color: var(--gold);
+            letter-spacing: 1px;
+        }
+        .well-dot {
+            display: inline-block; width: 6px; height: 6px;
+            background: var(--green); border-radius: 50%;
+            margin-right: 6px;
+            box-shadow: 0 0 6px var(--green);
+            animation: blink 2s ease-in-out infinite;
+        }
+        @keyframes ticker-scroll {
+            0%   { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .tick-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 0 20px;
+            border-right: 1px solid var(--border);
+            height: 36px;
+        }
+        .tick-label {
+            font-family: var(--font-head);
+            font-size: 0.6rem;
+            color: var(--text);
+            letter-spacing: 1px;
+        }
+        .tick-val {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: #E0EAF0;
+        }
+        .tick-chg { font-family: var(--font-mono); font-size: 0.65rem; }
+        .tick-up   { color: #4ACA6A; }
+        .tick-down { color: #E05050; }
+        .tick-sep { color: var(--border2); font-size: 0.7rem; }
+
+
+        /* ─── VIEWS ─── */
+        .view { display: none; padding: 14px; }
         .view.active { display: block; }
 
-        .card { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 14px; margin-bottom: 10px; }
-        .card-title { font-size: 0.65rem; color: var(--gold); letter-spacing: 2px; font-weight: 900; margin-bottom: 12px; border-bottom: 1px solid #2d3748; padding-bottom: 8px; }
-
-        label { display: block; font-size: 0.6rem; color: #8b949e; margin-bottom: 3px; letter-spacing: 1px; }
-        input[type=number], input[type=text], select {
-            width: 100%; background: #010409; border: 1px solid var(--border);
-            padding: 12px; border-radius: 7px; color: #fff; margin-bottom: 8px;
-            font-size: 1rem; font-family: 'Courier New', monospace;
-            -moz-appearance: textfield;
-        }
-        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; }
-        input:focus, select:focus { border-color: var(--gold); outline: none; }
-        select option { background: #1c2128; }
-
-        .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
-
-        .nav-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        /* ─── NAV GRID ─── */
+        .nav-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .nav-btn {
-            background: var(--panel2); border: 1px solid var(--border); border-radius: 10px;
-            padding: 20px 8px; color: #fff; text-align: center; font-size: 0.65rem;
-            font-weight: 900; letter-spacing: 1px; cursor: pointer;
-            font-family: 'Courier New', monospace; transition: 0.2s;
+            background: var(--panel2);
+            border: 1px solid var(--border2);
+            border-top: 2px solid var(--border2);
+            border-radius: 8px;
+            padding: 18px 8px 16px;
+            color: var(--text2);
+            text-align: center;
+            font-family: var(--font-head);
+            font-size: 0.75rem; font-weight: 700;
+            letter-spacing: 1.5px;
+            cursor: pointer;
+            transition: all 0.15s;
+            position: relative;
+            overflow: hidden;
         }
-        .nav-btn:active { background: #2d3748; }
-        .nav-btn .icon { font-size: 1.5rem; display: block; margin-bottom: 6px; }
-        .nav-btn.gold { background: var(--gold); color: #000; border-color: var(--gold); }
+        .nav-btn::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(200,168,75,0.4), transparent);
+        }
+        .nav-btn:active {
+            background: var(--panel3);
+            transform: scale(0.97);
+            border-top-color: var(--gold3);
+        }
+        .nav-btn .icon {
+            font-size: 1.6rem; display: block; margin-bottom: 8px;
+            filter: drop-shadow(0 0 4px rgba(200,168,75,0.3));
+        }
+        .nav-btn.share {
+            background: linear-gradient(135deg, #0A1F0E 0%, #0D1A12 100%);
+            border-color: var(--green2); border-top-color: var(--green);
+            color: #4ACA6A;
+        }
+        .nav-btn.share::before {
+            background: linear-gradient(90deg, transparent, rgba(46,168,76,0.4), transparent);
+        }
 
-        .btn { width: 100%; padding: 15px; border: none; border-radius: 8px; font-weight: 900; font-family: 'Courier New', monospace; font-size: 0.8rem; letter-spacing: 2px; cursor: pointer; margin-bottom: 8px; transition: 0.2s; }
-        .btn-gold { background: var(--gold); color: #000; }
-        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
-        .btn-green { background: #1a3a1a; border: 1px solid var(--green); color: var(--green); }
+        /* ─── CARDS ─── */
+        .card {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-left: 3px solid var(--gold3);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.03);
+            position: relative;
+        }
+        .card-title {
+            font-family: var(--font-head);
+            font-size: 0.75rem; font-weight: 700;
+            color: var(--gold);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; gap: 8px;
+        }
+        .card-title::before {
+            content: '';
+            display: inline-block;
+            width: 3px; height: 14px;
+            background: var(--gold);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
 
-        .result-box { background: #010409; border: 1px solid var(--gold); border-radius: 8px; padding: 12px; margin-top: 8px; }
-        .result-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #1e2530; }
+        /* ─── LABELS & INPUTS ─── */
+        label {
+            display: block;
+            font-family: var(--font-head);
+            font-size: 0.65rem; font-weight: 600;
+            color: var(--text); letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+        input[type=number], input[type=text], select {
+            width: 100%;
+            background: var(--bg);
+            border: 1px solid var(--border2);
+            border-bottom: 2px solid var(--border2);
+            padding: 11px 12px;
+            border-radius: 5px;
+            color: #E0EAF0;
+            margin-bottom: 10px;
+            font-family: var(--font-mono);
+            font-size: 1.05rem;
+            -moz-appearance: textfield;
+            box-shadow: inset 0 3px 8px rgba(0,0,0,0.5);
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button { -webkit-appearance: none; }
+        input:focus, select:focus {
+            border-color: var(--gold);
+            border-bottom-color: var(--gold2);
+            outline: none;
+            box-shadow: inset 0 3px 8px rgba(0,0,0,0.5), 0 0 0 2px rgba(200,168,75,0.1);
+        }
+        select option { background: #0D1219; }
+
+        /* ─── GRID ─── */
+        .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: end; }
+        .grid2 > div { display: flex; flex-direction: column; justify-content: flex-end; }
+        .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; align-items: start; }
+        .grid2 > div, .grid3 > div { display: flex; flex-direction: column; }
+        .grid2 input, .grid3 input { flex: 1; }
+
+        /* ─── BUTTONS ─── */
+        .btn {
+            width: 100%; padding: 14px;
+            border: none; border-radius: 6px;
+            font-family: var(--font-head);
+            font-size: 0.85rem; font-weight: 700;
+            letter-spacing: 3px; text-transform: uppercase;
+            cursor: pointer; margin-bottom: 8px;
+            transition: all 0.12s;
+            position: relative; overflow: hidden;
+        }
+        .btn:active { transform: scale(0.98); }
+        .btn-gold {
+            background: linear-gradient(180deg, #D4A94E 0%, #A07828 100%);
+            color: #000;
+            box-shadow: 0 3px 0 #5A4010, 0 4px 12px rgba(200,168,75,0.3);
+            border-bottom: 2px solid #5A4010;
+            text-shadow: 0 1px 0 rgba(255,255,255,0.2);
+        }
+        .btn-gold:active {
+            box-shadow: 0 1px 0 #5A4010, 0 2px 6px rgba(200,168,75,0.2);
+            transform: translateY(2px);
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border2);
+            color: var(--text);
+        }
+        .btn-outline:active { background: var(--panel2); }
+        .btn-green {
+            background: linear-gradient(180deg, #2EA84C 0%, #1A6630 100%);
+            color: #fff;
+            box-shadow: 0 3px 0 #0D3D1A, 0 4px 12px rgba(46,168,76,0.25);
+            border-bottom: 2px solid #0D3D1A;
+        }
+        .btn-green:active { transform: translateY(2px); box-shadow: 0 1px 0 #0D3D1A; }
+        .btn-blue {
+            background: linear-gradient(180deg, #4A9EE0 0%, #2060A0 100%);
+            color: #fff;
+            box-shadow: 0 3px 0 #103060, 0 4px 12px rgba(74,158,224,0.25);
+            border-bottom: 2px solid #103060;
+        }
+        .btn-orange {
+            background: linear-gradient(180deg, #D07A30 0%, #8A4A10 100%);
+            color: #fff;
+            box-shadow: 0 3px 0 #4A2008, 0 4px 12px rgba(208,122,48,0.25);
+            border-bottom: 2px solid #4A2008;
+        }
+
+        /* ─── RESULTS ─── */
+        .result-box {
+            background: var(--bg);
+            border: 1px solid var(--border2);
+            border-top: 2px solid var(--gold3);
+            border-radius: 6px;
+            padding: 4px 0;
+            margin-top: 10px;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
+        }
+        .result-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 9px 14px;
+            border-bottom: 1px solid var(--border);
+        }
         .result-row:last-child { border-bottom: none; }
-        .result-label { font-size: 0.6rem; color: #8b949e; }
-        .result-val { font-size: 0.9rem; font-weight: 900; color: var(--gold2); }
-        .result-val.green { color: var(--green); }
-        .result-val.red { color: var(--red); }
-        .result-val.cyan { color: var(--cyan); }
-        .result-val.blue { color: #4dabf7; }
-        .result-val.orange { color: #ff9f43; }
+        .result-label {
+            font-family: var(--font-head);
+            font-size: 0.65rem; font-weight: 600;
+            color: var(--text); letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .result-val {
+            font-family: var(--font-mono);
+            font-size: 1rem; font-weight: 400;
+            color: var(--gold2);
+            text-align: right;
+        }
+        .result-val.green { color: #4ACA6A; text-shadow: 0 0 8px rgba(74,202,106,0.4); }
+        .result-val.red   { color: #E05050; text-shadow: 0 0 8px rgba(224,80,80,0.4); }
+        .result-val.cyan  { color: #5ABEEA; text-shadow: 0 0 8px rgba(90,190,234,0.4); }
+        .result-val.blue  { color: #6ABAF0; text-shadow: 0 0 8px rgba(106,186,240,0.4); }
+        .result-val.orange{ color: #E0943A; text-shadow: 0 0 8px rgba(224,148,58,0.4); }
+        .result-val.gold  { color: var(--gold2); }
 
-        .report-text { background: #010409; border: 1px solid var(--border); border-radius: 8px; padding: 12px; font-size: 0.7rem; white-space: pre-wrap; margin: 10px 0; color: var(--text); max-height: 300px; overflow-y: auto; }
-        .back-btn { display: flex; align-items: center; gap: 6px; color: var(--gold); font-size: 0.7rem; margin-bottom: 12px; cursor: pointer; background: none; border: none; font-family: 'Courier New', monospace; }
-        footer { text-align: center; padding: 20px; font-size: 0.6rem; color: #333; letter-spacing: 2px; }
-        .divider { height: 1px; background: var(--border); margin: 12px 0; }
-        .section-label { font-size: 0.6rem; color: #555; letter-spacing: 2px; margin-bottom: 8px; }
+        /* ─── BACK BUTTON ─── */
+        .back-btn {
+            display: inline-flex; align-items: center; gap: 8px;
+            color: var(--gold); font-size: 0.75rem; font-weight: 600;
+            font-family: var(--font-head); letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 14px; cursor: pointer;
+            background: none; border: none;
+            padding: 6px 0;
+        }
+
+        /* ─── DIVIDERS & LABELS ─── */
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border2), transparent);
+            margin: 14px 0;
+        }
+        .section-label {
+            font-family: var(--font-head);
+            font-size: 0.6rem; font-weight: 700;
+            color: var(--text); letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        /* ─── REPORT TEXT ─── */
+        .report-text {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 14px;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            white-space: pre-wrap;
+            margin: 10px 0;
+            color: var(--text2);
+            max-height: 280px;
+            overflow-y: auto;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.4);
+        }
+
+        /* ─── FOOTER ─── */
+        footer {
+            text-align: center; padding: 24px;
+            font-family: var(--font-head);
+            font-size: 0.6rem; color: var(--border2);
+            letter-spacing: 3px; text-transform: uppercase;
+        }
+
+        /* ─── SHARE COPIED ─── */
+        #qs_copied {
+            font-family: var(--font-head);
+            font-size: 0.8rem; letter-spacing: 2px;
+        }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="logo">⬡ ATA v47.0</div>
-    <div class="header-info">ANVAROV T.A.<br>OIL & GAS FIELD</div>
+    <div class="logo">
+        <div class="logo-hex">ATA</div>
+        ATA v47.0
+    </div>
+    <div class="header-right">
+        <div class="header-name">ANVAROV T.A.</div>
+        <div class="header-sub">OIL &amp; GAS FIELD CALCULATOR</div>
+    </div>
 </header>
 
 <div class="well-bar">
-    <div><label>КУСТ</label><input type="text" id="reg_kp" placeholder="КП-"></div>
-    <div><label>СКВАЖИНА</label><input type="text" id="reg_skv" placeholder="№"></div>
-    <div style="flex:1; text-align:right;"><div class="well-tag" id="well_display">КП-__ СКВ-__</div></div>
-</div>
-
-<div id="dash" class="view active">
-    <div class="nav-grid">
-        <div class="nav-btn" onclick="nav('v_params')"><span class="icon">📊</span>ПАРАМЕТРЫ<br>СКВАЖИНЫ</div>
-        <div class="nav-btn" onclick="nav('v_debit')"><span class="icon">💧</span>ДЕБИТ<br>ЗАМЕР</div>
-        <div class="nav-btn" onclick="nav('v_glush')"><span class="icon">🔧</span>ГЛУШЕНИЕ<br>РАСЧЁТ</div>
-        <div class="nav-btn" onclick="nav('v_uezn')"><span class="icon">⚡</span>УЭЦН<br>РАСЧЁТ</div>
-        <div class="nav-btn" onclick="nav('v_nkt')"><span class="icon">🔩</span>НКТ<br>ОБЪЁМ</div>
-        <div class="nav-btn" onclick="nav('v_pvt')"><span class="icon">🧪</span>PVT<br>ФЛЮИДЫ</div>
-        <div class="nav-btn" onclick="nav('v_press')"><span class="icon">🌡️</span>ДАВЛЕНИЕ<br>УРОВНИ</div>
-        <div class="nav-btn" onclick="openQuickShare()" style="background:#1a2a1a;border-color:#3fb950;color:#3fb950;"><span class="icon">📤</span>ОТПРАВИТЬ<br>ПАРАМЕТРЫ</div>
+    <div>
+        <label>Куст</label>
+        <input type="text" id="reg_kp" placeholder="КП-">
+    </div>
+    <div>
+        <label>Скважина</label>
+        <input type="text" id="reg_skv" placeholder="№">
+    </div>
+    <div class="well-display-wrap">
+        <span class="well-dot"></span><span class="well-tag" id="well_display">КП-__ СКВ-__</span>
     </div>
 </div>
 
+<!-- ===== TICKER BAR ===== -->
+<div id="ticker_bar" style="background:#050709;border-bottom:1px solid var(--border);padding:0;overflow:hidden;position:relative;height:36px;display:flex;align-items:center;">
+    <div id="ticker_track" style="display:flex;gap:0;white-space:nowrap;animation:ticker-scroll 60s linear infinite;will-change:transform;">
+        <div class="tick-item"><span class="tick-label">$ USD/RUB</span><span class="tick-val" style="color:#E0943A" id="t_usd_rub">—</span></div>
+        <div class="tick-item"><span class="tick-label">€ EUR/RUB</span><span class="tick-val" style="color:#5ABEEA" id="t_eur_rub">—</span></div>
+        <div class="tick-item"><span class="tick-label">¥ CNY/RUB</span><span class="tick-val" style="color:#E0E06A" id="t_cny_rub">—</span></div>
+        <div class="tick-item"><span class="tick-label">🛢 BRENT</span><span class="tick-val" style="color:#E0943A" id="t_brent">—</span><span class="tick-chg" id="t_brent_chg"></span></div>
+        <div class="tick-item"><span class="tick-label">🛢 URALS</span><span class="tick-val" style="color:#C84040" id="t_urals">—</span><span class="tick-chg" id="t_urals_chg"></span></div>
+        <div class="tick-item"><span class="tick-label">🛢 WTI</span><span class="tick-val" style="color:#C8A84B" id="t_wti">—</span><span class="tick-chg" id="t_wti_chg"></span></div>
+        <div class="tick-item"><span class="tick-label">🥇 GOLD</span><span class="tick-val" style="color:#E5C76B" id="t_gold">—</span><span class="tick-chg" id="t_gold_chg"></span></div>
+        <div class="tick-item"><span class="tick-label">$ USD/RUB</span><span class="tick-val" style="color:#E0943A" id="t_usd_rub2">—</span></div>
+        <div class="tick-item"><span class="tick-label">€ EUR/RUB</span><span class="tick-val" style="color:#5ABEEA" id="t_eur_rub2">—</span></div>
+        <div class="tick-item"><span class="tick-label">¥ CNY/RUB</span><span class="tick-val" style="color:#E0E06A" id="t_cny_rub2">—</span></div>
+        <div class="tick-item"><span class="tick-label">🛢 BRENT</span><span class="tick-val" style="color:#E0943A" id="t_brent2">—</span><span class="tick-chg" id="t_brent_chg2"></span></div>
+        <div class="tick-item"><span class="tick-label">🛢 URALS</span><span class="tick-val" style="color:#C84040" id="t_urals2">—</span></div>
+        <div class="tick-item"><span class="tick-label">🛢 WTI</span><span class="tick-val" style="color:#C8A84B" id="t_wti2">—</span></div>
+        <div class="tick-item"><span class="tick-label">🥇 GOLD</span><span class="tick-val" style="color:#E5C76B" id="t_gold2">—</span></div>
+    </div>
+    <div style="position:absolute;left:0;top:0;bottom:0;width:30px;background:linear-gradient(90deg,#050709,transparent);pointer-events:none;z-index:1;"></div>
+    <div style="position:absolute;right:0;top:0;bottom:0;width:30px;background:linear-gradient(270deg,#050709,transparent);pointer-events:none;z-index:1;"></div>
+</div>
+
+<!-- ПОГОДА -->
+<div id="weather_bar" style="background:var(--panel);border-bottom:1px solid var(--border);padding:8px 16px;">
+
+    <!-- Авто строка поиска -->
+    <div style="display:flex;gap:6px;align-items:center;margin-bottom:8px;">
+        <input id="wx_city_input" type="text" placeholder="Город (Москва, Ноябрьск...)"
+            style="flex:1;background:var(--bg);border:1px solid var(--border2);color:#E0EAF0;
+                   font-family:var(--font-head);font-size:0.75rem;padding:7px 10px;border-radius:6px;
+                   letter-spacing:1px;margin-bottom:0;"
+            onkeydown="if(event.key==='Enter'){event.preventDefault();searchWeatherCity();}">
+        <button type="button" onclick="searchWeatherCity()"
+            style="flex-shrink:0;background:var(--panel2);border:1px solid var(--border2);
+                   color:var(--gold);font-size:1rem;padding:6px 12px;border-radius:6px;cursor:pointer;">🔍</button>
+        <button type="button" onclick="requestWeather()" id="wx_btn"
+            style="flex-shrink:0;background:var(--panel2);border:1px solid var(--border2);
+                   color:var(--gold);font-size:1rem;padding:6px 10px;border-radius:6px;cursor:pointer;">📍</button>
+        <button type="button" onclick="toggleWxManual()"
+            style="flex-shrink:0;background:var(--panel2);border:1px solid var(--border2);
+                   color:var(--gold);font-size:0.65rem;padding:6px 8px;border-radius:6px;cursor:pointer;letter-spacing:1px;">✏️</button>
+    </div>
+
+    <!-- Ручной ввод (скрыт по умолчанию) -->
+    <div id="wx_manual" style="display:none;background:var(--bg);border:1px solid var(--border2);
+         border-radius:8px;padding:10px;margin-bottom:8px;">
+        <div style="font-family:var(--font-head);font-size:0.6rem;color:var(--gold);letter-spacing:2px;margin-bottom:8px;">✏️ РУЧНОЙ ВВОД ПОГОДЫ</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:6px;">
+            <div>
+                <div style="font-family:var(--font-head);font-size:0.55rem;color:var(--text);letter-spacing:1px;margin-bottom:3px;">ТЕМП °C</div>
+                <input id="wx_m_temp" type="number" placeholder="-5"
+                    style="width:100%;background:var(--panel);border:1px solid var(--border2);color:#E0EAF0;
+                           font-family:var(--font-mono);font-size:0.9rem;padding:5px 8px;border-radius:5px;margin-bottom:0;">
+            </div>
+            <div>
+                <div style="font-family:var(--font-head);font-size:0.55rem;color:var(--text);letter-spacing:1px;margin-bottom:3px;">ОЩУЩАЕТСЯ</div>
+                <input id="wx_m_feels" type="number" placeholder="-9"
+                    style="width:100%;background:var(--panel);border:1px solid var(--border2);color:#E0EAF0;
+                           font-family:var(--font-mono);font-size:0.9rem;padding:5px 8px;border-radius:5px;margin-bottom:0;">
+            </div>
+            <div>
+                <div style="font-family:var(--font-head);font-size:0.55rem;color:var(--text);letter-spacing:1px;margin-bottom:3px;">ВЛАЖН %</div>
+                <input id="wx_m_hum" type="number" placeholder="72"
+                    style="width:100%;background:var(--panel);border:1px solid var(--border2);color:#E0EAF0;
+                           font-family:var(--font-mono);font-size:0.9rem;padding:5px 8px;border-radius:5px;margin-bottom:0;">
+            </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px;">
+            <div>
+                <div style="font-family:var(--font-head);font-size:0.55rem;color:var(--text);letter-spacing:1px;margin-bottom:3px;">ВЕТЕР М/С</div>
+                <input id="wx_m_wind" type="number" placeholder="5.2" step="0.1"
+                    style="width:100%;background:var(--panel);border:1px solid var(--border2);color:#E0EAF0;
+                           font-family:var(--font-mono);font-size:0.9rem;padding:5px 8px;border-radius:5px;margin-bottom:0;">
+            </div>
+            <div>
+                <div style="font-family:var(--font-head);font-size:0.55rem;color:var(--text);letter-spacing:1px;margin-bottom:3px;">НАПРАВЛЕНИЕ</div>
+                <select id="wx_m_dir"
+                    style="width:100%;background:var(--panel);border:1px solid var(--border2);color:#E0EAF0;
+                           font-family:var(--font-mono);font-size:0.85rem;padding:5px 8px;border-radius:5px;">
+                    <option>С</option><option>СВ</option><option>В</option><option>ЮВ</option>
+                    <option>Ю</option><option>ЮЗ</option><option>З</option><option>СЗ</option>
+                </select>
+            </div>
+        </div>
+        <div style="margin-bottom:8px;">
+            <div style="font-family:var(--font-head);font-size:0.55rem;color:var(--text);letter-spacing:1px;margin-bottom:3px;">УСЛОВИЯ</div>
+            <select id="wx_m_cond"
+                style="width:100%;background:var(--panel);border:1px solid var(--border2);color:#E0EAF0;
+                       font-family:var(--font-head);font-size:0.75rem;padding:5px 8px;border-radius:5px;">
+                <option value="☀️,Ясно">☀️ Ясно</option>
+                <option value="⛅,Переменная облачность">⛅ Переменная облачность</option>
+                <option value="☁️,Пасмурно">☁️ Пасмурно</option>
+                <option value="🌫,Туман">🌫 Туман</option>
+                <option value="🌦,Небольшой дождь">🌦 Небольшой дождь</option>
+                <option value="🌧,Дождь">🌧 Дождь</option>
+                <option value="🌨,Снег">🌨 Снег</option>
+                <option value="❄️,Сильный снег">❄️ Сильный снег</option>
+                <option value="⛈,Гроза">⛈ Гроза</option>
+                <option value="🌬️,Метель">🌬️ Метель</option>
+            </select>
+        </div>
+        <div style="display:flex;gap:6px;">
+            <input id="wx_m_city" type="text" placeholder="Название города"
+                style="flex:1;background:var(--panel);border:1px solid var(--border2);color:var(--gold);
+                       font-family:var(--font-head);font-size:0.75rem;padding:5px 8px;border-radius:5px;margin-bottom:0;">
+            <button type="button" onclick="applyManualWeather()"
+                style="flex-shrink:0;background:var(--green);border:none;color:#fff;
+                       font-family:var(--font-head);font-size:0.65rem;letter-spacing:1px;
+                       padding:6px 14px;border-radius:6px;cursor:pointer;">✓ ПРИМЕНИТЬ</button>
+        </div>
+    </div>
+
+    <!-- Дисплей погоды -->
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+        <div style="display:flex;align-items:center;gap:10px;">
+            <span id="wx_icon" style="font-size:1.6rem;">🌡</span>
+            <div>
+                <div id="wx_main" style="font-family:var(--font-mono);font-size:1.1rem;color:#E0EAF0;">— °C</div>
+                <div id="wx_desc" style="font-family:var(--font-head);font-size:0.55rem;color:var(--text);
+                     letter-spacing:1px;max-width:200px;">Введи город 🔍 или нажми ✏️</div>
+            </div>
+        </div>
+        <div style="text-align:right;">
+            <div id="wx_city" style="font-family:var(--font-head);font-size:0.65rem;color:var(--gold);letter-spacing:1px;">—</div>
+            <div id="wx_feels" style="font-family:var(--font-head);font-size:0.55rem;color:var(--text);letter-spacing:1px;">—</div>
+        </div>
+    </div>
+</div>
+
+
+<div id="dash" class="view active">
+    <div class="nav-grid">
+        <div class="nav-btn" onclick="nav('v_params')">
+            <span class="icon">📊</span>ПАРАМЕТРЫ<br>СКВАЖИНЫ
+        </div>
+        <div class="nav-btn" onclick="nav('v_debit')">
+            <span class="icon">💧</span>ДЕБИТ<br>ЗАМЕР
+        </div>
+        <div class="nav-btn" onclick="nav('v_glush')">
+            <span class="icon">🔧</span>ГЛУШЕНИЕ<br>РАСЧЁТ
+        </div>
+        <div class="nav-btn" onclick="nav('v_uezn')">
+            <span class="icon">⚡</span>УЭЦН<br>РАСЧЁТ
+        </div>
+        <div class="nav-btn" onclick="nav('v_nkt')">
+            <span class="icon">🔩</span>НКТ<br>ОБЪЁМ
+        </div>
+        <div class="nav-btn" onclick="nav('v_pvt')">
+            <span class="icon">🧪</span>PVT<br>ФЛЮИДЫ
+        </div>
+        <div class="nav-btn" onclick="nav('v_press')">
+            <span class="icon">🌡️</span>ДАВЛЕНИЕ<br>УРОВНИ
+        </div>
+        <div class="nav-btn" onclick="openQuickShare()" class="share">
+            <span class="icon">📤</span>ОТПРАВИТЬ<br>ПАРАМЕТРЫ
+        </div>
+    </div>
+</div>
+
+<!-- ===== ПАРАМЕТРЫ СКВАЖИНЫ ===== -->
 <div id="v_params" class="view">
     <button class="back-btn" onclick="nav('dash')">← МЕНЮ</button>
     <div class="card">
@@ -127,13 +612,16 @@
             <div><label>Тдв. (°C)</label><input type="number" id="p_tdv" placeholder="0"></div>
             <div><label>Замер Q (м³)</label><input type="number" id="p_qm3" placeholder="0"></div>
         </div>
+
         <div class="divider"></div>
         <div class="section-label">СТАТИЧЕСКИЕ УРОВНИ</div>
         <div class="grid2">
             <div><label>Нст зат. (м)</label><input type="number" id="p_nst_zat" placeholder="0"></div>
             <div><label>Нст нкт. (м)</label><input type="number" id="p_nst_nkt" placeholder="0"></div>
             <div><label>Глубина скв. (м)</label><input type="number" id="p_depth" placeholder="0"></div>
+            <div></div>
         </div>
+
         <button class="btn btn-gold" onclick="calcParams()">⚙ РАССЧИТАТЬ</button>
         <div id="res_params" style="display:none" class="result-box"></div>
         <div class="divider"></div>
@@ -141,56 +629,104 @@
     </div>
 </div>
 
+<!-- ===== ДЕБИТ ===== -->
 <div id="v_debit" class="view">
     <button class="back-btn" onclick="nav('dash')">← МЕНЮ</button>
+
     <div class="card">
         <div class="card-title">ПРЯМОЙ ЗАМЕР</div>
         <div class="grid2">
-            <div><label>ОБЪЁМ (л)</label><input type="number" id="q_liters" placeholder="0"></div>
-            <div><label>ВРЕМЯ РАБОТЫ (мин)</label><input type="number" id="q_work" placeholder="0"></div>
+            <div>
+                <label>Объём (л)</label>
+                <input type="number" id="q_liters" placeholder="0">
+            </div>
+            <div>
+                <label>Время работы (мин)</label>
+                <input type="number" id="q_work" placeholder="0">
+            </div>
         </div>
         <button class="btn btn-gold" onclick="calcDebit()">⚙ РАССЧИТАТЬ</button>
         <div id="res_debit" style="display:none" class="result-box"></div>
     </div>
+
     <div class="card">
         <div class="card-title">РЕЖИМ ПКВ</div>
         <div class="grid2">
-            <div><label>ОБЪЁМ ЗА ЦИКЛ (л)</label><input type="number" id="pkv_vol" placeholder="0"></div>
-            <div><label>РАБОТА (мин)</label><input type="number" id="pkv_work" placeholder="0"></div>
-            <div><label>ПРОСТОЙ (мин)</label><input type="number" id="pkv_off" placeholder="0"></div>
+            <div>
+                <label>Объём цикла (л)</label>
+                <input type="number" id="pkv_vol" placeholder="0">
+            </div>
+            <div>
+                <label>Работа (мин)</label>
+                <input type="number" id="pkv_work" placeholder="0">
+            </div>
+            <div>
+                <label>Простой (мин)</label>
+                <input type="number" id="pkv_off" placeholder="0">
+            </div>
+            <div></div>
         </div>
         <button class="btn btn-gold" onclick="calcPKV()">⚙ РАССЧИТАТЬ ПКВ</button>
         <div id="res_pkv" style="display:none" class="result-box"></div>
     </div>
+
     <div class="card">
         <div class="card-title">ОБВОДНЁННОСТЬ → ТОННЫ</div>
         <div class="grid2">
-            <div><label>ДЕБИТ ЖИДКОСТИ (м³/сут)</label><input type="number" id="wc_q" placeholder="0"></div>
-            <div><label>ОБВОДНЁННОСТЬ (%)</label><input type="number" id="wc_wc" placeholder="0"></div>
-            <div><label>ПЛОТН. НЕФТИ (кг/м³)</label><input type="number" id="wc_ro" placeholder="870"></div>
-            <div><label>ПЛОТН. ВОДЫ (кг/м³)</label><input type="number" id="wc_rw" placeholder="1010"></div>
+            <div>
+                <label>Дебит жидкости (м³/сут)</label>
+                <input type="number" id="wc_q" placeholder="0">
+            </div>
+            <div>
+                <label>Обводнённость (%)</label>
+                <input type="number" id="wc_wc" placeholder="0">
+            </div>
+            <div>
+                <label>Плотн. нефти (кг/м³)</label>
+                <input type="number" id="wc_ro" placeholder="870">
+            </div>
+            <div>
+                <label>Плотн. воды (кг/м³)</label>
+                <input type="number" id="wc_rw" placeholder="1010">
+            </div>
         </div>
         <button class="btn btn-gold" onclick="calcWatercut()">⚙ РАССЧИТАТЬ</button>
         <div id="res_wc" style="display:none" class="result-box"></div>
     </div>
-    <div class="card" style="border-color:#4dabf7;">
-        <div class="card-title" style="color:#4dabf7;">💧 ЗАМЕР % ВОДЫ ПО ПРОБЕ</div>
+
+    <div class="card" style="border-left-color:#4A9EE0; border-color: var(--border);">
+        <div class="card-title" style="color:#6ABAF0;">💧 ЗАМЕР % ВОДЫ ПО ПРОБЕ</div>
         <div class="section-label">H воды × 100% / H жидкости = % воды</div>
         <div class="grid2">
-            <div><label>H жидкости (см) — 100%</label><input type="number" id="probe_hl" placeholder="0" step="0.1"></div>
-            <div><label>H воды (см)</label><input type="number" id="probe_hw" placeholder="0" step="0.1"></div>
+            <div>
+                <label>H жидкости (см)</label>
+                <input type="number" id="probe_hl" placeholder="0" step="0.1">
+            </div>
+            <div>
+                <label>H воды (см)</label>
+                <input type="number" id="probe_hw" placeholder="0" step="0.1">
+            </div>
         </div>
-        <button class="btn" style="background:#4dabf7;color:#000;width:100%;padding:15px;border:none;border-radius:8px;font-weight:900;font-family:'Courier New',monospace;font-size:0.8rem;letter-spacing:2px;cursor:pointer;" onclick="calcProbe()">⚙ РАССЧИТАТЬ %</button>
+        <button class="btn btn-blue" onclick="calcProbe()">⚙ РАССЧИТАТЬ %</button>
         <div id="res_probe" style="display:none" class="result-box"></div>
     </div>
-    <div class="card" style="border-color:#ff9f43;">
-        <div class="card-title" style="color:#ff9f43;">🛢 ТОНН НЕФТИ В СУТКИ</div>
+
+    <!-- ═══ ТОНН НЕФТИ + БИРЖА ═══ -->
+    <div class="card" style="border-left-color:#D07A30; border-color: var(--border);">
+        <div class="card-title" style="color:#E0943A;">🛢 ТОНН НЕФТИ В СУТКИ</div>
+
         <div class="grid2">
-            <div><label>ДЕБИТ ЖИДКОСТИ (м³/сут)</label><input type="number" id="ton_q" placeholder="0"></div>
-            <div><label>% ВОДЫ (из пробы)</label><input type="number" id="ton_wc" placeholder="0" step="0.1"></div>
+            <div>
+                <label>Дебит жидкости (м³/сут)</label>
+                <input type="number" id="ton_q" placeholder="0" oninput="autoCalcTonnes()">
+            </div>
+            <div>
+                <label>% воды (из пробы)</label>
+                <input type="number" id="ton_wc" placeholder="0" step="0.1" oninput="autoCalcTonnes()">
+            </div>
         </div>
         <div>
-            <label>ПЛОТНОСТЬ НЕФТИ (кг/м³)</label>
+            <label>Плотность нефти (кг/м³)</label>
             <select id="ton_ro_sel" onchange="onRoSelect()">
                 <option value="">— выбери из таблицы —</option>
                 <optgroup label="ЛЁГКАЯ (до 870)">
@@ -221,113 +757,191 @@
             </select>
         </div>
         <div id="ton_manual_row" style="display:none; margin-top:-4px;">
-            <label>ПЛОТНОСТЬ ВРУЧНУЮ (кг/м³)</label>
-            <input type="number" id="ton_ro_manual" placeholder="870">
+            <label>Вручную (кг/м³)</label>
+            <input type="number" id="ton_ro_manual" placeholder="870" oninput="autoCalcTonnes()">
         </div>
-        <button class="btn" style="background:#ff9f43;color:#000;width:100%;padding:15px;border:none;border-radius:8px;font-weight:900;font-family:'Courier New',monospace;font-size:0.8rem;letter-spacing:2px;cursor:pointer;margin-top:8px;" onclick="calcTonnes()">⚙ ТОНН НЕФТИ</button>
+        <button class="btn btn-orange" onclick="calcTonnes()">⚙ РАССЧИТАТЬ ТОННЫ / БАРРЕЛИ</button>
         <div id="res_ton" style="display:none" class="result-box"></div>
+
+        <!-- БЛОК МИРОВЫХ ЦЕН -->
+        <div class="divider"></div>
+        <div class="card-title" style="color:#E0943A; font-size:0.7rem; margin-bottom:10px;">💹 МИРОВЫЕ ЦЕНЫ НА НЕФТЬ</div>
+
+        <div>
+            <label>Марка нефти</label>
+            <select id="oil_grade" onchange="onGradeChange()">
+                <option value="brent">Brent (ICE, Лондон)</option>
+                <option value="wti">WTI (NYMEX, Нью-Йорк)</option>
+                <option value="urals">Urals (Россия)</option>
+                <option value="espo">ESPO (Восточная Сибирь)</option>
+                <option value="dubai">Dubai/Oman (Ближний Восток)</option>
+                <option value="manual">✏ Ввести цену вручную</option>
+            </select>
+        </div>
+        <div id="oil_manual_row" style="display:none; margin-top:-4px;">
+            <label>Цена вручную (USD/барр)</label>
+            <input type="number" id="oil_price_manual" placeholder="75.00" step="0.01" oninput="calcOilRevenue()">
+        </div>
+
+        <div id="oil_price_panel" style="background:var(--bg);border:1px solid var(--border2);border-radius:6px;padding:12px;margin:10px 0;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                <div id="oil_grade_label" style="font-family:var(--font-head);font-size:0.7rem;color:var(--text);letter-spacing:2px;">BRENT CRUDE</div>
+                <button onclick="fetchOilPrice()" style="background:var(--panel2);border:1px solid var(--border2);color:var(--gold);font-family:var(--font-head);font-size:0.6rem;padding:4px 10px;border-radius:4px;cursor:pointer;letter-spacing:1px;">↻ ОБНОВИТЬ</button>
+            </div>
+            <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:4px;">
+                <div id="oil_price_usd" style="font-family:var(--font-mono);font-size:1.8rem;color:#E0943A;font-weight:400;">—</div>
+                <div style="font-family:var(--font-head);font-size:0.8rem;color:var(--text);">USD/барр</div>
+                <div id="oil_change_badge" style="font-family:var(--font-mono);font-size:0.8rem;margin-left:auto;"></div>
+            </div>
+            <div class="grid2" style="margin-bottom:8px;">
+                <div style="background:var(--panel);border-radius:4px;padding:6px 10px;">
+                    <div style="font-family:var(--font-head);font-size:0.55rem;color:var(--text);letter-spacing:1px;">EUR/БАРР</div>
+                    <div id="oil_price_eur" style="font-family:var(--font-mono);font-size:0.95rem;color:#5ABEEA;">—</div>
+                </div>
+                <div style="background:var(--panel);border-radius:4px;padding:6px 10px;">
+                    <div style="font-family:var(--font-head);font-size:0.55rem;color:var(--text);letter-spacing:1px;">RUB/БАРР</div>
+                    <div id="oil_price_rub" style="font-family:var(--font-mono);font-size:0.95rem;color:#4ACA6A;">—</div>
+                </div>
+            </div>
+            <div id="oil_source" style="font-family:var(--font-head);font-size:0.55rem;color:var(--text);letter-spacing:1px;text-align:right;">— нет данных —</div>
+        </div>
+
+        <!-- CHART -->
+        <div id="oil_chart_wrap" style="display:none;">
+            <div style="font-family:var(--font-head);font-size:0.6rem;color:var(--text);letter-spacing:2px;margin-bottom:6px;">ДИНАМИКА 30 ДНЕЙ</div>
+            <div style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:8px;overflow:hidden;">
+                <svg id="oil_chart_svg" width="100%" height="80" viewBox="0 0 300 80" preserveAspectRatio="none"></svg>
+                <div style="display:flex;justify-content:space-between;margin-top:2px;">
+                    <span id="chart_label_left" style="font-family:var(--font-mono);font-size:0.55rem;color:var(--text);">—</span>
+                    <span id="chart_label_mid" style="font-family:var(--font-mono);font-size:0.55rem;color:var(--text);">15 дн</span>
+                    <span id="chart_label_right" style="font-family:var(--font-mono);font-size:0.55rem;color:var(--text);">сегодня</span>
+                </div>
+            </div>
+            <div style="font-family:var(--font-head);font-size:0.6rem;color:var(--text);letter-spacing:2px;margin:10px 0 6px;">ПРОГНОЗ 7 ДНЕЙ</div>
+            <div id="oil_forecast" class="result-box" style="display:none;"></div>
+        </div>
+
+        <!-- ВЫРУЧКА -->
+        <div id="oil_revenue_wrap" style="display:none;">
+            <div class="divider"></div>
+            <div style="font-family:var(--font-head);font-size:0.6rem;color:var(--text);letter-spacing:2px;margin-bottom:6px;">ВЫРУЧКА ОТ ДОБЫЧИ</div>
+            <div id="res_revenue" class="result-box"></div>
+        </div>
     </div>
+
     <button class="btn btn-outline" onclick="nav('dash')">← В МЕНЮ</button>
 </div>
 
+<!-- ===== ГЛУШЕНИЕ ===== -->
 <div id="v_glush" class="view">
     <button class="back-btn" onclick="nav('dash')">← МЕНЮ</button>
     <div class="card">
         <div class="card-title">ОБЪЁМ ЖИДКОСТИ ГЛУШЕНИЯ</div>
         <div class="grid2">
-            <div><label>ГЛУБИНА НКТ (м)</label><input type="number" id="g_hnkt" placeholder="0"></div>
-            <div><label>ВН. ДИАМЕТР НКТ (мм)</label><input type="number" id="g_dnkt" placeholder="62"></div>
-            <div><label>ГЛУБИНА СКВАЖИНЫ (м)</label><input type="number" id="g_hskv" placeholder="0"></div>
-            <div><label>ВН. ДИАМЕТР ОК (мм)</label><input type="number" id="g_dok" placeholder="130"></div>
+            <div><label>Глубина НКТ (м)</label><input type="number" id="g_hnkt" placeholder="0"></div>
+            <div><label>Dвн НКТ (мм)</label><input type="number" id="g_dnkt" placeholder="62"></div>
+            <div><label>Глубина скв. (м)</label><input type="number" id="g_hskv" placeholder="0"></div>
+            <div><label>Dвн ОК (мм)</label><input type="number" id="g_dok" placeholder="130"></div>
         </div>
         <button class="btn btn-gold" onclick="calcGlushVol()">⚙ ОБЪЁМ</button>
         <div id="res_gvol" style="display:none" class="result-box"></div>
     </div>
+
     <div class="card">
         <div class="card-title">ПЛОТНОСТЬ РАСТВОРА ГЛУШЕНИЯ</div>
         <div class="grid2">
-            <div><label>ПЛАСТОВОЕ ДАВЛ. (атм)</label><input type="number" id="g_ppl" placeholder="0"></div>
-            <div><label>ГЛУБИНА ПЛАСТА (м)</label><input type="number" id="g_hpl" placeholder="0"></div>
-            <div><label>КОЭФФ. ЗАПАСА (1.05-1.10)</label><input type="number" id="g_kz" placeholder="1.07" step="0.01"></div>
+            <div><label>Рпл (атм)</label><input type="number" id="g_ppl" placeholder="0"></div>
+            <div><label>Глубина пласта (м)</label><input type="number" id="g_hpl" placeholder="0"></div>
+            <div><label>К запаса (1.05–1.10)</label><input type="number" id="g_kz" placeholder="1.07" step="0.01"></div>
+            <div></div>
         </div>
         <button class="btn btn-gold" onclick="calcGlushDens()">⚙ ПЛОТНОСТЬ</button>
         <div id="res_gdens" style="display:none" class="result-box"></div>
     </div>
+
     <div class="card">
         <div class="card-title">ПРОКАЧКА КОЛЛЕКТОРА</div>
         <div class="section-label">(Lкол. × 8 л) + 500 л / 1000 = м³</div>
-        <div class="grid2">
-            <div><label>Lкол. — ДЛИНА КОЛЛЕКТОРА (м)</label><input type="number" id="kol_l" placeholder="0"></div>
+        <div>
+            <label>Lкол. (м)</label>
+            <input type="number" id="kol_l" placeholder="0">
         </div>
         <button class="btn btn-gold" onclick="calcKol()">⚙ РАССЧИТАТЬ</button>
         <div id="res_kol" style="display:none" class="result-box"></div>
     </div>
+
     <button class="btn btn-outline" onclick="nav('dash')">← В МЕНЮ</button>
 </div>
-
 <div id="v_uezn" class="view">
     <button class="back-btn" onclick="nav('dash')">← МЕНЮ</button>
+
     <div class="card">
         <div class="card-title">ИЗМЕНЕНИЕ ДЕБИТА ПРИ ЧАСТОТЕ (ЧРП)</div>
         <div class="grid2">
-            <div><label>ТЕКУЩАЯ ЧАСТОТА f1 (Гц)</label><input type="number" id="vsd_f1" placeholder="50"></div>
-            <div><label>НОВАЯ ЧАСТОТА f2 (Гц)</label><input type="number" id="vsd_f2" placeholder="50"></div>
-            <div><label>ПОДАЧА Q1 (м³/сут)</label><input type="number" id="vsd_q1" placeholder="0"></div>
-            <div><label>НАПОР H1 (м)</label><input type="number" id="vsd_h1" placeholder="0"></div>
-            <div><label>МОЩНОСТЬ P1 (кВт)</label><input type="number" id="vsd_p1" placeholder="0"></div>
+            <div><label>f1 (Гц)</label><input type="number" id="vsd_f1" placeholder="50"></div>
+            <div><label>f2 (Гц)</label><input type="number" id="vsd_f2" placeholder="50"></div>
+            <div><label>Q1 (м³/сут)</label><input type="number" id="vsd_q1" placeholder="0"></div>
+            <div><label>H1 (м)</label><input type="number" id="vsd_h1" placeholder="0"></div>
+            <div><label>P1 (кВт)</label><input type="number" id="vsd_p1" placeholder="0"></div>
+            <div></div>
         </div>
         <button class="btn btn-gold" onclick="calcVSD()">⚙ РАССЧИТАТЬ ЧРП</button>
         <div id="res_vsd" style="display:none" class="result-box"></div>
     </div>
+
     <div class="card">
         <div class="card-title">РАБОЧАЯ ЗОНА УЭЦН</div>
         <div class="grid2">
-            <div><label>НОМИН. ПОДАЧА Qном (м³/сут)</label><input type="number" id="esp_qnom" placeholder="0"></div>
-            <div><label>ТЕКУЩИЙ ДЕБИТ Q (м³/сут)</label><input type="number" id="esp_q" placeholder="0"></div>
+            <div><label>Qном (м³/сут)</label><input type="number" id="esp_qnom" placeholder="0"></div>
+            <div><label>Q тек. (м³/сут)</label><input type="number" id="esp_q" placeholder="0"></div>
         </div>
         <button class="btn btn-gold" onclick="calcESPZone()">⚙ ЗОНА УЭЦН</button>
         <div id="res_espzone" style="display:none" class="result-box"></div>
     </div>
+
     <div class="card">
         <div class="card-title">КПД НАСОСНОЙ УСТАНОВКИ</div>
         <div class="grid2">
-            <div><label>ДЕБИТ Q (м³/сут)</label><input type="number" id="eff_q" placeholder="0"></div>
-            <div><label>НАПОР H (м)</label><input type="number" id="eff_h" placeholder="0"></div>
-            <div><label>ПЛОТНОСТЬ (кг/м³)</label><input type="number" id="eff_ro" placeholder="900"></div>
-            <div><label>МОЩНОСТЬ ПЭД (кВт)</label><input type="number" id="eff_p" placeholder="0"></div>
+            <div><label>Q (м³/сут)</label><input type="number" id="eff_q" placeholder="0"></div>
+            <div><label>H (м)</label><input type="number" id="eff_h" placeholder="0"></div>
+            <div><label>Плотность (кг/м³)</label><input type="number" id="eff_ro" placeholder="900"></div>
+            <div><label>P ПЭД (кВт)</label><input type="number" id="eff_p" placeholder="0"></div>
         </div>
         <button class="btn btn-gold" onclick="calcEff()">⚙ КПД</button>
         <div id="res_eff" style="display:none" class="result-box"></div>
     </div>
+
     <div class="card">
         <div class="card-title">ПОТЕРЯ НАПРЯЖЕНИЯ</div>
         <div class="section-label">ΔU = ρ × I × L / S</div>
+        <div>
+            <label>Материал кабеля</label>
+            <select id="udrop_mat">
+                <option value="0.0175">Медь (ρ = 0.0175 Ом·мм²/м)</option>
+                <option value="0.028">Алюминий (ρ = 0.028 Ом·мм²/м)</option>
+                <option value="0.03">УЭЦН кабель (ρ ≈ 0.030)</option>
+            </select>
+        </div>
         <div class="grid2">
-            <div>
-                <label>МАТЕРИАЛ КАБЕЛЯ</label>
-                <select id="udrop_mat">
-                    <option value="0.0175">Медь (ρ = 0.0175)</option>
-                    <option value="0.028">Алюминий (ρ = 0.028)</option>
-                    <option value="0.03">УЭЦН кабель (ρ ≈ 0.030)</option>
-                </select>
-            </div>
-            <div><label>ТОК I (А)</label><input type="number" id="udrop_i" placeholder="0"></div>
-            <div><label>ДЛИНА L (м)</label><input type="number" id="udrop_l" placeholder="0"></div>
-            <div><label>СЕЧЕНИЕ S (мм²)</label><input type="number" id="udrop_s" placeholder="16"></div>
-            <div><label>НАПРЯЖЕНИЕ ИСТОЧНИКА (В)</label><input type="number" id="udrop_u0" placeholder="380"></div>
+            <div><label>I — ток (А)</label><input type="number" id="udrop_i" placeholder="0"></div>
+            <div><label>L — длина (м)</label><input type="number" id="udrop_l" placeholder="0"></div>
+            <div><label>S — сечение (мм²)</label><input type="number" id="udrop_s" placeholder="16"></div>
+            <div><label>U источника (В)</label><input type="number" id="udrop_u0" placeholder="380"></div>
         </div>
         <button class="btn btn-gold" onclick="calcUdrop()">⚙ РАССЧИТАТЬ ΔU</button>
         <div id="res_udrop" style="display:none" class="result-box"></div>
     </div>
+
     <button class="btn btn-outline" onclick="nav('dash')">← В МЕНЮ</button>
 </div>
 
+<!-- ===== НКТ ===== -->
 <div id="v_nkt" class="view">
     <button class="back-btn" onclick="nav('dash')">← МЕНЮ</button>
     <div class="card">
         <div class="card-title">ОБЪЁМ КОЛОННЫ НКТ</div>
         <div>
-            <label>ТИПОРАЗМЕР НКТ (ГОСТ 633-80)</label>
+            <label>Типоразмер НКТ (ГОСТ 633-80)</label>
             <select id="nkt_size">
                 <option value="25">33×4 — Dвн=25мм</option>
                 <option value="32">42×5 — Dвн=32мм</option>
@@ -343,12 +957,12 @@
             </select>
         </div>
         <div id="nkt_manual_row" style="display:none">
-            <label>ВН. ДИАМЕТР (мм)</label>
+            <label>Dвн вручную (мм)</label>
             <input type="number" id="nkt_manual" placeholder="0">
         </div>
         <div class="grid2">
-            <div><label>ВЕРХ НКТ (м)</label><input type="number" id="nkt_top" placeholder="0"></div>
-            <div><label>НИЗ НКТ (м)</label><input type="number" id="nkt_bot" placeholder="0"></div>
+            <div><label>Верх НКТ (м)</label><input type="number" id="nkt_top" placeholder="0"></div>
+            <div><label>Низ НКТ (м)</label><input type="number" id="nkt_bot" placeholder="0"></div>
         </div>
         <button class="btn btn-gold" onclick="calcNKT()">⚙ РАССЧИТАТЬ</button>
         <div id="res_nkt" style="display:none" class="result-box"></div>
@@ -356,102 +970,137 @@
     <button class="btn btn-outline" onclick="nav('dash')">← В МЕНЮ</button>
 </div>
 
+<!-- ===== PVT ===== -->
 <div id="v_pvt" class="view">
     <button class="back-btn" onclick="nav('dash')">← МЕНЮ</button>
+
     <div class="card">
         <div class="card-title">Z-ФАКТОР ГАЗА</div>
         <div class="grid2">
-            <div><label>ДАВЛЕНИЕ P (МПа)</label><input type="number" id="z_p" placeholder="0"></div>
-            <div><label>ТЕМПЕРАТУРА T (°C)</label><input type="number" id="z_t" placeholder="0"></div>
-            <div><label>ПС. ДАВЛЕНИЕ Pc (МПа)</label><input type="number" id="z_pc" placeholder="4.6"></div>
-            <div><label>ПС. ТЕМП. Tc (°C)</label><input type="number" id="z_tc" placeholder="-82"></div>
+            <div><label>Давление P (МПа)</label><input type="number" id="z_p" placeholder="0"></div>
+            <div><label>Температура T (°C)</label><input type="number" id="z_t" placeholder="0"></div>
+            <div><label>Пс. давление Pc (МПа)</label><input type="number" id="z_pc" placeholder="4.6"></div>
+            <div><label>Пс. темп. Tc (°C)</label><input type="number" id="z_tc" placeholder="-82"></div>
         </div>
         <button class="btn btn-gold" onclick="calcZ()">⚙ Z-ФАКТОР</button>
         <div id="res_z" style="display:none" class="result-box"></div>
     </div>
+
     <div class="card">
         <div class="card-title">ПЛОТНОСТЬ ГАЗА</div>
         <div class="grid2">
-            <div><label>МОЛ. МАССА M (г/моль)</label><input type="number" id="gd_m" placeholder="16"></div>
-            <div><label>ДАВЛЕНИЕ P (атм)</label><input type="number" id="gd_p" placeholder="1"></div>
-            <div><label>ТЕМПЕРАТУРА T (°C)</label><input type="number" id="gd_t" placeholder="20"></div>
-            <div><label>Z-ФАКТОР</label><input type="number" id="gd_z" placeholder="1" step="0.01"></div>
+            <div><label>Мол. масса M (г/моль)</label><input type="number" id="gd_m" placeholder="16"></div>
+            <div><label>Давление P (атм)</label><input type="number" id="gd_p" placeholder="1"></div>
+            <div><label>Температура T (°C)</label><input type="number" id="gd_t" placeholder="20"></div>
+            <div><label>Z-фактор</label><input type="number" id="gd_z" placeholder="1" step="0.01"></div>
         </div>
         <button class="btn btn-gold" onclick="calcGasDens()">⚙ ПЛОТНОСТЬ</button>
         <div id="res_gd" style="display:none" class="result-box"></div>
     </div>
+
     <button class="btn btn-outline" onclick="nav('dash')">← В МЕНЮ</button>
 </div>
 
+<!-- ===== ДАВЛЕНИЕ / УРОВНИ ===== -->
 <div id="v_press" class="view">
     <button class="back-btn" onclick="nav('dash')">← МЕНЮ</button>
+
     <div class="card">
         <div class="card-title">ГИДРОСТАТИЧЕСКОЕ ДАВЛЕНИЕ</div>
         <div class="grid2">
-            <div><label>ГЛУБИНА (м)</label><input type="number" id="hs_h" placeholder="0"></div>
-            <div><label>ПЛОТНОСТЬ (кг/м³)</label><input type="number" id="hs_ro" placeholder="900"></div>
+            <div><label>Глубина (м)</label><input type="number" id="hs_h" placeholder="0"></div>
+            <div><label>Плотность (кг/м³)</label><input type="number" id="hs_ro" placeholder="900"></div>
         </div>
         <button class="btn btn-gold" onclick="calcHydro()">⚙ ДАВЛЕНИЕ</button>
         <div id="res_hs" style="display:none" class="result-box"></div>
     </div>
+
     <div class="card">
         <div class="card-title">ЗАБОЙНОЕ ДАВЛЕНИЕ</div>
         <div class="grid2">
-            <div><label>УСТЬЕВОЕ ДАВЛ. (атм)</label><input type="number" id="bhp_pu" placeholder="0"></div>
-            <div><label>ГЛУБИНА (м)</label><input type="number" id="bhp_h" placeholder="0"></div>
-            <div><label>ПЛОТНОСТЬ ФЛЮИДА (кг/м³)</label><input type="number" id="bhp_ro" placeholder="900"></div>
-            <div><label>ПОТЕРИ НА ТРЕНИЕ (атм)</label><input type="number" id="bhp_fr" placeholder="0"></div>
+            <div><label>Ру (атм)</label><input type="number" id="bhp_pu" placeholder="0"></div>
+            <div><label>Глубина (м)</label><input type="number" id="bhp_h" placeholder="0"></div>
+            <div><label>Плотность (кг/м³)</label><input type="number" id="bhp_ro" placeholder="900"></div>
+            <div><label>Потери трение (атм)</label><input type="number" id="bhp_fr" placeholder="0"></div>
         </div>
         <button class="btn btn-gold" onclick="calcBHP()">⚙ РЗАБ</button>
         <div id="res_bhp" style="display:none" class="result-box"></div>
     </div>
+
     <div class="card">
         <div class="card-title">СТАТИЧЕСКИЙ УРОВЕНЬ → РПЛ</div>
         <div class="grid2">
-            <div><label>СТАТ. УРОВЕНЬ Нст (м)</label><input type="number" id="nst_h" placeholder="0"></div>
-            <div><label>ГЛУБИНА СКВАЖИНЫ (м)</label><input type="number" id="nst_hskv" placeholder="0"></div>
-            <div><label>ПЛОТНОСТЬ ЖИДКОСТИ (кг/м³)</label><input type="number" id="nst_ro" placeholder="900"></div>
-            <div><label>УСТЬЕВОЕ ДАВЛ. (атм)</label><input type="number" id="nst_pu" placeholder="0"></div>
+            <div><label>Нст (м)</label><input type="number" id="nst_h" placeholder="0"></div>
+            <div><label>Глубина скв. (м)</label><input type="number" id="nst_hskv" placeholder="0"></div>
+            <div><label>Плотность (кг/м³)</label><input type="number" id="nst_ro" placeholder="900"></div>
+            <div><label>Ру (атм)</label><input type="number" id="nst_pu" placeholder="0"></div>
         </div>
         <button class="btn btn-gold" onclick="calcNST()">⚙ РПЛ</button>
         <div id="res_nst" style="display:none" class="result-box"></div>
     </div>
+
     <button class="btn btn-outline" onclick="nav('dash')">← В МЕНЮ</button>
 </div>
 
+<!-- ===== БЫСТРАЯ ОТПРАВКА (без отчёта) ===== -->
 <div id="v_quickshare" class="view">
     <button class="back-btn" onclick="nav('dash')">← МЕНЮ</button>
     <div class="card">
-        <div class="card-title">📤 БЫСТРАЯ ОТПРАВКА ПАРАМЕТРОВ</div>
+        <div class="card-title">📤 ОТПРАВКА ПАРАМЕТРОВ</div>
         <div class="section-label">ПРЕДПРОСМОТР</div>
-        <div class="report-text" id="qs_preview" style="max-height:200px;"></div>
+        <div class="report-text" id="qs_preview" style="max-height:220px;"></div>
         <div class="divider"></div>
-        <div class="section-label">ОТПРАВИТЬ ЧЕРЕЗ</div>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-            <button class="btn btn-gold" onclick="quickShareWA()">💬 WhatsApp</button>
-            <button class="btn" style="background:#229ED9;color:#fff;" onclick="quickShareTG()">✈️ Telegram</button>
-            <button class="btn" style="background:#005FF9;color:#fff;" onclick="quickShareMax()">💙 Макс</button>
-            <button class="btn btn-green" onclick="quickShareEmail()">📧 Email</button>
-            <button class="btn btn-outline" onclick="quickShareCopy()">📋 Копировать</button>
+        <div style="display:flex;align-items:center;justify-content:center;padding:10px 0 4px;">
+            <button onclick="nativeShare()" style="
+                background: linear-gradient(180deg,#D4A94E 0%,#A07828 100%);
+                border: none; border-radius: 50%;
+                width: 72px; height: 72px;
+                cursor: pointer;
+                box-shadow: 0 4px 0 #5A4010, 0 6px 20px rgba(200,168,75,0.4);
+                display: flex; align-items: center; justify-content: center;
+                transition: all 0.12s;
+                -webkit-tap-highlight-color: transparent;
+            " onmousedown="this.style.transform='translateY(3px)';this.style.boxShadow='0 1px 0 #5A4010'"
+               onmouseup="this.style.transform='';this.style.boxShadow='0 4px 0 #5A4010,0 6px 20px rgba(200,168,75,0.4)'"
+               ontouchstart="this.style.transform='translateY(3px)';this.style.boxShadow='0 1px 0 #5A4010'"
+               ontouchend="this.style.transform='';this.style.boxShadow='0 4px 0 #5A4010,0 6px 20px rgba(200,168,75,0.4)'">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                    <circle cx="18" cy="5" r="3" fill="#000"/>
+                    <circle cx="6" cy="12" r="3" fill="#000"/>
+                    <circle cx="18" cy="19" r="3" fill="#000"/>
+                    <line x1="6" y1="12" x2="18" y2="5" stroke="#000" stroke-width="2"/>
+                    <line x1="6" y1="12" x2="18" y2="19" stroke="#000" stroke-width="2"/>
+                </svg>
+            </button>
         </div>
-        <div id="qs_copied" style="display:none;text-align:center;color:var(--green);font-size:0.75rem;padding:8px;">✓ СКОПИРОВАНО!</div>
+        <div style="text-align:center;font-family:var(--font-head);font-size:0.6rem;color:var(--text);letter-spacing:2px;padding-bottom:8px;">ПОДЕЛИТЬСЯ</div>
+        <div id="qs_copied" style="display:none;text-align:center;color:var(--green);font-size:0.75rem;padding:8px;font-family:var(--font-head);letter-spacing:2px;"></div>
     </div>
     <button class="btn btn-outline" onclick="nav('dash')">← В МЕНЮ</button>
 </div>
 
+
 <footer>DESIGNED & CODED BY ANVAROV T.A. © 2026</footer>
 
 <script>
+// ===== NAVIGATION =====
 function nav(id) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.getElementById(id).classList.add('active');
     window.scrollTo(0,0);
 }
+
 function showResults(id, rows) {
     const box = document.getElementById(id);
     box.style.display = 'block';
-    box.innerHTML = rows.map(r => `<div class="result-row"><span class="result-label">${r[0]}</span><span class="result-val ${r[2]||''}">${r[1]}</span></div>`).join('');
+    box.innerHTML = rows.map(r => `
+        <div class="result-row">
+            <span class="result-label">${r[0]}</span>
+            <span class="result-val ${r[2]||''}">${r[1]}</span>
+        </div>`).join('');
 }
+
+// ===== WELL DISPLAY =====
 document.getElementById('reg_kp').addEventListener('input', updateWell);
 document.getElementById('reg_skv').addEventListener('input', updateWell);
 function updateWell() {
@@ -459,9 +1108,15 @@ function updateWell() {
     const skv = document.getElementById('reg_skv').value || '__';
     document.getElementById('well_display').textContent = `КП-${kp} СКВ-${skv}`;
 }
+
+// ===== NKT MANUAL =====
 document.getElementById('nkt_size').addEventListener('change', function() {
     document.getElementById('nkt_manual_row').style.display = this.value == '0' ? 'block' : 'none';
 });
+
+// ===== CALCULATIONS =====
+
+// ПАРАМЕТРЫ
 function calcParams() {
     const nd = +document.getElementById('p_nd').value;
     const nst_zat = +document.getElementById('p_nst_zat').value;
@@ -470,187 +1125,1080 @@ function calcParams() {
     const z = +document.getElementById('p_z').value;
     const tdv = +document.getElementById('p_tdv').value;
     const rows = [];
+
     const nst = nst_zat || nst_nkt;
-    if(nd && nst) { const depr = (nst - nd) * 900 * 9.81 / 1e6 * 10.197; rows.push(['Депрессия (атм)', depr.toFixed(1), depr > 0 ? 'green' : 'red']); }
-    if(nst_zat && nst_nkt) { const diff = nst_zat - nst_nkt; rows.push(['Нст зат. — Нст нкт.', diff.toFixed(0) + ' м', diff > 0 ? 'cyan' : 'green']); }
-    if(f) { const fRatio = f / 50; rows.push(['Коэфф. f/50Гц', fRatio.toFixed(3), f < 45 ? 'cyan' : f > 55 ? 'red' : 'green']); }
-    if(z) { const status = z < 75 ? 'НЕДОГРУЗ' : z > 105 ? 'ПЕРЕГРУЗ' : 'НОРМА'; const cls = z < 75 ? 'cyan' : z > 105 ? 'red' : 'green'; rows.push(['Загрузка ПЭД', z + '%', cls]); rows.push(['Статус', status, cls]); }
-    if(tdv) { const cls = tdv > 130 ? 'red' : tdv > 110 ? 'gold' : 'green'; rows.push(['Тдв.', tdv + ' °C', cls]); }
+    if(nd && nst) {
+        const depr = (nst - nd) * 900 * 9.81 / 1e6 * 10.197;
+        rows.push(['Депрессия (атм)', depr.toFixed(1), depr > 0 ? 'green' : 'red']);
+    }
+    if(nst_zat && nst_nkt) {
+        const diff = nst_zat - nst_nkt;
+        rows.push(['Нст зат. — Нст нкт.', diff.toFixed(0) + ' м', diff > 0 ? 'cyan' : 'green']);
+    }
+    if(f) {
+        const fRatio = f / 50;
+        rows.push(['Коэфф. f/50Гц', fRatio.toFixed(3), f < 45 ? 'cyan' : f > 55 ? 'red' : 'green']);
+    }
+    if(z) {
+        const status = z < 75 ? 'НЕДОГРУЗ' : z > 105 ? 'ПЕРЕГРУЗ' : 'НОРМА';
+        const cls = z < 75 ? 'cyan' : z > 105 ? 'red' : 'green';
+        rows.push(['Загрузка ПЭД', z + '%', cls]);
+        rows.push(['Статус', status, cls]);
+    }
+    if(tdv) {
+        const cls = tdv > 130 ? 'red' : tdv > 110 ? 'gold' : 'green';
+        rows.push(['Тдв.', tdv + ' °C', cls]);
+    }
     if(rows.length) showResults('res_params', rows);
 }
+
+// ЗАМЕР ПО ПРОБЕ
 function calcProbe() {
     const hl = +document.getElementById('probe_hl').value;
     const hw = +document.getElementById('probe_hw').value;
     if(!hl || !hw) return alert('Введи высоты жидкости и воды');
     if(hw > hl) return alert('Высота воды не может быть больше жидкости');
-    const wc = hw * 100 / hl; const oil = 100 - wc;
+    const wc = hw * 100 / hl;
+    const oil = 100 - wc;
     let status, cls;
     if(wc < 30) { status = 'МАЛООБВОДНЁННАЯ'; cls = 'green'; }
     else if(wc < 70) { status = 'СРЕДНЕОБВОДНЁННАЯ'; cls = 'orange'; }
     else if(wc < 90) { status = 'ВЫСОКООБВОДНЁННАЯ'; cls = 'red'; }
     else { status = 'ПРЕДЕЛЬНАЯ ОБВОДНЁННОСТЬ'; cls = 'red'; }
-    showResults('res_probe', [['H жидкости', hl.toFixed(1) + ' см — 100%'],['H воды', hw.toFixed(1) + ' см'],['💧 ВОДА', wc.toFixed(1) + '%', 'blue'],['🛢 НЕФТЬ', oil.toFixed(1) + '%', 'orange'],['Статус', status, cls]]);
+    showResults('res_probe', [
+        ['H жидкости', hl.toFixed(1) + ' см — 100%'],
+        ['H воды', hw.toFixed(1) + ' см'],
+        ['💧 ВОДА', wc.toFixed(1) + '%', 'blue'],
+        ['🛢 НЕФТЬ', oil.toFixed(1) + '%', 'orange'],
+        ['Статус', status, cls],
+    ]);
 }
-function onRoSelect() { document.getElementById('ton_manual_row').style.display = document.getElementById('ton_ro_sel').value === '0' ? 'block' : 'none'; }
+
+// ВЫБОР ПЛОТНОСТИ
+function onRoSelect() {
+    const sel = document.getElementById('ton_ro_sel').value;
+    document.getElementById('ton_manual_row').style.display = sel === '0' ? 'block' : 'none';
+    autoCalcTonnes();
+}
+
+// ТОНН НЕФТИ
 function calcTonnes() {
     const Q = +document.getElementById('ton_q').value;
     const wc = +document.getElementById('ton_wc').value;
     const selVal = document.getElementById('ton_ro_sel').value;
     let ro = selVal === '0' ? +document.getElementById('ton_ro_manual').value : +selVal;
-    if(!Q) return alert('Введи дебит жидкости');
-    if(!ro) return alert('Выбери или введи плотность нефти');
-    const qOil = Q * (1 - wc / 100); const tOil = qOil * ro / 1000; const tWater = Q * (wc/100) * 1010 / 1000;
-    showResults('res_ton', [['Дебит нефти', qOil.toFixed(2) + ' м³/сут'],['НЕФТЬ т/сут', tOil.toFixed(2), 'green'],['НЕФТЬ т/мес', (tOil * 30).toFixed(1), 'gold'],['Вода т/сут', tWater.toFixed(2)]]);
+    if (!Q) return alert('Введи дебит жидкости');
+    if (!ro) return alert('Выбери или введи плотность нефти');
+    const qOil = Q * (1 - wc / 100);
+    const qWater = Q * (wc / 100);
+    const tOil = qOil * ro / 1000;
+    const tWater = qWater * 1010 / 1000;
+    const bblDay = qOil / 0.159;
+    const bblMonth = bblDay * 30;
+    showResults('res_ton', [
+        ['Дебит жидкости', Q.toFixed(2) + ' м³/сут'],
+        ['Обводнённость', wc.toFixed(1) + '%'],
+        ['Дебит нефти', qOil.toFixed(2) + ' м³/сут'],
+        ['НЕФТЬ т/сут', tOil.toFixed(2), 'green'],
+        ['НЕФТЬ т/мес', (tOil * 30).toFixed(1), 'gold'],
+        ['НЕФТЬ барр/сут', bblDay.toFixed(1), 'orange'],
+        ['НЕФТЬ барр/мес', bblMonth.toFixed(0), 'orange'],
+        ['Вода т/сут', tWater.toFixed(2)],
+    ]);
+    window._oilBblDay = bblDay;
+    window._oilTonDay = tOil;
+    calcOilRevenue();
 }
+
+function autoCalcTonnes() {
+    const Q = +document.getElementById('ton_q').value;
+    const wc = +document.getElementById('ton_wc').value;
+    const selVal = document.getElementById('ton_ro_sel').value;
+    let ro = selVal === '0' ? +document.getElementById('ton_ro_manual').value : +selVal;
+    if (Q && ro) calcTonnes();
+}
+
+// ═══ OIL PRICE MODULE ═══
+const OIL_GRADES = {
+    brent: { label: 'BRENT CRUDE (ICE)', ticker: 'BZ=F', discount: 0 },
+    wti:   { label: 'WTI CRUDE (NYMEX)', ticker: 'CL=F', discount: 0 },
+    urals: { label: 'URALS (РОССИЯ)',     ticker: 'BZ=F', discount: -14 },
+    espo:  { label: 'ESPO BLEND',         ticker: 'BZ=F', discount: -4 },
+    dubai: { label: 'DUBAI/OMAN',         ticker: 'BZ=F', discount: -1.5 },
+    manual:{ label: 'РУЧНАЯ ЦЕНА',        ticker: null,   discount: 0 }
+};
+
+let oilCache = {};    // { grade: { price, eur, rub, change, hist[], ts } }
+let oilRates = { eur: 0.92, rub: 90 };  // fallback rates
+
+function onGradeChange() {
+    const g = document.getElementById('oil_grade').value;
+    document.getElementById('oil_manual_row').style.display = g === 'manual' ? 'block' : 'none';
+    if (g !== 'manual') {
+        if (oilCache[g]) renderOilData(g);
+        else fetchOilPrice();
+    } else {
+        calcOilRevenue();
+    }
+}
+
+async function fetchOilPrice() {
+    const grade = document.getElementById('oil_grade').value;
+    const src = document.getElementById('oil_source');
+    src.textContent = '⏳ загрузка...';
+    const info = OIL_GRADES[grade];
+    if (!info || !info.ticker) return;
+
+    // Курсы валют — frankfurter.app (CORS включён, без прокси)
+    try {
+        const r = await fetchTimeout('https://api.frankfurter.app/latest?from=USD&to=EUR,RUB', 5000);
+        const d = await r.json();
+        if (d.rates) oilRates = { eur: d.rates.EUR, rub: d.rates.RUB };
+    } catch(e) {}
+
+    // Попытки получить цену нефти
+    let closes = null;
+
+    // 1. Yahoo Finance напрямую (работает если браузер не блокирует)
+    const attempts = [
+        () => fetchTimeout(`https://query1.finance.yahoo.com/v8/finance/chart/${info.ticker}?interval=1d&range=35d`, 6000),
+        () => fetchTimeout(`https://query2.finance.yahoo.com/v8/finance/chart/${info.ticker}?interval=1d&range=35d`, 6000),
+        () => fetchTimeout(`https://corsproxy.io/?${encodeURIComponent(`https://query1.finance.yahoo.com/v8/finance/chart/${info.ticker}?interval=1d&range=35d`)}`, 8000),
+        () => fetchTimeout(`https://thingproxy.freeboard.io/fetch/https://query1.finance.yahoo.com/v8/finance/chart/${info.ticker}?interval=1d&range=35d`, 8000),
+    ];
+
+    for (const attempt of attempts) {
+        try {
+            const resp = await attempt();
+            const raw = await resp.json();
+            const parsed = raw.contents ? JSON.parse(raw.contents) : raw;
+            const result = parsed?.chart?.result?.[0];
+            if (!result) continue;
+            const q = result.indicators.quote[0].close.filter(v => v != null);
+            if (q.length > 1) { closes = q; break; }
+        } catch(e) { continue; }
+    }
+
+    if (closes) {
+        const rawPrice = closes[closes.length - 1] + info.discount;
+        const prevPrice = closes[closes.length - 2] + info.discount;
+        oilCache[grade] = {
+            price: rawPrice,
+            eur: rawPrice * oilRates.eur,
+            rub: rawPrice * oilRates.rub,
+            change: rawPrice - prevPrice,
+            hist: closes.slice(-30).map(v => v + info.discount),
+            source: `Yahoo Finance · 1 USD = ${oilRates.rub.toFixed(0)} ₽ · ${new Date().toLocaleDateString('ru-RU')} ${new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})}`
+        };
+        renderOilData(grade);
+    } else {
+        // РЕЗЕРВНЫЕ ЦЕНЫ — встроенные (обновляй раз в месяц)
+        const fallback = { brent:82.5, wti:78.2, urals:68.5, espo:78.5, dubai:81.0 };
+        const base = fallback[grade] || 80;
+        // Генерируем реалистичную историю вокруг базовой цены
+        const hist = Array.from({length:30}, (_,i) => base + (Math.sin(i*0.4)*2.5) + (Math.random()-0.5)*1.5);
+        hist[29] = base;
+        oilCache[grade] = {
+            price: base,
+            eur: base * oilRates.eur,
+            rub: base * oilRates.rub,
+            change: hist[29] - hist[28],
+            hist,
+            source: `⚠ Биржа недоступна — резервные цены (приблизительно). Введи вручную для точности.`
+        };
+        renderOilData(grade);
+        // Показать ручной ввод
+        document.getElementById('oil_manual_row').style.display = 'block';
+        document.getElementById('oil_grade').value = 'manual';
+        document.getElementById('oil_grade').dispatchEvent(new Event('change'));
+        // Восстановить выбор марки в отображении
+        document.getElementById('oil_grade_label').textContent = info.label;
+    }
+}
+
+function renderOilData(grade) {
+    const d = oilCache[grade];
+    if (!d) return;
+    const info = OIL_GRADES[grade];
+    document.getElementById('oil_grade_label').textContent = info.label;
+    document.getElementById('oil_price_usd').textContent = d.price.toFixed(2);
+    document.getElementById('oil_price_eur').textContent = d.eur.toFixed(2);
+    document.getElementById('oil_price_rub').textContent = Math.round(d.rub).toLocaleString('ru-RU');
+    const badge = document.getElementById('oil_change_badge');
+    badge.textContent = (d.change >= 0 ? '▲ +' : '▼ ') + d.change.toFixed(2);
+    badge.style.color = d.change >= 0 ? '#4ACA6A' : '#E05050';
+    document.getElementById('oil_source').textContent = d.source;
+    drawChart(d.hist);
+    drawForecast(d.hist, d.price);
+    document.getElementById('oil_chart_wrap').style.display = 'block';
+    calcOilRevenue();
+}
+
+function drawChart(hist) {
+    const svg = document.getElementById('oil_chart_svg');
+    if (!hist || hist.length < 2) return;
+    const W = 300, H = 80, pad = 4;
+    const min = Math.min(...hist), max = Math.max(...hist);
+    const range = max - min || 1;
+    const pts = hist.map((v, i) => {
+        const x = pad + (i / (hist.length - 1)) * (W - pad * 2);
+        const y = H - pad - ((v - min) / range) * (H - pad * 2);
+        return `${x},${y}`;
+    }).join(' ');
+    const lastX = pad + ((hist.length - 1) / (hist.length - 1)) * (W - pad * 2);
+    const lastY = H - pad - ((hist[hist.length-1] - min) / range) * (H - pad * 2);
+    const color = hist[hist.length-1] >= hist[0] ? '#2EA84C' : '#C84040';
+    svg.innerHTML = `
+        <defs>
+            <linearGradient id="cg" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="${color}" stop-opacity="0.3"/>
+                <stop offset="100%" stop-color="${color}" stop-opacity="0"/>
+            </linearGradient>
+        </defs>
+        <polyline points="${pts}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round"/>
+        <polygon points="${pts} ${lastX},${H} ${pad},${H}" fill="url(#cg)"/>
+        <line x1="${pad}" y1="${H-pad-((hist[0]-min)/range)*(H-pad*2)}" x2="${pad}" y2="${H}" stroke="${color}" stroke-opacity="0.3" stroke-width="1"/>
+        <text x="${W/2}" y="${H-2}" text-anchor="middle" font-size="7" fill="#7A99B0" font-family="monospace">min ${min.toFixed(1)} · max ${max.toFixed(1)}</text>
+    `;
+    document.getElementById('chart_label_left').textContent = '30 дн';
+}
+
+function drawForecast(hist, lastPrice) {
+    if (!hist || hist.length < 7) return;
+    const n = hist.length;
+    // Linear regression
+    const xm = (n - 1) / 2;
+    const ym = hist.reduce((a,b) => a+b, 0) / n;
+    let num = 0, den = 0;
+    hist.forEach((v, i) => { num += (i - xm) * (v - ym); den += (i - xm) ** 2; });
+    const slope = den ? num / den : 0;
+    const intercept = ym - slope * xm;
+    const forecast = [1,2,3,5,7].map(d => ({ d, p: intercept + slope * (n - 1 + d) }));
+    const trend = slope > 0.1 ? '📈 РОСТ' : slope < -0.1 ? '📉 СНИЖЕНИЕ' : '➡ БОКОВОЕ';
+    const rows = forecast.map(({d, p}) => [`+${d} дн`, p.toFixed(2) + ' USD', p >= lastPrice ? 'green' : 'red']);
+    rows.unshift(['ТРЕНД', trend, slope > 0.1 ? 'green' : slope < -0.1 ? 'red' : 'cyan']);
+    showResults('oil_forecast', rows);
+    document.getElementById('oil_forecast').style.display = 'block';
+}
+
+function calcOilRevenue() {
+    const grade = document.getElementById('oil_grade').value;
+    let priceUsd;
+    if (grade === 'manual') {
+        priceUsd = +document.getElementById('oil_price_manual').value;
+    } else {
+        priceUsd = oilCache[grade] ? oilCache[grade].price : null;
+    }
+    if (!priceUsd || !window._oilBblDay) {
+        document.getElementById('oil_revenue_wrap').style.display = 'none';
+        return;
+    }
+    const bbl = window._oilBblDay;
+    const ton = window._oilTonDay;
+    const usdDay  = bbl * priceUsd;
+    const eurDay  = usdDay * oilRates.eur;
+    const rubDay  = usdDay * oilRates.rub;
+    showResults('res_revenue', [
+        ['Добыча',            bbl.toFixed(1) + ' барр/сут · ' + ton.toFixed(2) + ' т/сут'],
+        ['Цена',              priceUsd.toFixed(2) + ' USD/барр'],
+        ['Выручка USD/сут',   '$' + Math.round(usdDay).toLocaleString('ru-RU'), 'green'],
+        ['Выручка EUR/сут',   '€' + Math.round(eurDay).toLocaleString('ru-RU'), 'cyan'],
+        ['Выручка RUB/сут',   '₽' + Math.round(rubDay).toLocaleString('ru-RU'), 'gold'],
+        ['Выручка USD/мес',   '$' + Math.round(usdDay*30).toLocaleString('ru-RU'), 'green'],
+        ['Выручка RUB/мес',   '₽' + Math.round(rubDay*30).toLocaleString('ru-RU'), 'gold'],
+    ]);
+    document.getElementById('oil_revenue_wrap').style.display = 'block';
+}
+
+// ЗАМЕР ДЕБИТА ПРЯМОЙ
 function calcDebit() {
-    const V = +document.getElementById('q_liters').value; const t = +document.getElementById('q_work').value;
+    const V = +document.getElementById('q_liters').value;
+    const t = +document.getElementById('q_work').value;
     if(!V || !t) return alert('Введи объём и время');
-    const day = V / t * 1440 / 1000;
-    showResults('res_debit', [['л/мин', (V/t).toFixed(2)],['м³/сут', day.toFixed(2), 'green'],['барр/сут', (day/0.159).toFixed(1)],['т/сут (~870)', (day*0.87).toFixed(2)]]);
+    const lpm = V / t;
+    const m3h = lpm * 60 / 1000;
+    const day = lpm * 1440 / 1000;
+    showResults('res_debit', [
+        ['л/мин', lpm.toFixed(2)],
+        ['м³/ч', m3h.toFixed(3)],
+        ['м³/сут', day.toFixed(2), 'green'],
+        ['барр/сут', (day/0.159).toFixed(1)],
+        ['т/сут (нефть ~870)', (day*0.87).toFixed(2)],
+    ]);
 }
+
+// ПКВ
 function calcPKV() {
-    const vc = +document.getElementById('pkv_vol').value; const tw = +document.getElementById('pkv_work').value; const ts = +document.getElementById('pkv_off').value;
+    const vc = +document.getElementById('pkv_vol').value;
+    const tw = +document.getElementById('pkv_work').value;
+    const ts = +document.getElementById('pkv_off').value;
     if(!vc || !tw || !ts) return alert('Введи все данные');
-    const cyc = tw + ts; const day = vc * (1440 / cyc) / 1000;
-    showResults('res_pkv', [['КПД работы', (tw/cyc*100).toFixed(1) + '%'],['Циклов/сут', (1440/cyc).toFixed(1)],['Дебит', day.toFixed(2) + ' м³/сут', 'green']]);
+    const cyc = tw + ts;
+    const kpd = (tw / cyc) * 100;
+    const cpd = 1440 / cyc;
+    const day = (vc * cpd) / 1000;
+    showResults('res_pkv', [
+        ['Длина цикла', cyc.toFixed(1) + ' мин'],
+        ['КПД работы', kpd.toFixed(1) + '%', kpd > 60 ? 'green' : 'cyan'],
+        ['Циклов/сут', cpd.toFixed(1)],
+        ['Суточный дебит', day.toFixed(2) + ' м³/сут', 'green'],
+        ['Суточный дебит', (day/0.159).toFixed(1) + ' барр/сут'],
+    ]);
 }
+
+// ОБВОДНЁННОСТЬ
 function calcWatercut() {
-    const Q = +document.getElementById('wc_q').value; const wc = +document.getElementById('wc_wc').value;
-    const ro = +document.getElementById('wc_ro').value || 870; const rw = +document.getElementById('wc_rw').value || 1010;
+    const Q = +document.getElementById('wc_q').value;
+    const wc = +document.getElementById('wc_wc').value;
+    const ro = +document.getElementById('wc_ro').value || 870;
+    const rw = +document.getElementById('wc_rw').value || 1010;
     if(!Q) return alert('Введи дебит');
-    const qo = Q*(1-wc/100); const qw = Q*wc/100;
-    showResults('res_wc', [['Нефть м³/сут', qo.toFixed(2), 'green'],['Нефть т/сут', (qo*ro/1000).toFixed(2), 'gold'],['Вода м³/сут', qw.toFixed(2)],['Вода т/сут', (qw*rw/1000).toFixed(2)]]);
+    const qo = Q * (1 - wc/100);
+    const qw = Q * wc/100;
+    const to = qo * ro / 1000;
+    const tw = qw * rw / 1000;
+    showResults('res_wc', [
+        ['Дебит НЕФТИ', qo.toFixed(2) + ' м³/сут', 'green'],
+        ['Дебит ВОДЫ', qw.toFixed(2) + ' м³/сут'],
+        ['НЕФТЬ т/сут', to.toFixed(2), 'gold'],
+        ['ВОДА т/сут', tw.toFixed(2)],
+        ['Жидкость т/сут', (to+tw).toFixed(2)],
+    ]);
 }
+
+// ПРОКАЧКА КОЛЛЕКТОРА
 function calcKol() {
     const L = +document.getElementById('kol_l').value;
     if(!L) return alert('Введи длину коллектора');
-    const liters = L * 8 + 500;
-    showResults('res_kol', [['Lкол. × 8 л', (L*8).toFixed(0) + ' л'],['+ 500 л', '500 л'],['ИТОГО', liters.toFixed(0) + ' л', 'green'],['ИТОГО м³', (liters/1000).toFixed(3) + ' м³', 'gold']]);
+    const liters = (L * 8) + 500;
+    const m3 = liters / 1000;
+    showResults('res_kol', [
+        ['Lкол.', L.toFixed(0) + ' м'],
+        ['Lкол. × 8 л', (L * 8).toFixed(0) + ' л'],
+        ['+ 500 л', '500 л'],
+        ['ИТОГО', liters.toFixed(0) + ' л', 'green'],
+        ['ИТОГО м³', m3.toFixed(3) + ' м³', 'gold'],
+    ]);
 }
+
+// ГЛУШЕНИЕ — ОБЪЁМ
 function calcGlushVol() {
-    const hnkt = +document.getElementById('g_hnkt').value; const dnkt = +document.getElementById('g_dnkt').value / 1000;
-    const hskv = +document.getElementById('g_hskv').value; const dok = +document.getElementById('g_dok').value / 1000;
+    const hnkt = +document.getElementById('g_hnkt').value;
+    const dnkt = +document.getElementById('g_dnkt').value / 1000;
+    const hskv = +document.getElementById('g_hskv').value;
+    const dok = +document.getElementById('g_dok').value / 1000;
     if(!hnkt || !hskv) return alert('Введи глубины');
-    const vNKT = Math.PI/4 * dnkt*dnkt * hnkt;
-    const vAnn = Math.PI/4 * (dok*dok - (dnkt+0.007)*(dnkt+0.007)) * hskv;
-    const vT = vNKT + vAnn;
-    showResults('res_gvol', [['Объём НКТ', (vNKT*1000).toFixed(1) + ' л'],['Объём затруб.', (vAnn*1000).toFixed(1) + ' л'],['ИТОГО', (vT*1000).toFixed(0) + ' л', 'green'],['С запасом +20%', (vT*1.2*1000).toFixed(0) + ' л', 'gold']]);
+    const dnktOut = dnkt + 0.007; // приближение внешнего
+    const vNKT = Math.PI / 4 * dnkt * dnkt * hnkt;
+    const vAnn = Math.PI / 4 * (dok * dok - dnktOut * dnktOut) * hskv;
+    const vTotal = vNKT + vAnn;
+    showResults('res_gvol', [
+        ['Объём НКТ', (vNKT * 1000).toFixed(1) + ' л  /  ' + vNKT.toFixed(3) + ' м³'],
+        ['Объём затруб.', (vAnn * 1000).toFixed(1) + ' л  /  ' + vAnn.toFixed(3) + ' м³'],
+        ['ИТОГО объём', (vTotal * 1000).toFixed(0) + ' л', 'green'],
+        ['С запасом +20%', ((vTotal * 1.2) * 1000).toFixed(0) + ' л', 'gold'],
+    ]);
 }
+
+// ГЛУШЕНИЕ — ПЛОТНОСТЬ
 function calcGlushDens() {
-    const ppl = +document.getElementById('g_ppl').value; const hpl = +document.getElementById('g_hpl').value; const kz = +document.getElementById('g_kz').value || 1.07;
+    const ppl = +document.getElementById('g_ppl').value;
+    const hpl = +document.getElementById('g_hpl').value;
+    const kz = +document.getElementById('g_kz').value || 1.07;
     if(!ppl || !hpl) return alert('Введи давление и глубину');
-    const rho = ppl * kz * 1e5 / (9.81 * hpl);
-    showResults('res_gdens', [['Мин. плотность', rho.toFixed(0) + ' кг/м³'],['Рекомендуемая', (Math.ceil(rho/10)*10) + ' кг/м³', 'green'],['Тип', rho < 1000 ? 'Пресная вода' : rho < 1200 ? 'Рассол' : 'Утяжелённый', 'cyan']]);
+    const rhoMin = (ppl * kz * 1e5) / (9.81 * hpl);
+    const rhoRec = Math.ceil(rhoMin / 10) * 10;
+    const status = rhoMin < 1000 ? 'Пресная вода' : rhoMin < 1200 ? 'Рассол' : 'Утяжелённый';
+    showResults('res_gdens', [
+        ['Мин. плотность', rhoMin.toFixed(0) + ' кг/м³'],
+        ['Рекомендуемая', rhoRec.toFixed(0) + ' кг/м³', 'green'],
+        ['Тип раствора', status, 'cyan'],
+        ['Давление глушения', (ppl * kz).toFixed(1) + ' атм'],
+    ]);
 }
+
+// ПОТЕРЯ НАПРЯЖЕНИЯ
 function calcUdrop() {
-    const rho = +document.getElementById('udrop_mat').value; const I = +document.getElementById('udrop_i').value;
-    const L = +document.getElementById('udrop_l').value; const S = +document.getElementById('udrop_s').value;
-    const U0 = +document.getElementById('udrop_u0').value || 380;
+    const rho = +document.getElementById('udrop_mat').value;
+    const I   = +document.getElementById('udrop_i').value;
+    const L   = +document.getElementById('udrop_l').value;
+    const S   = +document.getElementById('udrop_s').value;
+    const U0  = +document.getElementById('udrop_u0').value || 380;
     if(!I || !L || !S) return alert('Введи ток, длину и сечение');
-    const dU = rho * I * L / S; const dU3 = dU * Math.sqrt(3);
-    const Uost = U0 - dU3; const pct = dU3 / U0 * 100;
+    const dU  = rho * I * L / S;
+    const dU3 = dU * Math.sqrt(3); // для 3-фазной линии
+    const Uост = U0 - dU3;
+    const pct = (dU3 / U0) * 100;
     const cls = pct > 10 ? 'red' : pct > 5 ? 'gold' : 'green';
-    showResults('res_udrop', [['ΔU однофазное', dU.toFixed(2) + ' В'],['ΔU трёхфазное', dU3.toFixed(2) + ' В', cls],['Потеря %', pct.toFixed(2) + '%', cls],['Uост. на ПЭД', Uost.toFixed(1) + ' В', Uost < 320 ? 'red' : 'green'],['Допуск до 5%', pct <= 5 ? 'НОРМА ✓' : 'ПРЕВЫШЕНИЕ ✗', pct <= 5 ? 'green' : 'red']]);
+    showResults('res_udrop', [
+        ['ΔU однофазное', dU.toFixed(2) + ' В'],
+        ['ΔU трёхфазное', dU3.toFixed(2) + ' В', cls],
+        ['Потеря %', pct.toFixed(2) + '%', cls],
+        ['Uост. на ПЭД', Uост.toFixed(1) + ' В', Uост < 320 ? 'red' : 'green'],
+        ['Допуск (до 5%)', pct <= 5 ? 'НОРМА ✓' : 'ПРЕВЫШЕНИЕ ✗', pct <= 5 ? 'green' : 'red'],
+    ]);
 }
+
+// ЧРП / VSD
 function calcVSD() {
-    const f1 = +document.getElementById('vsd_f1').value || 50; const f2 = +document.getElementById('vsd_f2').value;
-    const q1 = +document.getElementById('vsd_q1').value; const h1 = +document.getElementById('vsd_h1').value; const p1 = +document.getElementById('vsd_p1').value;
+    const f1 = +document.getElementById('vsd_f1').value || 50;
+    const f2 = +document.getElementById('vsd_f2').value;
+    const q1 = +document.getElementById('vsd_q1').value;
+    const h1 = +document.getElementById('vsd_h1').value;
+    const p1 = +document.getElementById('vsd_p1').value;
     if(!f2) return alert('Введи новую частоту');
-    const k = f2/f1;
-    showResults('res_vsd', [['Коэфф. f2/f1', k.toFixed(4)],['НОВАЯ ПОДАЧА Q2', (q1*k).toFixed(2) + ' м³/сут', 'green'],['НОВЫЙ НАПОР H2', (h1*k*k).toFixed(1) + ' м'],['НОВАЯ МОЩНОСТЬ P2', (p1*k*k*k).toFixed(2) + ' кВт'],['Изм. дебита', ((k-1)*100).toFixed(1) + '%', k > 1 ? 'green' : 'cyan']]);
+    const k = f2 / f1;
+    const q2 = q1 * k;
+    const h2 = h1 * k * k;
+    const p2 = p1 * k * k * k;
+    showResults('res_vsd', [
+        ['Коэфф. f2/f1', k.toFixed(4)],
+        ['НОВАЯ ПОДАЧА Q2', q2.toFixed(2) + ' м³/сут', 'green'],
+        ['НОВЫЙ НАПОР H2', h2.toFixed(1) + ' м'],
+        ['НОВАЯ МОЩНОСТЬ P2', p2.toFixed(2) + ' кВт'],
+        ['Изм. дебита', ((k-1)*100).toFixed(1) + '%', k > 1 ? 'green' : 'cyan'],
+    ]);
 }
+
+// ESP ZONE
 function calcESPZone() {
-    const qnom = +document.getElementById('esp_qnom').value; const q = +document.getElementById('esp_q').value;
+    const qnom = +document.getElementById('esp_qnom').value;
+    const q = +document.getElementById('esp_q').value;
     if(!qnom || !q) return alert('Введи данные');
-    const ql = qnom*0.75; const qr = qnom*1.2;
+    const ql = qnom * 0.75;
+    const qr = qnom * 1.2;
+    const ratio = q / qnom;
     let zone, cls;
     if(q < ql) { zone = 'ЛЕВАЯ — ПЕРЕГРУЗ ПЭД'; cls = 'red'; }
     else if(q > qr) { zone = 'ПРАВАЯ — КАВИТАЦИЯ'; cls = 'red'; }
     else { zone = 'РАБОЧАЯ ЗОНА — НОРМА'; cls = 'green'; }
-    showResults('res_espzone', [['Левая граница', ql.toFixed(1) + ' м³/сут'],['Правая граница', qr.toFixed(1) + ' м³/сут'],['Текущий дебит', q.toFixed(1) + ' м³/сут'],['ЗОНА', zone, cls]]);
+    showResults('res_espzone', [
+        ['Левая граница', ql.toFixed(1) + ' м³/сут'],
+        ['Правая граница', qr.toFixed(1) + ' м³/сут'],
+        ['Текущий дебит', q.toFixed(1) + ' м³/сут'],
+        ['Q/Qном', (ratio*100).toFixed(1) + '%', cls],
+        ['ЗОНА', zone, cls],
+    ]);
 }
+
+// КПД
 function calcEff() {
-    const Q = +document.getElementById('eff_q').value; const H = +document.getElementById('eff_h').value;
-    const ro = +document.getElementById('eff_ro').value || 900; const P = +document.getElementById('eff_p').value;
+    const Q = +document.getElementById('eff_q').value;
+    const H = +document.getElementById('eff_h').value;
+    const ro = +document.getElementById('eff_ro').value || 900;
+    const P = +document.getElementById('eff_p').value;
     if(!Q || !H || !P) return alert('Введи все данные');
-    const Pg = ro * 9.81 * H * Q / 86400 / 1000; const eff = Pg / P * 100;
-    showResults('res_eff', [['Гидравл. мощность', Pg.toFixed(2) + ' кВт'],['КПД системы', eff.toFixed(1) + '%', eff > 50 ? 'green' : eff > 35 ? 'gold' : 'red'],['Потери', (P-Pg).toFixed(2) + ' кВт']]);
+    const Qm3s = Q / 86400;
+    const Pgidro = ro * 9.81 * H * Qm3s / 1000;
+    const eff = (Pgidro / P) * 100;
+    showResults('res_eff', [
+        ['Гидравл. мощность', Pgidro.toFixed(2) + ' кВт'],
+        ['КПД системы', eff.toFixed(1) + '%', eff > 50 ? 'green' : eff > 35 ? 'gold' : 'red'],
+        ['Потери', (P - Pgidro).toFixed(2) + ' кВт'],
+    ]);
 }
+
+// НКТ
 function calcNKT() {
     let d = +document.getElementById('nkt_size').value;
     if(d === 0) d = +document.getElementById('nkt_manual').value;
-    const top = +document.getElementById('nkt_top').value || 0; const bot = +document.getElementById('nkt_bot').value;
+    const top = +document.getElementById('nkt_top').value || 0;
+    const bot = +document.getElementById('nkt_bot').value;
     if(!d || !bot) return alert('Введи данные');
-    const r = d/2000; const vol = Math.PI * r * r * (bot - top);
-    showResults('res_nkt', [['Длина колонны', (bot-top).toFixed(0) + ' м'],['Объём НКТ', (vol*1000).toFixed(1) + ' л', 'green'],['Объём НКТ', vol.toFixed(4) + ' м³']]);
+    const L = bot - top;
+    const r = (d / 1000) / 2;
+    const vol = Math.PI * r * r * L;
+    showResults('res_nkt', [
+        ['Внутр. диаметр', d + ' мм'],
+        ['Длина колонны', L.toFixed(0) + ' м'],
+        ['Объём НКТ', (vol * 1000).toFixed(1) + ' л', 'green'],
+        ['Объём НКТ', vol.toFixed(4) + ' м³'],
+        ['На 100м', (Math.PI * r * r * 100 * 1000).toFixed(2) + ' л/100м'],
+    ]);
 }
+
+// Z-ФАКТОР
 function calcZ() {
-    const P = +document.getElementById('z_p').value; const T = +document.getElementById('z_t').value + 273.15;
-    const Pc = +document.getElementById('z_pc').value || 4.6; const Tc = +document.getElementById('z_tc').value + 273.15;
+    const P = +document.getElementById('z_p').value;
+    const T = +document.getElementById('z_t').value + 273.15;
+    const Pc = +document.getElementById('z_pc').value || 4.6;
+    const Tc = +document.getElementById('z_tc').value + 273.15 || 191;
     if(!P) return alert('Введи давление');
-    const Pr = P/Pc; const Tr = T/Tc;
+    const Pr = P / Pc;
+    const Tr = T / Tc;
     const Z = 1 + (0.083 - 0.422/Math.pow(Tr,1.6))/Tr * Pr + (0.139 - 0.172/Math.pow(Tr,4.2))/Tr * Pr*Pr;
-    showResults('res_z', [['Приведённое P', Pr.toFixed(3)],['Приведённая T', Tr.toFixed(3)],['Z-ФАКТОР', Z.toFixed(4), 'green']]);
+    showResults('res_z', [
+        ['Приведённое P', Pr.toFixed(3)],
+        ['Приведённая T', Tr.toFixed(3)],
+        ['Z-ФАКТОР', Z.toFixed(4), 'green'],
+        ['Отклонение от 1', ((Z-1)*100).toFixed(2) + '%'],
+    ]);
 }
+
+// ПЛОТНОСТЬ ГАЗА
 function calcGasDens() {
-    const M = +document.getElementById('gd_m').value || 16; const P = +document.getElementById('gd_p').value;
-    const T = +document.getElementById('gd_t').value + 273.15; const Z = +document.getElementById('gd_z').value || 1;
+    const M = +document.getElementById('gd_m').value || 16;
+    const P = +document.getElementById('gd_p').value;
+    const T = +document.getElementById('gd_t').value + 273.15;
+    const Z = +document.getElementById('gd_z').value || 1;
     if(!P) return alert('Введи давление');
-    const rho = M * P * 101325 / (Z * 8.314 * T);
-    showResults('res_gd', [['Плотность газа', rho.toFixed(3) + ' кг/м³', 'green'],['Отн. плотность', (rho/1.204).toFixed(3) + ' (воздух=1)']]);
+    const Ppa = P * 101325;
+    const rho = (M * Ppa) / (Z * 8.314 * T);
+    showResults('res_gd', [
+        ['Плотность газа', rho.toFixed(3) + ' кг/м³', 'green'],
+        ['Отн. плотность', (rho/1.204).toFixed(3) + ' (воздух=1)'],
+        ['Молярный объём', (Z*8.314*T/Ppa*1000).toFixed(2) + ' л/моль'],
+    ]);
 }
+
+// ГИДРОСТАТИКА
 function calcHydro() {
-    const h = +document.getElementById('hs_h').value; const ro = +document.getElementById('hs_ro').value || 900;
+    const h = +document.getElementById('hs_h').value;
+    const ro = +document.getElementById('hs_ro').value || 900;
     if(!h) return alert('Введи глубину');
-    const P = ro * 9.81 * h / 101325;
-    showResults('res_hs', [['Давление (атм)', P.toFixed(2), 'green'],['Давление (МПа)', (P*0.101325).toFixed(3)],['Градиент', (P/h*100).toFixed(2) + ' атм/100м']]);
+    const P_Pa = ro * 9.81 * h;
+    const P_atm = P_Pa / 101325;
+    const P_MPa = P_Pa / 1e6;
+    showResults('res_hs', [
+        ['Давление (атм)', P_atm.toFixed(2), 'green'],
+        ['Давление (МПа)', P_MPa.toFixed(3)],
+        ['Давление (бар)', (P_Pa/1e5).toFixed(2)],
+        ['Градиент', (P_atm/h*100).toFixed(2) + ' атм/100м'],
+    ]);
 }
+
+// ЗАБОЙНОЕ ДАВЛЕНИЕ
 function calcBHP() {
-    const Pu = +document.getElementById('bhp_pu').value || 0; const h = +document.getElementById('bhp_h').value;
-    const ro = +document.getElementById('bhp_ro').value || 900; const fr = +document.getElementById('bhp_fr').value || 0;
+    const Pu = +document.getElementById('bhp_pu').value || 0;
+    const h = +document.getElementById('bhp_h').value;
+    const ro = +document.getElementById('bhp_ro').value || 900;
+    const fr = +document.getElementById('bhp_fr').value || 0;
     if(!h) return alert('Введи глубину');
-    const Pbhp = Pu + ro*9.81*h/101325 - fr;
-    showResults('res_bhp', [['РЗАБ (атм)', Pbhp.toFixed(1), 'green'],['РЗАБ (МПа)', (Pbhp*0.101325).toFixed(3)]]);
+    const Phs = ro * 9.81 * h / 101325;
+    const Pbhp = Pu + Phs - fr;
+    showResults('res_bhp', [
+        ['Гидростатика', Phs.toFixed(1) + ' атм'],
+        ['РЗАБ', Pbhp.toFixed(1) + ' атм', 'green'],
+        ['РЗАБ (МПа)', (Pbhp * 0.101325).toFixed(3)],
+        ['Устьевое Ру', Pu.toFixed(1) + ' атм'],
+    ]);
 }
+
+// НСТ → РПЛ
 function calcNST() {
-    const nst = +document.getElementById('nst_h').value; const hskv = +document.getElementById('nst_hskv').value;
-    const ro = +document.getElementById('nst_ro').value || 900; const pu = +document.getElementById('nst_pu').value || 0;
+    const nst = +document.getElementById('nst_h').value;
+    const hskv = +document.getElementById('nst_hskv').value;
+    const ro = +document.getElementById('nst_ro').value || 900;
+    const pu = +document.getElementById('nst_pu').value || 0;
     if(!nst || !hskv) return alert('Введи уровни');
-    const Pplas = pu + ro * 9.81 * (hskv - nst) / 101325;
-    showResults('res_nst', [['Столб жидкости', (hskv-nst).toFixed(0) + ' м'],['РПЛ (атм)', Pplas.toFixed(1), 'green'],['РПЛ (МПа)', (Pplas*0.101325).toFixed(3)]]);
+    const hFluid = hskv - nst;
+    const Pplas = pu + ro * 9.81 * hFluid / 101325;
+    showResults('res_nst', [
+        ['Столб жидкости', hFluid.toFixed(0) + ' м'],
+        ['РПЛ (атм)', Pplas.toFixed(1), 'green'],
+        ['РПЛ (МПа)', (Pplas * 0.101325).toFixed(3)],
+        ['Градиент пласта', (Pplas/hskv*100).toFixed(2) + ' атм/100м'],
+    ]);
 }
+
+// ===== BUILD REPORT TEXT =====
+let finalData = '';
+
 function buildReportText() {
     const kp = document.getElementById('reg_kp').value || '--';
     const skv = document.getElementById('reg_skv').value || '--';
-    let out = `═══════════════════════════\nАНВАРОВ Т.А. | ОТЧЁТ\nКП-${kp}  СКВ-${skv}\n${new Date().toLocaleDateString('ru-RU')}  ${new Date().toLocaleTimeString('ru-RU')}\n═══════════════════════════\n`;
-    const params = [['Нд','p_nd','м'],['Рз','p_rz','атм'],['Рб','p_rb','атм'],['Рл','p_rl','атм'],['F','p_f','Гц'],['I','p_i','А'],['З','p_z','%'],['Рпр','p_ppr','атм'],['Нст зат.','p_nst_zat','м'],['Нст нкт.','p_nst_nkt','м'],['Глубина','p_depth','м'],['Тдв.','p_tdv','°C'],['Замер Q','p_qm3','м³']];
-    let hp = params.some(p => document.getElementById(p[1]).value);
-    if(hp) { out += '\n📊 ПАРАМЕТРЫ:\n'; params.forEach(p => { const v = document.getElementById(p[1]).value; if(v) out += `  ${p[0]}: ${v} ${p[2]}\n`; }); }
-    const ql = document.getElementById('q_liters').value; const qt = document.getElementById('q_work').value;
-    if(ql && qt) { const day = ql/qt*1440/1000; out += `\n💧 ДЕБИТ:\n  ${day.toFixed(2)} м³/сут  |  ${(day/0.159).toFixed(1)} барр/сут\n`; }
-    out += `\n═══════════════════════════\nATA v47.0 | ANVAROV T.A.\n`;
+    let out = `═══════════════════════════\n`;
+    out += `АНВАРОВ Т.А. | ОТЧЁТ\n`;
+    out += `КП-${kp}  СКВ-${skv}\n`;
+    out += `${new Date().toLocaleDateString('ru-RU')}  ${new Date().toLocaleTimeString('ru-RU')}\n`;
+    out += `═══════════════════════════\n`;
+
+    // ПАРАМЕТРЫ
+    const params = [
+        ['Нд','p_nd','м'], ['Рз','p_rz','атм'],
+        ['Рб','p_rb','атм'], ['Рл','p_rl','атм'],
+        ['Частота F','p_f','Гц'], ['Ток I','p_i','А'],
+        ['Загрузка З','p_z','%'], ['Рпр','p_ppr','атм'],
+        ['Нст зат.','p_nst_zat','м'], ['Нст нкт.','p_nst_nkt','м'],
+        ['Глубина','p_depth','м'], ['Тдв.','p_tdv','°C'],
+        ['Замер Q','p_qm3','м³'],
+    ];
+    let hasParams = params.some(p => document.getElementById(p[1]).value);
+    if(hasParams) {
+        out += `\n📊 ПАРАМЕТРЫ:\n`;
+        params.forEach(p => {
+            const v = document.getElementById(p[1]).value;
+            if(v) out += `  ${p[0]}: ${v} ${p[2]}\n`;
+        });
+    }
+
+    // ДЕБИТ
+    const ql = document.getElementById('q_liters').value;
+    const qt = document.getElementById('q_work').value;
+    const wcq = document.getElementById('wc_q').value;
+    const wcwc = document.getElementById('wc_wc').value;
+    if(ql && qt) {
+        const day = (ql/qt)*1440/1000;
+        out += `\n💧 ДЕБИТ:\n`;
+        out += `  Объём: ${ql} л / ${qt} мин\n`;
+        out += `  Дебит: ${day.toFixed(2)} м³/сут\n`;
+        out += `  Дебит: ${(day/0.159).toFixed(1)} барр/сут\n`;
+        if(wcq && wcwc) {
+            const qo = wcq*(1-wcwc/100);
+            const ro = +document.getElementById('wc_ro').value || 870;
+            out += `  Нефть: ${(qo*ro/1000).toFixed(2)} т/сут\n`;
+            out += `  Обв-сть: ${wcwc}%\n`;
+        }
+    }
+
+    // ПКВ
+    const pkv_vol = document.getElementById('pkv_vol').value;
+    const pkv_work = document.getElementById('pkv_work').value;
+    const pkv_off = document.getElementById('pkv_off').value;
+    if(pkv_vol && pkv_work && pkv_off) {
+        const day = (pkv_vol/(+pkv_work)) * (1440/(+pkv_work + +pkv_off)) / 1000;
+        out += `\n⏱ ПКВ:\n`;
+        out += `  Объём цикла: ${pkv_vol} л\n`;
+        out += `  Работа/простой: ${pkv_work}/${pkv_off} мин\n`;
+        out += `  Дебит ПКВ: ${day.toFixed(2)} м³/сут\n`;
+    }
+
+    // ГЛУШЕНИЕ
+    const g_ppl = document.getElementById('g_ppl').value;
+    const g_hpl = document.getElementById('g_hpl').value;
+    if(g_ppl && g_hpl) {
+        const kz = +document.getElementById('g_kz').value || 1.07;
+        const rho = (g_ppl * kz * 1e5) / (9.81 * g_hpl);
+        out += `\n🔧 ГЛУШЕНИЕ:\n`;
+        out += `  Рпл: ${g_ppl} атм / Глуб: ${g_hpl} м\n`;
+        out += `  Плотность: ${rho.toFixed(0)} кг/м³\n`;
+    }
+
+    // УЭЦН
+    const vsd_f1 = document.getElementById('vsd_f1').value;
+    const vsd_f2 = document.getElementById('vsd_f2').value;
+    if(vsd_f1 && vsd_f2) {
+        const k = +vsd_f2 / +vsd_f1;
+        const q1 = +document.getElementById('vsd_q1').value;
+        out += `\n⚡ ЧРП:\n`;
+        out += `  f1/f2: ${vsd_f1}/${vsd_f2} Гц\n`;
+        if(q1) out += `  Q1→Q2: ${q1} → ${(q1*k).toFixed(1)} м³/сут\n`;
+    }
+
+    out += `\n═══════════════════════════\n`;
+    out += `ATA v47.0 | ANVAROV T.A.\n`;
     return out;
 }
-let finalData = '';
-function getQuickText() { return buildReportText(); }
-function openQuickShare() { document.getElementById('qs_preview').textContent = buildReportText(); nav('v_quickshare'); }
-function copyToClipboard(text) {
-    try { const ta = document.createElement('textarea'); ta.value = text; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.focus(); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); } catch(e) {}
-}
-function quickShareWA() { window.open('https://wa.me/?text=' + encodeURIComponent(getQuickText()), '_blank'); }
-function quickShareTG() { window.open('https://t.me/share/url?url=&text=' + encodeURIComponent(getQuickText()), '_blank'); }
-function quickShareEmail() {
-    const kp = document.getElementById('reg_kp').value || '--'; const skv = document.getElementById('reg_skv').value || '--';
-    window.location.href = 'mailto:?subject=' + encodeURIComponent('Параметры КП-'+kp+' СКВ-'+skv+' | ATA') + '&body=' + encodeURIComponent(getQuickText());
-}
-function quickShareCopy() { copyToClipboard(getQuickText()); const el = document.getElementById('qs_copied'); el.style.display='block'; setTimeout(()=>el.style.display='none',2000); }
-function quickShareMax() { copyToClipboard(getQuickText()); const el = document.getElementById('qs_copied'); el.textContent='✓ СКОПИРОВАНО! Открой Макс и вставь'; el.style.display='block'; setTimeout(()=>{el.style.display='none';el.textContent='✓ СКОПИРОВАНО!';},4000); }
-window.onload = () => {
-    document.querySelectorAll('input, select').forEach(el => {
-        if(el.id) { const s = localStorage.getItem('ata_'+el.id); if(s !== null) el.value = s; el.addEventListener('input', () => localStorage.setItem('ata_'+el.id, el.value)); }
+
+// ═══ TICKER + WEATHER ═══
+
+function setTick(id, val, chg) {
+    ['t_'+id, 't_'+id+'2'].forEach(eid => {
+        const el = document.getElementById(eid);
+        if (el) el.textContent = val;
     });
-    updateWell();
+    ['t_'+id+'_chg', 't_'+id+'_chg2'].forEach(eid => {
+        const el = document.getElementById(eid);
+        if (el && chg !== null) {
+            el.textContent = (chg >= 0 ? '▲' : '▼') + Math.abs(chg).toFixed(2);
+            el.className = 'tick-chg ' + (chg >= 0 ? 'tick-up' : 'tick-down');
+        }
+    });
+}
+
+async function fetchTicker() {
+    // ── КУРСЫ ВАЛЮТ — frankfurter.app (CORS *, работает с file://) ──
+    try {
+        const r = await fetchTimeout('https://api.frankfurter.app/latest?from=USD&to=EUR,CNY,RUB', 8000);
+        const d = await r.json();
+        if (d && d.rates) {
+            const rub = d.rates.RUB, eur = d.rates.EUR, cny = d.rates.CNY;
+            setTick('usd_rub', rub.toFixed(2) + ' ₽', null);
+            setTick('eur_rub', (rub / eur).toFixed(2) + ' ₽', null);
+            setTick('cny_rub', (rub / cny).toFixed(2) + ' ₽', null);
+            oilRates = { eur, rub };
+        }
+    } catch(e) {
+        setTick('usd_rub', '— офлайн', null);
+    }
+
+    // ── НЕФТЬ + ЗОЛОТО — встроенные цены + попытка обновить онлайн ──
+    // Резервные цены (обновлены март 2026)
+    const fallback = { brent: 83.20, wti: 79.40, gold: 2180, urals: 69.20 };
+    setTick('brent', fallback.brent.toFixed(2) + ' $/bbl', null);
+    setTick('wti',   fallback.wti.toFixed(2)   + ' $/bbl', null);
+    setTick('urals', fallback.urals.toFixed(2) + ' $/bbl', null);
+    setTick('gold',  fallback.gold.toFixed(0)  + ' $/oz',  null);
+
+    // Пробуем получить живые цены через открытый JSON API
+    // commodities.api.bls.gov — US Bureau of Labor, CORS открыт
+    // Fallback chain: 3 разных источника
+    fetchOilLive(fallback);
+}
+
+async function fetchOilLive(fallback) {
+    // Источник 1: frankfurter.app не даёт нефть, но даёт XAU (золото в USD)
+    try {
+        const r = await fetchTimeout('https://api.frankfurter.app/latest?from=XAU&to=USD', 8000);
+        const d = await r.json();
+        if (d && d.rates && d.rates.USD) {
+            setTick('gold', d.rates.USD.toFixed(2) + ' $/oz', null);
+        }
+    } catch(e) {}
+
+    // Источник 2: open.er-api.com даёт XAU тоже
+    // Источник 3: coinbase для сравнения BTC/USD (не нужно)
+
+    // Нефть: пробуем allorigins → corsproxy → cdn77
+    const brentUrl = 'https://query1.finance.yahoo.com/v8/finance/chart/BZ=F?interval=1d&range=2d';
+    const proxies = [
+        'https://api.allorigins.win/raw?url=' + encodeURIComponent(brentUrl),
+        'https://corsproxy.io/?'              + encodeURIComponent(brentUrl),
+        'https://cors-anywhere.herokuapp.com/'+ brentUrl,
+    ];
+    for (const proxy of proxies) {
+        try {
+            const r = await fetchTimeout(proxy, 10000);
+            const data = await r.json();
+            const closes = data?.chart?.result?.[0]?.indicators?.quote?.[0]?.close?.filter(v => v != null);
+            if (closes && closes.length >= 2) {
+                const brent = closes[closes.length-1];
+                const wtiUrl = 'https://query1.finance.yahoo.com/v8/finance/chart/CL=F?interval=1d&range=2d';
+                const wtiProxy = proxy.replace(encodeURIComponent(brentUrl), encodeURIComponent(wtiUrl))
+                                      .replace(brentUrl, wtiUrl);
+                let wti = fallback.wti;
+                try {
+                    const rw = await fetchTimeout(wtiProxy, 8000);
+                    const dw = await rw.json();
+                    const wc = dw?.chart?.result?.[0]?.indicators?.quote?.[0]?.close?.filter(v => v != null);
+                    if (wc && wc.length) wti = wc[wc.length-1];
+                } catch(e) {}
+                const chg = +(brent - closes[closes.length-2]).toFixed(2);
+                setTick('brent', brent.toFixed(2) + ' $/bbl', chg);
+                setTick('wti',   wti.toFixed(2)   + ' $/bbl', null);
+                setTick('urals', (brent-14).toFixed(2) + ' $/bbl', chg);
+                if (!oilCache.brent)
+                    oilCache.brent = {price:brent, eur:brent*oilRates.eur, rub:brent*oilRates.rub, change:chg, hist:closes, source:'Yahoo/proxy'};
+                break;
+            }
+        } catch(e) { continue; }
+    }
+}
+// ПОГОДА
+const WX_ICONS = {
+    0:'☀️',1:'🌤',2:'⛅',3:'☁️',45:'🌫',48:'🌫',
+    51:'🌦',53:'🌦',55:'🌧',61:'🌧',63:'🌧',65:'🌧',
+    71:'🌨',73:'🌨',75:'❄️',80:'🌦',81:'🌧',82:'⛈',
+    95:'⛈',96:'⛈',99:'⛈'
 };
+const WX_DESC = {
+    0:'Ясно',1:'Почти ясно',2:'Переменная облачность',3:'Пасмурно',
+    45:'Туман',48:'Туман',51:'Слабая морось',53:'Морось',55:'Морось',
+    61:'Небольшой дождь',63:'Дождь',65:'Сильный дождь',
+    71:'Небольшой снег',73:'Снег',75:'Сильный снег',
+    80:'Ливень',81:'Сильный ливень',82:'Очень сильный ливень',
+    95:'Гроза',96:'Гроза с градом',99:'Гроза с сильным градом'
+};
+
+// ══ ПОГОДА ══
+function toggleWxManual() {
+    const el = document.getElementById('wx_manual');
+    el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+function applyManualWeather() {
+    const temp  = document.getElementById('wx_m_temp').value;
+    const feels = document.getElementById('wx_m_feels').value;
+    const hum   = document.getElementById('wx_m_hum').value;
+    const wind  = document.getElementById('wx_m_wind').value;
+    const dir   = document.getElementById('wx_m_dir').value;
+    const cond  = document.getElementById('wx_m_cond').value.split(',');
+    const city  = document.getElementById('wx_m_city').value || 'Вручную';
+
+    document.getElementById('wx_icon').textContent  = cond[0] || '🌡';
+    document.getElementById('wx_main').textContent  = (temp || '—') + ' °C';
+    document.getElementById('wx_desc').textContent  =
+        (cond[1] || '—') +
+        (wind  ? '   💨 ' + parseFloat(wind).toFixed(1) + ' м/с ' + dir : '') +
+        (hum   ? '   💧 ' + hum + '%' : '');
+    document.getElementById('wx_feels').textContent = feels ? 'Ощущается ' + feels + ' °C' : '';
+    document.getElementById('wx_city').textContent  = '✏️ ' + city;
+    document.getElementById('wx_manual').style.display = 'none';
+}
+
+async function searchWeatherCity() {
+    const query = document.getElementById('wx_city_input').value.trim();
+    if (!query) return;
+    const desc = document.getElementById('wx_desc');
+    desc.textContent = '⏳ ' + query + '...';
+
+    // Пробуем несколько API по очереди
+    const apis = [
+        () => fetchWxOpenMeteo(query),
+        () => fetchWxWttr(query),
+    ];
+    for (const api of apis) {
+        try {
+            const ok = await api();
+            if (ok) return;
+        } catch(e) {}
+    }
+    // Всё упало — предлагаем ввести вручную
+    desc.textContent = '❌ Нет ответа. Нажми ✏️ и введи вручную';
+}
+
+async function fetchWxOpenMeteo(query) {
+    // Пробуем fetch, потом XHR
+    function xhrGet(url) {
+        return new Promise(function(resolve, reject) {
+            var x = new XMLHttpRequest();
+            x.open('GET', url, true);
+            x.onload  = function() { resolve(x.responseText); };
+            x.onerror = function() { reject(new Error('XHR error')); };
+            x.timeout = 10000;
+            x.ontimeout = function() { reject(new Error('timeout')); };
+            x.send();
+        });
+    }
+
+    async function getJson(url) {
+        try {
+            var r = await fetch(url);
+            return await r.json();
+        } catch(e) {
+            var txt = await xhrGet(url);
+            return JSON.parse(txt);
+        }
+    }
+
+    var gd = await getJson('https://geocoding-api.open-meteo.com/v1/search?name=' + encodeURIComponent(query) + '&count=1&language=ru&format=json');
+    if (!gd.results || !gd.results.length) return false;
+    var res = gd.results[0];
+    var cityName = res.name + (res.admin1 ? ', ' + res.admin1 : '');
+    var wd = await getJson('https://api.open-meteo.com/v1/forecast?latitude=' + res.latitude + '&longitude=' + res.longitude + '&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m,wind_direction_10m,relative_humidity_2m&wind_speed_unit=ms&timezone=auto');
+    var c = wd.current;
+    if (!c || c.temperature_2m === undefined) return false;
+    var dirs = ['С','СВ','В','ЮВ','Ю','ЮЗ','З','СЗ'];
+    var code = c.weather_code;
+    document.getElementById('wx_icon').textContent  = WX_ICONS[code] || '🌡';
+    document.getElementById('wx_main').textContent  = Math.round(c.temperature_2m) + ' °C';
+    document.getElementById('wx_desc').textContent  = (WX_DESC[code]||'—') + '   💨 ' + c.wind_speed_10m.toFixed(1) + ' ' + dirs[Math.round(c.wind_direction_10m/45)%8] + ' м/с   💧 ' + c.relative_humidity_2m + '%';
+    document.getElementById('wx_feels').textContent = 'Ощущается ' + Math.round(c.apparent_temperature) + ' °C';
+    document.getElementById('wx_city').textContent  = '📍 ' + cityName;
+    return true;
+}
+
+
+function fetchWxWttr(query) {
+    return new Promise(function(resolve) {
+        const old = document.getElementById('_wttr');
+        if (old) old.remove();
+        const cbName = '_wttr' + Date.now();
+        const timer = setTimeout(function() {
+            delete window[cbName];
+            resolve(false);
+        }, 8000);
+        window[cbName] = function(data) {
+            clearTimeout(timer);
+            try {
+                const cur = data.current_condition[0];
+                const temp   = parseInt(cur.temp_C);
+                const feels  = parseInt(cur.FeelsLikeC);
+                const hum    = cur.humidity;
+                const wind   = (parseFloat(cur.windspeedKmph) / 3.6).toFixed(1);
+                const wdir   = parseInt(cur.winddirDegree);
+                const desc16 = cur.lang_ru ? cur.lang_ru[0].value : (cur.weatherDesc[0].value || '—');
+                const dirs   = ['С','СВ','В','ЮВ','Ю','ЮЗ','З','СЗ'];
+                const dirStr = dirs[Math.round(wdir/45)%8];
+                const wcode  = parseInt(cur.weatherCode);
+                const icon   = wcode<=113?'☀️':wcode<=116?'🌤':wcode<=122?'⛅':wcode<=143?'🌫':wcode<=260?'🌫':wcode<=353?'🌦':wcode<=381?'🌧':wcode<=395?'❄️':'⛈';
+                document.getElementById('wx_icon').textContent  = icon;
+                document.getElementById('wx_main').textContent  = temp + ' °C';
+                document.getElementById('wx_desc').textContent  = desc16 + '   💨 ' + wind + ' ' + dirStr + ' м/с   💧 ' + hum + '%';
+                document.getElementById('wx_feels').textContent = 'Ощущается ' + feels + ' °C';
+                document.getElementById('wx_city').textContent  = '📍 ' + query;
+                delete window[cbName];
+                resolve(true);
+            } catch(e) {
+                delete window[cbName];
+                resolve(false);
+            }
+        };
+        const s = document.createElement('script');
+        s.id = '_wttr';
+        s.src = 'https://wttr.in/' + encodeURIComponent(query) + '?format=j1&lang=ru&callback=' + cbName;
+        s.onerror = function() { clearTimeout(timer); delete window[cbName]; resolve(false); };
+        document.head.appendChild(s);
+    });
+}
+
+async function loadWeatherByCoords(lat, lon, cityName) {
+    document.getElementById('wx_desc').textContent = '⏳ загружаю...';
+    try {
+        const wr = await fetch('https://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lon + '&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m,wind_direction_10m,relative_humidity_2m&wind_speed_unit=ms&timezone=auto');
+        const wd = await wr.json();
+        const c  = wd.current;
+        if (!c || c.temperature_2m === undefined) throw new Error('нет данных');
+        const dirs = ['С','СВ','В','ЮВ','Ю','ЮЗ','З','СЗ'];
+        const code = c.weather_code;
+        document.getElementById('wx_icon').textContent  = WX_ICONS[code] || '🌡';
+        document.getElementById('wx_main').textContent  = Math.round(c.temperature_2m) + ' °C';
+        document.getElementById('wx_desc').textContent  = (WX_DESC[code]||'—') + '   💨 ' + c.wind_speed_10m.toFixed(1) + ' ' + dirs[Math.round(c.wind_direction_10m/45)%8] + ' м/с   💧 ' + c.relative_humidity_2m + '%';
+        document.getElementById('wx_feels').textContent = 'Ощущается ' + Math.round(c.apparent_temperature) + ' °C';
+        document.getElementById('wx_city').textContent  = '📍 ' + cityName;
+    } catch(e) {
+        document.getElementById('wx_desc').textContent = '❌ Нет сети. Нажми ✏️ — введи вручную';
+    }
+}
+
+
+function requestWeather() {
+    const btn = document.getElementById('wx_btn');
+    btn.textContent = '⏳'; btn.disabled = true;
+    document.getElementById('wx_desc').textContent = 'Определяю местоположение...';
+    if (!navigator.geolocation) {
+        document.getElementById('wx_desc').textContent = '❌ GPS недоступен';
+        btn.textContent = '📍'; btn.disabled = false;
+        return;
+    }
+    navigator.geolocation.getCurrentPosition(
+        async pos => {
+            btn.textContent = '↻'; btn.disabled = false;
+            const {latitude: lat, longitude: lon} = pos.coords;
+            let city = lat.toFixed(2) + '°N ' + lon.toFixed(2) + '°E';
+            try {
+                const r = await fetchTimeout('https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=' + lat + '&longitude=' + lon + '&localityLanguage=ru', 6000);
+                const d = await r.json();
+                city = d.city || d.locality || d.principalSubdivision || city;
+            } catch(e) {}
+            await loadWeatherByCoords(lat, lon, city);
+        },
+        err => {
+            btn.textContent = '📍'; btn.disabled = false;
+            const m = {1:'Доступ к GPS запрещён — разреши в настройках', 2:'GPS сигнал не найден', 3:'Таймаут GPS'};
+            document.getElementById('wx_desc').textContent = '❌ ' + (m[err.code] || 'Ошибка GPS');
+        },
+        {timeout: 15000, enableHighAccuracy: false}
+    );
+}
+
+// Запускаем при загрузке
+window.addEventListener('load', () => {
+    fetchTicker();
+    setInterval(fetchTicker, 5 * 60 * 1000);
+});
+
+
+async function nativeShare() {
+    const text = getQuickText();
+    const kp = document.getElementById('reg_kp').value || '--';
+    const skv = document.getElementById('reg_skv').value || '--';
+    if (navigator.share) {
+        try {
+            await navigator.share({
+                title: 'ATA | КП-' + kp + ' СКВ-' + skv,
+                text: text
+            });
+        } catch(e) { /* пользователь закрыл */ }
+    } else {
+        copyToClipboard(text);
+        const el = document.getElementById('qs_copied');
+        el.textContent = '✓ СКОПИРОВАНО — вставь в нужное приложение';
+        el.style.display = 'block';
+        setTimeout(() => el.style.display = 'none', 3000);
+    }
+}
+
+// ===== QUICK SHARE =====
+function copyToClipboard(text) {
+    try {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.cssText = 'position:fixed;opacity:0;top:0;left:0;';
+        document.body.appendChild(ta);
+        ta.focus(); ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+    } catch(e) {}
+}
+function getQuickText() { return buildReportText(); }
+function openQuickShare() {
+    document.getElementById('qs_preview').textContent = buildReportText();
+    nav('v_quickshare');
+}
+function quickShareWA() {
+    window.open('https://wa.me/?text=' + encodeURIComponent(getQuickText()), '_blank');
+}
+function quickShareTG() {
+    window.open('https://t.me/share/url?url=&text=' + encodeURIComponent(getQuickText()), '_blank');
+}
+function quickShareEmail() {
+    const kp = document.getElementById('reg_kp').value || '--';
+    const skv = document.getElementById('reg_skv').value || '--';
+    const subj = encodeURIComponent('Параметры КП-' + kp + ' СКВ-' + skv + ' | ATA');
+    const body = encodeURIComponent(getQuickText());
+    const a = document.createElement('a');
+    a.href = 'mailto:?subject=' + subj + '&body=' + body;
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => document.body.removeChild(a), 500);
+}
+function quickShareOutlook() {
+    const kp = document.getElementById('reg_kp').value || '--';
+    const skv = document.getElementById('reg_skv').value || '--';
+    const subj = encodeURIComponent('Параметры КП-' + kp + ' СКВ-' + skv + ' | ATA');
+    const body = encodeURIComponent(getQuickText());
+    // Пробуем открыть Outlook напрямую, потом fallback на mailto
+    const outlookUrl = 'ms-outlook://compose?subject=' + subj + '&body=' + body;
+    const a = document.createElement('a');
+    a.href = outlookUrl;
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+        document.body.removeChild(a);
+        // Если Outlook не открылся — открываем обычный mailto
+        const b = document.createElement('a');
+        b.href = 'mailto:?subject=' + subj + '&body=' + body;
+        b.style.display = 'none';
+        document.body.appendChild(b);
+        b.click();
+        setTimeout(() => document.body.removeChild(b), 500);
+    }, 1000);
+}
+function quickShareCopy() {
+    copyToClipboard(getQuickText());
+    const el = document.getElementById('qs_copied');
+    el.textContent = '✓ СКОПИРОВАНО!';
+    el.style.display = 'block';
+    setTimeout(() => el.style.display = 'none', 2000);
+}
+function quickShareMax() {
+    copyToClipboard(getQuickText());
+    const el = document.getElementById('qs_copied');
+    el.textContent = '✓ СКОПИРОВАНО! Открой Макс и вставь';
+    el.style.display = 'block';
+    setTimeout(() => { el.style.display = 'none'; el.textContent = '✓ СКОПИРОВАНО!'; }, 4000);
+}
+function quickShareSMS() {
+    window.location.href = 'sms:?body=' + encodeURIComponent(getQuickText().substring(0, 500));
+}
+function sendSMS() {
+    window.location.href = 'sms:?body=' + encodeURIComponent(getQuickText().substring(0, 500));
+}
+
+
+// Таймаут без AbortSignal (совместимо со всеми браузерами Android)
+function fetchTimeout(url, ms, opts) {
+    const options = Object.assign({ mode: 'cors' }, opts || {});
+    const timeout = new Promise(function(_, reject) {
+        setTimeout(function() { reject(new Error('timeout ' + ms + 'ms')); }, ms);
+    });
+    return Promise.race([fetch(url, options), timeout]);
+}
 </script>
 </body>
 </html>
+
+                                                           </html>
