@@ -591,6 +591,12 @@
         <div class="nav-btn share" id="nav_share_btn" onclick="openQuickShare()">
             <span class="icon">📤</span><span class="nav-label">ОТПРАВИТЬ<br>ПАРАМЕТРЫ</span>
         </div>
+        <div class="nav-btn" id="nav_journal_btn" onclick="nav('v_journal'); renderJournal();" style="background:linear-gradient(135deg,#0A1A2A 0%,#0D1A28 100%);border-color:#1E4A6A;border-top-color:#3A9EC8;">
+            <span class="icon">📋</span><span class="nav-label" id="nav_journal_label">ЖУРНАЛ<br>ЗАМЕРОВ</span>
+        </div>
+        <div class="nav-btn" id="nav_qrread_btn" onclick="nav('v_qrread')" style="background:linear-gradient(135deg,#1A0A2A 0%,#1A0D28 100%);border-color:#4A1E6A;border-top-color:#9C3AC8;">
+            <span class="icon">🔍</span><span class="nav-label" id="nav_qrread_label">ЧИТАТЬ QR<br>ИЗ ФОТО</span>
+        </div>
     </div>
 </div>
 
@@ -688,8 +694,10 @@
         <div class="divider"></div>
         <div style="display:flex;gap:8px;">
             <button class="btn btn-outline" onclick="nav('dash')" style="flex:1;">← В МЕНЮ</button>
+            <button class="btn btn-green" onclick="saveJournalEntry()" style="flex:1;">💾 СОХРАНИТЬ</button>
             <button class="btn btn-gold" id="params_share_btn" onclick="shareFromParams()" style="flex:1;">📤 ОТПРАВИТЬ</button>
         </div>
+        <div id="journal_save_msg" style="display:none;text-align:center;color:#2EA84C;font-size:0.8rem;padding:8px;letter-spacing:1px;">✓ ЗАМЕР СОХРАНЁН</div>
     </div>
 </div>
 
@@ -1107,6 +1115,92 @@
 </div>
 
 <!-- ===== БЫСТРАЯ ОТПРАВКА (без отчёта) ===== -->
+<!-- ===== ЖУРНАЛ ЗАМЕРОВ ===== -->
+<!-- ===== ЧИТАТЬ QR ИЗ ФОТО ===== -->
+<div id="v_qrread" class="view">
+    <button class="back-btn" onclick="nav('dash')">← МЕНЮ</button>
+    <div class="card">
+        <div class="card-title">🔍 ЧИТАТЬ QR-КОД ИЗ ФОТО</div>
+        <p style="font-size:0.75rem;color:var(--text);margin-bottom:14px;line-height:1.6;">
+            Выбери фото из галереи, скриншот, документ или картинку из письма — приложение само найдёт QR-код и прочитает его содержимое.
+        </p>
+
+        <!-- Зона выбора файла -->
+        <label for="qr_file_input" style="cursor:pointer;">
+            <div id="qr_drop_zone" style="
+                border: 2px dashed var(--border2);
+                border-radius: 10px;
+                padding: 32px 16px;
+                text-align: center;
+                background: var(--bg);
+                transition: border-color 0.2s;
+                margin-bottom: 14px;
+            ">
+                <div style="font-size:2.5rem;margin-bottom:10px;">📁</div>
+                <div style="font-family:var(--font-head);font-size:0.85rem;color:var(--gold);letter-spacing:2px;font-weight:700;">ВЫБРАТЬ ФОТО</div>
+                <div style="font-size:0.65rem;color:var(--text);margin-top:6px;letter-spacing:1px;">из галереи · скриншот · документ · письмо</div>
+            </div>
+        </label>
+        <input type="file" id="qr_file_input" accept="image/*" style="display:none;" onchange="readQrFromFile(this)">
+
+        <!-- Превью изображения -->
+        <div id="qr_preview_wrap" style="display:none;margin-bottom:14px;text-align:center;">
+            <img id="qr_preview_img" style="max-width:100%;max-height:240px;border-radius:8px;border:1px solid var(--border);">
+            <canvas id="qr_canvas" style="display:none;"></canvas>
+        </div>
+
+        <!-- Статус -->
+        <div id="qr_status" style="display:none;text-align:center;padding:10px;font-size:0.75rem;letter-spacing:1px;border-radius:6px;margin-bottom:10px;"></div>
+
+        <!-- Результат -->
+        <div id="qr_result_wrap" style="display:none;">
+            <div class="section-label">СОДЕРЖИМОЕ QR-КОДА</div>
+            <div id="qr_result_text" style="
+                background:var(--bg);
+                border:1px solid var(--green);
+                border-left:3px solid var(--green);
+                border-radius:6px;
+                padding:14px;
+                font-family:var(--font-mono);
+                font-size:0.8rem;
+                color:var(--text2);
+                white-space:pre-wrap;
+                word-break:break-all;
+                margin-bottom:10px;
+                min-height:60px;
+            "></div>
+            <div id="qr_link_wrap" style="display:none;margin-bottom:10px;">
+                <a id="qr_link" href="#" target="_blank" style="
+                    display:block;
+                    background:linear-gradient(180deg,#2EA84C 0%,#1A6630 100%);
+                    color:#fff;padding:12px;border-radius:6px;
+                    text-align:center;font-family:var(--font-head);
+                    font-size:0.8rem;font-weight:700;letter-spacing:2px;
+                    text-decoration:none;
+                ">🌐 ОТКРЫТЬ ССЫЛКУ</a>
+            </div>
+            <div style="display:flex;gap:8px;">
+                <button onclick="copyQrResult()" class="btn btn-outline" style="flex:1;">📋 КОПИРОВАТЬ</button>
+                <button onclick="shareQrResult()" class="btn btn-gold" style="flex:1;">📤 ПОДЕЛИТЬСЯ</button>
+            </div>
+            <div id="qr_copy_msg" style="display:none;text-align:center;color:var(--green);font-size:0.75rem;padding:6px;letter-spacing:1px;">✓ СКОПИРОВАНО</div>
+        </div>
+    </div>
+</div>
+
+<div id="v_journal" class="view">
+    <button class="back-btn" onclick="nav('dash')">← МЕНЮ</button>
+    <div class="card">
+        <div class="card-title">📋 ЖУРНАЛ ЗАМЕРОВ</div>
+        <div style="display:flex;gap:8px;margin-bottom:12px;align-items:center;">
+            <div id="journal_count" style="flex:1;font-size:0.65rem;color:var(--text);letter-spacing:1px;"></div>
+            <button onclick="clearAllJournal()" style="background:var(--red2);border:1px solid var(--red);color:var(--red);border-radius:5px;padding:6px 12px;font-size:0.65rem;font-family:var(--font-head);letter-spacing:1px;cursor:pointer;">🗑 ОЧИСТИТЬ ВСЁ</button>
+        </div>
+        <div id="journal_list"></div>
+        <div id="journal_empty" style="display:none;text-align:center;padding:40px 0;color:var(--text);font-size:0.75rem;letter-spacing:2px;">НЕТ СОХРАНЁННЫХ ЗАМЕРОВ</div>
+    </div>
+</div>
+
 <div id="v_quickshare" class="view">
     <button class="back-btn" onclick="nav('dash')">← МЕНЮ</button>
     <div class="card">
@@ -1146,7 +1240,108 @@
 
 <footer>DESIGNED & CODED BY ANVAROV T.A. © 2026</footer>
 
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
 <script>
+// ===== QR READER =====
+var _qrResultText = '';
+
+function readQrFromFile(input) {
+    var file = input.files && input.files[0];
+    if (!file) return;
+
+    var statusEl = document.getElementById('qr_status');
+    var resultWrap = document.getElementById('qr_result_wrap');
+    var previewWrap = document.getElementById('qr_preview_wrap');
+    var previewImg = document.getElementById('qr_preview_img');
+
+    // Показываем превью
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        previewImg.src = e.target.result;
+        previewWrap.style.display = 'block';
+
+        // Статус — ищем
+        statusEl.style.display = 'block';
+        statusEl.style.background = '#1A1A0A';
+        statusEl.style.border = '1px solid var(--gold)';
+        statusEl.style.color = 'var(--gold)';
+        statusEl.textContent = '⏳ ИЩЕМ QR-КОД...';
+        resultWrap.style.display = 'none';
+
+        var img = new Image();
+        img.onload = function() {
+            var canvas = document.getElementById('qr_canvas');
+            canvas.width  = img.width;
+            canvas.height = img.height;
+            var ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+            var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+            // Пробуем jsQR
+            var code = null;
+            if (typeof jsQR !== 'undefined') {
+                code = jsQR(imageData.data, imageData.width, imageData.height, {
+                    inversionAttempts: 'attemptBoth'
+                });
+            }
+
+            if (code && code.data) {
+                _qrResultText = code.data;
+                statusEl.style.background = '#0A1A0A';
+                statusEl.style.border = '1px solid var(--green)';
+                statusEl.style.color = '#4ACA6A';
+                statusEl.textContent = '✓ QR-КОД НАЙДЕН И ПРОЧИТАН!';
+
+                document.getElementById('qr_result_text').textContent = code.data;
+
+                // Проверяем ссылка ли это
+                var linkWrap = document.getElementById('qr_link_wrap');
+                var link = document.getElementById('qr_link');
+                if (/^https?:\/\//i.test(code.data.trim())) {
+                    link.href = code.data.trim();
+                    linkWrap.style.display = 'block';
+                } else {
+                    linkWrap.style.display = 'none';
+                }
+                resultWrap.style.display = 'block';
+            } else {
+                statusEl.style.background = '#1A0A0A';
+                statusEl.style.border = '1px solid var(--red)';
+                statusEl.style.color = 'var(--red)';
+                statusEl.textContent = '❌ QR-КОД НЕ НАЙДЕН. Попробуй более чёткое фото.';
+                resultWrap.style.display = 'none';
+            }
+            // Сбрасываем input чтобы можно было выбрать то же фото снова
+            input.value = '';
+        };
+        img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+}
+
+function copyQrResult() {
+    if (!_qrResultText) return;
+    var ta = document.createElement('textarea');
+    ta.value = _qrResultText;
+    ta.style.cssText = 'position:fixed;opacity:0;';
+    document.body.appendChild(ta);
+    ta.focus(); ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    var msg = document.getElementById('qr_copy_msg');
+    msg.style.display = 'block';
+    setTimeout(function(){ msg.style.display = 'none'; }, 2000);
+}
+
+function shareQrResult() {
+    if (!_qrResultText) return;
+    if (navigator.share) {
+        navigator.share({ text: _qrResultText });
+    } else {
+        window.open('https://wa.me/?text=' + encodeURIComponent(_qrResultText), '_blank');
+    }
+}
+
 // ===== NAVIGATION =====
 function nav(id) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -2433,6 +2628,131 @@ function sendSMS() {
 
 
 // Таймаут без AbortSignal (совместимо со всеми браузерами Android)
+// ===== ЖУРНАЛ ЗАМЕРОВ =====
+var JOURNAL_KEY = 'ata_journal_v1';
+
+function getJournal() {
+    try { return JSON.parse(localStorage.getItem(JOURNAL_KEY) || '[]'); } catch(e) { return []; }
+}
+function saveJournal(data) {
+    try { localStorage.setItem(JOURNAL_KEY, JSON.stringify(data)); } catch(e) {}
+}
+
+function saveJournalEntry() {
+    var now = new Date();
+    var pad = function(n){ return n<10?'0'+n:n; };
+    var dateStr = pad(now.getDate())+'.'+pad(now.getMonth()+1)+'.'+now.getFullYear();
+    var timeStr = pad(now.getHours())+':'+pad(now.getMinutes());
+
+    var entry = {
+        id:   now.getTime(),
+        date: dateStr,
+        time: timeStr,
+        kp:      document.getElementById('p_kp')      ? document.getElementById('p_kp').value      : '',
+        skv:     document.getElementById('p_skv')     ? document.getElementById('p_skv').value     : '',
+        nd:      document.getElementById('p_nd')      ? document.getElementById('p_nd').value      : '',
+        rz:      document.getElementById('p_rz')      ? document.getElementById('p_rz').value      : '',
+        rb:      document.getElementById('p_rb')      ? document.getElementById('p_rb').value      : '',
+        rl:      document.getElementById('p_rl')      ? document.getElementById('p_rl').value      : '',
+        ppr:     document.getElementById('p_ppr')     ? document.getElementById('p_ppr').value     : '',
+        f:       document.getElementById('p_f')       ? document.getElementById('p_f').value       : '',
+        i:       document.getElementById('p_i')       ? document.getElementById('p_i').value       : '',
+        z:       document.getElementById('p_z')       ? document.getElementById('p_z').value       : '',
+        tdv:     document.getElementById('p_tdv')     ? document.getElementById('p_tdv').value     : '',
+        qm3:     document.getElementById('p_qm3')     ? document.getElementById('p_qm3').value     : '',
+        nst_zat: document.getElementById('p_nst_zat') ? document.getElementById('p_nst_zat').value : '',
+        nst_nkt: document.getElementById('p_nst_nkt') ? document.getElementById('p_nst_nkt').value : '',
+        depth:   document.getElementById('p_depth')   ? document.getElementById('p_depth').value   : '',
+        h2o:     document.getElementById('p_h2o_vis') ? document.getElementById('p_h2o_vis').value : '',
+    };
+
+    var journal = getJournal();
+    journal.unshift(entry); // новые сверху
+    if(journal.length > 200) journal = journal.slice(0, 200);
+    saveJournal(journal);
+
+    var msg = document.getElementById('journal_save_msg');
+    if(msg) { msg.style.display='block'; setTimeout(function(){ msg.style.display='none'; }, 2000); }
+}
+
+function loadJournalEntry(id) {
+    var journal = getJournal();
+    var e = journal.find(function(x){ return x.id === id; });
+    if(!e) return;
+    var set = function(fid, val) { var el=document.getElementById(fid); if(el && val) el.value=val; };
+    set('p_kp', e.kp); set('p_skv', e.skv);
+    set('p_nd', e.nd); set('p_rz', e.rz); set('p_rb', e.rb); set('p_rl', e.rl);
+    set('p_ppr', e.ppr); set('p_f', e.f); set('p_i', e.i); set('p_z', e.z); set('p_tdv', e.tdv);
+    set('p_nst_zat', e.nst_zat); set('p_nst_nkt', e.nst_nkt);
+    set('p_depth', e.depth); set('p_h2o_vis', e.h2o); set('p_qm3', e.qm3);
+    if(typeof syncWellBar === 'function') { syncWellBar('kp', e.kp); syncWellBar('skv', e.skv); }
+    if(typeof updateH2oBar === 'function') updateH2oBar();
+    nav('v_params');
+}
+
+function deleteJournalEntry(id) {
+    var journal = getJournal().filter(function(x){ return x.id !== id; });
+    saveJournal(journal);
+    renderJournal();
+}
+
+function clearAllJournal() {
+    if(!confirm(appLang==='ru' ? 'Удалить все замеры?' : 'Delete all entries?')) return;
+    saveJournal([]);
+    renderJournal();
+}
+
+function renderJournal() {
+    var journal = getJournal();
+    var listEl  = document.getElementById('journal_list');
+    var emptyEl = document.getElementById('journal_empty');
+    var countEl = document.getElementById('journal_count');
+    if(!listEl) return;
+
+    if(countEl) countEl.textContent = journal.length + (appLang==='ru' ? ' замеров сохранено' : ' entries saved');
+
+    if(journal.length === 0) {
+        listEl.innerHTML = '';
+        if(emptyEl) emptyEl.style.display = 'block';
+        return;
+    }
+    if(emptyEl) emptyEl.style.display = 'none';
+
+    listEl.innerHTML = journal.map(function(e) {
+        var title = 'КП-'+(e.kp||'?')+' СКВ-'+(e.skv||'?');
+        var rows = [];
+        if(e.nd)      rows.push('Нд: '+e.nd+' м');
+        if(e.rz)      rows.push('Рз: '+e.rz+' атм');
+        if(e.rb)      rows.push('Рб: '+e.rb+' атм');
+        if(e.rl)      rows.push('Рл: '+e.rl+' атм');
+        if(e.qm3)     rows.push('Q: '+e.qm3+' м³/сут');
+        if(e.f)       rows.push('F: '+e.f+' Гц');
+        if(e.i)       rows.push('I: '+e.i+' А');
+        if(e.z)       rows.push('З: '+e.z+'%');
+        if(e.ppr)     rows.push('Рпр: '+e.ppr+' атм');
+        if(e.tdv)     rows.push('Тдв: '+e.tdv+'°C');
+        if(e.h2o)     rows.push('Н₂О: '+e.h2o+'%');
+        if(e.nst_zat) rows.push('Нст зат: '+e.nst_zat+' м');
+        if(e.nst_nkt) rows.push('Нст нкт: '+e.nst_nkt+' м');
+        if(e.depth)   rows.push('Глубина: '+e.depth+' м');
+        return '<div style="background:var(--panel2);border:1px solid var(--border);border-left:3px solid var(--cyan);border-radius:6px;padding:12px;margin-bottom:8px;">'
+            + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">'
+            +   '<div>'
+            +     '<span style="font-family:var(--font-head);font-size:0.85rem;font-weight:700;color:var(--gold2);">'+title+'</span>'
+            +     '<span style="display:block;font-size:0.6rem;color:var(--text);letter-spacing:1px;margin-top:2px;">'+e.date+' '+e.time+'</span>'
+            +   '</div>'
+            +   '<div style="display:flex;gap:6px;">'
+            +     '<button onclick="loadJournalEntry('+e.id+')" style="background:var(--green2);border:1px solid var(--green);color:#fff;border-radius:4px;padding:5px 10px;font-size:0.65rem;cursor:pointer;font-family:var(--font-head);letter-spacing:1px;">📂 ЗАГРУЗИТЬ</button>'
+            +     '<button onclick="deleteJournalEntry('+e.id+')" style="background:var(--red2);border:1px solid var(--red);color:var(--red);border-radius:4px;padding:5px 10px;font-size:0.65rem;cursor:pointer;font-family:var(--font-head);">✕</button>'
+            +   '</div>'
+            + '</div>'
+            + (rows.length ? '<div style="display:flex;flex-wrap:wrap;gap:6px;">'
+                + rows.map(function(r){ return '<span style="background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:3px 8px;font-size:0.65rem;color:var(--text2);font-family:var(--font-mono);">'+r+'</span>'; }).join('')
+                + '</div>' : '')
+            + '</div>';
+    }).join('');
+}
+
 function fetchTimeout(url, ms, opts) {
     const options = Object.assign({}, opts || {});
     const timeout = new Promise(function(_, reject) {
@@ -3541,6 +3861,53 @@ return [
 [{ru:'Приток (м³/ч)',en:'Inflow (m³/h)'}[lang], Q_inflow_hr.toFixed(3)+' м³/ч'],
 [{ru:'Приток (барр/сут)',en:'Inflow (bbl/d)'}[lang], (Q_inflow/0.159).toFixed(1)+' барр/сут'],
 ];
+}
+},
+
+{
+tab: 1,
+id: 'kns_priemistost',
+title: {ru:'КНС — ПРИЁМИСТОСТЬ СКВАЖИНЫ',en:'INJECTOR WELL INJECTIVITY'},
+fields: [
+{ id: 'Q_pump',  label:{ru:'Подача насоса КНС (м³/сут)',en:'Pump rate (m³/d)'},  def:'' },
+{ id: 'T_inj',   label:{ru:'Время закачки (мин)',en:'Injection time (min)'},       def:'' },
+{ id: 'V_inj',   label:{ru:'Объём закачанный (м³) — если известен',en:'Volume injected (m³) — if known'}, def:'' },
+{ id: 'P_ust',   label:{ru:'Давление на устье скважины (атм)',en:'Wellhead pressure (atm)'}, def:'' },
+{ id: 'P_pl',    label:{ru:'Пластовое давление (атм)',en:'Reservoir pressure (atm)'},  def:'' },
+{ id: 'H_depth', label:{ru:'Глубина скважины / насоса (м)',en:'Well/pump depth (m)'},  def:'' },
+{ id: 'rho_inj', label:{ru:'Плотность закачиваемой жидкости (кг/м³)',en:'Injection fluid density (kg/m³)'}, def:'1010' },
+],
+calc(v) {
+const Qpump=+v.Q_pump, Tinj=+v.T_inj, Vinj=+v.V_inj;
+const Pust=+v.P_ust, Ppl=+v.P_pl, H=+v.H_depth, rho=+v.rho_inj||1010;
+if(!Pust) return [[L('Введите давление на устье','Enter wellhead pressure'),'']];
+let V_fact = 0;
+if(Vinj > 0) { V_fact = Vinj; }
+else if(Qpump > 0 && Tinj > 0) { V_fact = Qpump / 1440 * Tinj; }
+const P_gidro = rho * 9.81 * H / 1e5 * 1.01972;
+const P_zab = Pust + (H > 0 ? P_gidro : 0);
+const dP = Ppl > 0 ? (P_zab - Ppl) : null;
+let Q_pr_day = null, Q_pr_hr = null;
+if(V_fact > 0 && Tinj > 0) { Q_pr_hr = V_fact / (Tinj/60); Q_pr_day = Q_pr_hr * 24; }
+else if(Qpump > 0) { Q_pr_day = Qpump; Q_pr_hr = Qpump/24; }
+let Kpr = null;
+if(Q_pr_day && dP && dP > 0) { Kpr = Q_pr_day / dP; }
+const res = [];
+if(V_fact > 0)  res.push([L('Объём закачанный','Volume injected'), V_fact.toFixed(3)+' м³ = '+(V_fact*1000).toFixed(0)+' л']);
+if(H > 0)       res.push([L('Давление забойное (Р_уст + столб)','Bottomhole pressure'), P_zab.toFixed(1)+' атм']);
+if(dP !== null) res.push([L('Депрессия на пласт (Р_заб − Р_пл)','Pressure differential'), dP > 0 ? dP.toFixed(1)+' атм' : L('⚠ Р_заб < Р_пл — нет закачки','⚠ P_bh < P_res — no injection')]);
+if(Q_pr_hr  !== null) res.push([L('Приёмистость','Injectivity'), Q_pr_hr.toFixed(2)+' м³/ч']);
+if(Q_pr_day !== null) res.push([L('ПРИЁМИСТОСТЬ','INJECTIVITY'), Q_pr_day.toFixed(1)+' м³/сут']);
+if(Q_pr_day !== null) res.push([L('Приёмистость (барр/сут)','Injectivity (bbl/d)'), (Q_pr_day/0.159).toFixed(0)+' барр/сут']);
+if(Kpr !== null) res.push([L('Коэф. приёмистости К','Injectivity index K'), Kpr.toFixed(2)+' м³/сут/атм']);
+if(Kpr !== null) {
+    let grade = Kpr<10 ? L('🔴 Низкая — пласт слабо принимает','🔴 Low — poor reservoir')
+              : Kpr<50  ? L('🟡 Средняя','🟡 Medium')
+              : Kpr<150 ? L('🟢 Хорошая','🟢 Good')
+              :            L('💧 Высокая — пласт хорошо принимает','💧 High — good reservoir');
+    res.push([L('Оценка приёмистости','Injectivity assessment'), grade]);
+}
+return res.length ? res : [[L('Введите данные замера','Enter measurement data'),'']];
 }
 },
 
@@ -5893,6 +6260,7 @@ function setAppLang(l) {
 
 </script>
 </html>
+
 
 
 
