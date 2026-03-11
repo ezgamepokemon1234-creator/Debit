@@ -122,6 +122,10 @@
             box-shadow: 0 0 6px var(--green);
             animation: blink 2s ease-in-out infinite;
         }
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to   { transform: translateY(0); }
+        }
         @keyframes ticker-scroll {
             0%   { transform: translateX(0); }
             100% { transform: translateX(-50%); }
@@ -529,6 +533,16 @@
     <button class="back-btn" onclick="nav('dash')">← МЕНЮ</button>
     <div class="card">
         <div class="card-title">ПАРАМЕТРЫ СКВАЖИНЫ</div>
+
+        <!-- КП / СКВАЖИНА -->
+        <div class="section-label">КУСТ / СКВАЖИНА</div>
+        <div class="grid2">
+            <div><label>Куст (КП)</label><input type="text" id="p_kp" placeholder="КП-" oninput="syncWellBar('kp',this.value)"></div>
+            <div><label>Скважина №</label><input type="text" id="p_skv" placeholder="№" oninput="syncWellBar('skv',this.value)"></div>
+        </div>
+
+        <div class="divider"></div>
+        <div class="section-label">РАБОЧИЕ ПАРАМЕТРЫ</div>
         <div class="grid2">
             <div><label>Нд (м)</label><input type="number" id="p_nd" placeholder="0"></div>
             <div><label>Рз (атм)</label><input type="number" id="p_rz" placeholder="0"></div>
@@ -553,8 +567,63 @@
 
         <button class="btn btn-gold" onclick="calcParams()">⚙ РАССЧИТАТЬ</button>
         <div id="res_params" style="display:none" class="result-box"></div>
+
         <div class="divider"></div>
-        <button class="btn btn-outline" onclick="nav('dash')">← В МЕНЮ</button>
+
+        <!-- ВИЗУАЛЬНЫЙ % Н2О -->
+        <div class="section-label">💧 ВИЗУАЛЬНЫЙ % Н₂О (ПРОБА)</div>
+        <div style="background:var(--bg);border-radius:10px;padding:14px;border:1px solid var(--border2);">
+            <div class="grid2" style="margin-bottom:12px;">
+                <div>
+                    <label>Визуальный % воды</label>
+                    <input type="number" id="p_h2o_vis" placeholder="0" min="0" max="100" step="1"
+                        oninput="updateH2oBar()" style="font-size:1.1rem;">
+                </div>
+                <div>
+                    <label>Описание пробы</label>
+                    <select id="p_h2o_desc" onchange="setH2oFromDesc()"
+                        style="width:100%;background:var(--bg);border:1px solid var(--border2);
+                               color:#E0EAF0;font-family:var(--font-head);font-size:0.7rem;
+                               padding:8px;border-radius:6px;letter-spacing:1px;">
+                        <option value="">— выбрать —</option>
+                        <option value="0">0% — чистая нефть</option>
+                        <option value="5">~5% — следы воды</option>
+                        <option value="10">~10% — незначительное</option>
+                        <option value="20">~20% — малообводнённая</option>
+                        <option value="30">~30% — умеренное</option>
+                        <option value="50">~50% — высокое</option>
+                        <option value="70">~70% — сильное</option>
+                        <option value="85">~85% — очень высокое</option>
+                        <option value="95">~95% — почти вода</option>
+                        <option value="100">100% — чистая вода</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Визуальная шкала -->
+            <div style="margin-bottom:6px;font-family:var(--font-head);font-size:0.55rem;color:var(--text);letter-spacing:1px;display:flex;justify-content:space-between;">
+                <span>🛢 НЕФТЬ</span><span>💧 ВОДА</span>
+            </div>
+            <div style="background:#1a1a2a;border-radius:8px;height:28px;overflow:hidden;border:1px solid var(--border2);position:relative;">
+                <!-- Нефть (левая часть) -->
+                <div id="h2o_oil_bar" style="position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#C8A84B,#8B6914);transition:width 0.4s;border-radius:8px 0 0 8px;width:100%;"></div>
+                <!-- Вода (правая часть) -->
+                <div id="h2o_water_bar" style="position:absolute;right:0;top:0;bottom:0;background:linear-gradient(90deg,#3A9EC8,#1A6E9E);transition:width 0.4s;border-radius:0 8px 8px 0;width:0%;"></div>
+                <!-- Метка % -->
+                <div id="h2o_label" style="position:absolute;top:0;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:0.8rem;color:#fff;font-weight:bold;text-shadow:0 1px 3px rgba(0,0,0,0.8);z-index:2;">
+                    0% Н₂О
+                </div>
+            </div>
+            <div id="h2o_result" style="margin-top:8px;font-family:var(--font-head);font-size:0.65rem;color:var(--text);letter-spacing:1px;text-align:center;">
+                Нефть: <span style="color:var(--gold)">100%</span> &nbsp;|&nbsp; Вода: <span style="color:#6ABAF0">0%</span>
+            </div>
+        </div>
+
+        <div class="divider"></div>
+        <div style="display:flex;gap:8px;">
+            <button class="btn btn-outline" onclick="nav('dash')" style="flex:1;">← В МЕНЮ</button>
+            <button class="btn btn-gold" id="params_share_btn" onclick="shareFromParams()" style="flex:1;">📤 ОТПРАВИТЬ</button>
+        </div>
     </div>
 </div>
 
@@ -1046,6 +1115,30 @@ document.getElementById('nkt_size').addEventListener('change', function() {
 // ===== CALCULATIONS =====
 
 // ПАРАМЕТРЫ
+// Синхронизация КП/Скв между параметрами и шапкой
+function syncWellBar(field, val) {
+    if (field === 'kp') document.getElementById('reg_kp').value = val;
+    else document.getElementById('reg_skv').value = val;
+    updateWell();
+}
+
+// Визуальный % Н2О
+function updateH2oBar() {
+    const val = Math.min(100, Math.max(0, parseFloat(document.getElementById('p_h2o_vis').value) || 0));
+    document.getElementById('h2o_water_bar').style.width = val + '%';
+    document.getElementById('h2o_oil_bar').style.width   = (100 - val) + '%';
+    document.getElementById('h2o_label').textContent     = val.toFixed(0) + '% Н₂О';
+    document.getElementById('h2o_result').innerHTML      =
+        'Нефть: <span style="color:var(--gold)">' + (100-val).toFixed(0) + '%</span>' +
+        ' &nbsp;|&nbsp; Вода: <span style="color:#6ABAF0">' + val.toFixed(0) + '%</span>';
+}
+function setH2oFromDesc() {
+    const v = document.getElementById('p_h2o_desc').value;
+    if (v === '') return;
+    document.getElementById('p_h2o_vis').value = v;
+    updateH2oBar();
+}
+
 function calcParams() {
     const nd = +document.getElementById('p_nd').value;
     const nst_zat = +document.getElementById('p_nst_zat').value;
@@ -1078,6 +1171,17 @@ function calcParams() {
         const cls = tdv > 130 ? 'red' : tdv > 110 ? 'gold' : 'green';
         rows.push(['Тдв.', tdv + ' °C', cls]);
     }
+
+    // Визуальный % Н2О
+    const h2oVal = document.getElementById('p_h2o_vis').value;
+    if(h2oVal !== '') {
+        const h2o = parseFloat(h2oVal);
+        const oil = 100 - h2o;
+        const cls = h2o > 70 ? 'red' : h2o > 40 ? 'gold' : h2o > 10 ? 'cyan' : 'green';
+        rows.push(['Визуальный % Н₂О', h2o.toFixed(0) + '%', cls]);
+        rows.push(['Нефть (визуально)', oil.toFixed(0) + '%', 'gold']);
+    }
+
     if(rows.length) showResults('res_params', rows);
 }
 
@@ -1637,7 +1741,7 @@ function buildReportText() {
     const kp = document.getElementById('reg_kp').value || '--';
     const skv = document.getElementById('reg_skv').value || '--';
     let out = `═══════════════════════════\n`;
-    out += `АНВАРОВ Т.А. | ОТЧЁТ\n`;
+    out += `ОТЧЁТ ПО СКВАЖИНЕ\n`;
     out += `КП-${kp}  СКВ-${skv}\n`;
     out += `${new Date().toLocaleDateString('ru-RU')}  ${new Date().toLocaleTimeString('ru-RU')}\n`;
     out += `═══════════════════════════\n`;
@@ -1659,6 +1763,18 @@ function buildReportText() {
             const v = document.getElementById(p[1]).value;
             if(v) out += `  ${p[0]}: ${v} ${p[2]}\n`;
         });
+    }
+
+    // ВИЗУАЛЬНЫЙ % Н2О
+    const h2oVis = document.getElementById('p_h2o_vis').value;
+    if(h2oVis !== '') {
+        const h2o = parseFloat(h2oVis);
+        const oil = (100 - h2o).toFixed(0);
+        const bar = '█'.repeat(Math.round(h2o/10)) + '░'.repeat(10 - Math.round(h2o/10));
+        out += `\n💧 ВИЗУАЛЬНЫЙ % Н₂О (ПРОБА):\n`;
+        out += `  Вода:  ${h2o.toFixed(0)}%\n`;
+        out += `  Нефть: ${oil}%\n`;
+        out += `  [${bar}] ${h2o.toFixed(0)}% Н₂О\n`;
     }
 
     // ДЕБИТ
@@ -1993,6 +2109,110 @@ window.addEventListener('load', () => {
 });
 
 
+function openShareModal() {
+    const text = buildReportText();
+    document.getElementById('share_modal_preview').textContent = text.substring(0, 300) + (text.length > 300 ? '...' : '');
+    document.getElementById('share_modal').style.display = 'block';
+    document.getElementById('share_modal_copied').style.display = 'none';
+    window._shareText = text;
+    window._shareKP  = document.getElementById('reg_kp').value || '--';
+    window._shareSKV = document.getElementById('reg_skv').value || '--';
+}
+
+function closeShareModal() {
+    document.getElementById('share_modal').style.display = 'none';
+}
+
+async function shareVia(type) {
+    const text  = window._shareText || buildReportText();
+    const kp    = window._shareKP  || '--';
+    const skv   = window._shareSKV || '--';
+    const title = 'ATA | КП-' + kp + ' СКВ-' + skv;
+
+    if (type === 'wa') {
+        window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
+    } else if (type === 'tg') {
+        window.open('https://t.me/share/url?url=&text=' + encodeURIComponent(text), '_blank');
+    } else if (type === 'sms') {
+        window.location.href = 'sms:?body=' + encodeURIComponent(text.substring(0, 500));
+    } else if (type === 'email') {
+        const a = document.createElement('a');
+        a.href = 'mailto:?subject=' + encodeURIComponent(title) + '&body=' + encodeURIComponent(text);
+        a.click();
+    } else if (type === 'copy') {
+        try {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.cssText = 'position:fixed;opacity:0;top:0;left:0;';
+            document.body.appendChild(ta);
+            ta.focus(); ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+        } catch(e) {}
+        const copied = document.getElementById('share_modal_copied');
+        const btn    = document.getElementById('modal_copy_btn');
+        copied.style.display = 'block';
+        btn.style.background = 'var(--green)';
+        setTimeout(() => { copied.style.display = 'none'; btn.style.background = 'var(--panel2)'; }, 2500);
+        return;
+    } else if (type === 'native') {
+        // navigator.share не работает с file:// — показываем выбор
+        if (navigator.share && location.protocol !== 'file:') {
+            try { await navigator.share({ title, text }); } catch(e) {}
+        } else {
+            // Показываем мини-меню выбора приложения
+            showAppPicker(text, title);
+        }
+        return;
+    }
+    closeShareModal();
+}
+
+async function shareFromParams() {
+    openShareModal();
+}
+
+function showAppPicker(text, title) {
+    const enc = encodeURIComponent(text);
+    const encTitle = encodeURIComponent(title || '');
+    const apps = [
+        { name:'WhatsApp',  color:'#25D366', url:'whatsapp://send?text=' + enc },
+        { name:'Telegram',  color:'#2AABEE', url:'tg://msg?text=' + enc },
+        { name:'Viber',     color:'#7360F2', url:'viber://forward?text=' + enc },
+        { name:'ВКонтакте', color:'#4680C2', url:'vk://share?text=' + enc },
+        { name:'SMS',       color:'#4ACA6A', url:'sms:?body=' + encodeURIComponent(text.substring(0,500)) },
+        { name:'Почта',     color:'#D07A30', url:'mailto:?subject=' + encTitle + '&body=' + enc },
+    ];
+
+    // Создаём временную панель поверх модала
+    const existing = document.getElementById('app_picker');
+    if (existing) existing.remove();
+
+    const panel = document.createElement('div');
+    panel.id = 'app_picker';
+    panel.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:10000;background:var(--bg);border-top:2px solid var(--border2);border-radius:18px 18px 0 0;padding:16px 16px 32px;animation:slideUp 0.2s ease;';
+
+    let html = '<div style="width:40px;height:4px;background:var(--border2);border-radius:2px;margin:0 auto 14px;"></div>';
+    html += '<div style="font-family:var(--font-head);font-size:0.6rem;color:var(--gold);letter-spacing:2px;text-align:center;margin-bottom:14px;">ВЫБЕРИ ПРИЛОЖЕНИЕ</div>';
+    html += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px;">';
+
+    apps.forEach(a => {
+        html += `<div style="display:flex;flex-direction:column;align-items:center;gap:5px;">
+            <a href="${a.url}" style="width:54px;height:54px;border-radius:14px;background:${a.color};
+               display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:1.4rem;">
+               ${a.name === 'WhatsApp' ? '💬' : a.name === 'Telegram' ? '✈️' : a.name === 'Viber' ? '📳' : a.name === 'ВКонтакте' ? '🅱️' : a.name === 'SMS' ? '💌' : '📧'}
+            </a>
+            <span style="font-family:var(--font-head);font-size:0.5rem;color:var(--text);letter-spacing:1px;">${a.name.toUpperCase()}</span>
+        </div>`;
+    });
+
+    html += '</div>';
+    html += '<button onclick="document.getElementById(\'app_picker\').remove()" style="width:100%;background:var(--panel);border:1px solid var(--border2);color:var(--text);font-family:var(--font-head);font-size:0.7rem;letter-spacing:2px;padding:12px;border-radius:8px;cursor:pointer;">ЗАКРЫТЬ</button>';
+
+    panel.innerHTML = html;
+    document.body.appendChild(panel);
+}
+
 async function nativeShare() {
     const text = getQuickText();
     const kp = document.getElementById('reg_kp').value || '--';
@@ -2102,8 +2322,68 @@ function fetchTimeout(url, ms, opts) {
     return Promise.race([fetch(url, options), timeout]);
 }
 </script>
-</body>
+<!-- ===== МОДАЛЬНОЕ ОКНО ШАРИНГА ===== -->
+<div id="share_modal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;
+     background:rgba(0,0,0,0.75);backdrop-filter:blur(4px);" onclick="closeShareModal()">
+    <div onclick="event.stopPropagation()" style="
+        position:absolute;bottom:0;left:0;right:0;
+        background:var(--panel);
+        border-top:2px solid var(--gold3);
+        border-radius:18px 18px 0 0;
+        padding:20px 16px 32px;
+        animation:slideUp 0.25s ease;">
+
+        <div style="width:40px;height:4px;background:var(--border2);border-radius:2px;margin:0 auto 16px;"></div>
+        <div style="font-family:var(--font-head);font-size:0.65rem;color:var(--gold);letter-spacing:2px;
+             text-align:center;margin-bottom:6px;">📤 ПОДЕЛИТЬСЯ</div>
+
+        <!-- Превью текста -->
+        <div id="share_modal_preview" style="
+            background:var(--bg);border:1px solid var(--border2);border-radius:8px;
+            padding:10px;font-family:var(--font-mono);font-size:0.65rem;color:var(--text);
+            max-height:100px;overflow:hidden;margin-bottom:14px;white-space:pre;line-height:1.5;"></div>
+
+        <!-- Кнопки -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+
+            <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+                <button onclick="shareVia('copy')" id="modal_copy_btn" style="width:64px;height:64px;border-radius:16px;border:1px solid var(--border2);
+                    background:var(--panel2);cursor:pointer;display:flex;align-items:center;justify-content:center;">
+                    <svg width="30" height="30" viewBox="0 0 24 24" fill="var(--gold)">
+                        <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+                    </svg>
+                </button>
+                <span style="font-family:var(--font-head);font-size:0.6rem;color:var(--text);letter-spacing:1px;">КОПИРОВАТЬ</span>
+            </div>
+
+            <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+                <button onclick="shareVia('native')" style="width:64px;height:64px;border-radius:16px;border:none;
+                    background:linear-gradient(180deg,#D4A94E,#A07828);cursor:pointer;
+                    display:flex;align-items:center;justify-content:center;
+                    box-shadow:0 4px 0 #5A4010;">
+                    <svg width="30" height="30" viewBox="0 0 24 24" fill="black">
+                        <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+                        <line x1="6" y1="12" x2="18" y2="5" stroke="black" stroke-width="2.5"/>
+                        <line x1="6" y1="12" x2="18" y2="19" stroke="black" stroke-width="2.5"/>
+                    </svg>
+                </button>
+                <span style="font-family:var(--font-head);font-size:0.6rem;color:var(--gold);letter-spacing:1px;">ПОДЕЛИТЬСЯ</span>
+            </div>
+
+        </div>
+
+        <div id="share_modal_copied" style="display:none;text-align:center;color:var(--green);
+             font-family:var(--font-head);font-size:0.7rem;letter-spacing:2px;padding:6px;">✓ СКОПИРОВАНО</div>
+
+        <button onclick="closeShareModal()" style="width:100%;background:var(--bg);border:1px solid var(--border2);
+            color:var(--text);font-family:var(--font-head);font-size:0.7rem;letter-spacing:2px;
+            padding:12px;border-radius:8px;cursor:pointer;margin-top:4px;">ЗАКРЫТЬ</button>
+    </div>
+</div>
+
+
 </html>
+
 
 
                                                            </html>
