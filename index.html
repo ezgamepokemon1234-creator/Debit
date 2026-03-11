@@ -3495,7 +3495,7 @@ const Q_nkt = Q_nkt_m3s*86400;
 const Q_inflow = Qesp - Q_nkt;
 const PI_est = null;
 return [
-[{ru:'НКТ',en:'Tubing'}[lang], n.label+' мм, D_вн='+n.d+' мм'],
+[{ru:'НКТ',en:'Tubing'}[lang], type + ' мм, D_вн=' + d_in_mm.toFixed(1) + ' мм'],
 [{ru:'Объём НКТ (ΔН)',en:'Tubing volume (ΔH)'}[lang], V_nkt.toFixed(3)+' м³ = '+(V_nkt*1000).toFixed(0)+' л'],
 [{ru:'Расход из НКТ',en:'Tubing flow rate'}[lang], Q_nkt.toFixed(2)+' м³/сут'],
 [{ru:'ПРИТОК ИЗ ПЛАСТА',en:'INFLOW FROM RESERVOIR'}[lang], Q_inflow.toFixed(2)+' м³/сут'],
@@ -5884,6 +5884,7 @@ function setAppLang(l) {
 
 </script>
 </html>
+
 
 
 
