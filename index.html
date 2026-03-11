@@ -474,78 +474,7 @@
         <button type="button" onclick="requestWeather()" id="wx_btn"
             style="flex-shrink:0;background:var(--panel2);border:1px solid var(--border2);
                    color:var(--gold);font-size:1rem;padding:6px 10px;border-radius:6px;cursor:pointer;">📍</button>
-        <button type="button" onclick="toggleWxManual()"
-            style="flex-shrink:0;background:var(--panel2);border:1px solid var(--border2);
-                   color:var(--gold);font-size:0.65rem;padding:6px 8px;border-radius:6px;cursor:pointer;letter-spacing:1px;">✏️</button>
-    </div>
 
-    <!-- Ручной ввод (скрыт по умолчанию) -->
-    <div id="wx_manual" style="display:none;background:var(--bg);border:1px solid var(--border2);
-         border-radius:8px;padding:10px;margin-bottom:8px;">
-        <div style="font-family:var(--font-head);font-size:0.6rem;color:var(--gold);letter-spacing:2px;margin-bottom:8px;">✏️ РУЧНОЙ ВВОД ПОГОДЫ</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:6px;">
-            <div>
-                <div style="font-family:var(--font-head);font-size:0.55rem;color:var(--text);letter-spacing:1px;margin-bottom:3px;">ТЕМП °C</div>
-                <input id="wx_m_temp" type="number" placeholder="-5"
-                    style="width:100%;background:var(--panel);border:1px solid var(--border2);color:#E0EAF0;
-                           font-family:var(--font-mono);font-size:0.9rem;padding:5px 8px;border-radius:5px;margin-bottom:0;">
-            </div>
-            <div>
-                <div style="font-family:var(--font-head);font-size:0.55rem;color:var(--text);letter-spacing:1px;margin-bottom:3px;">ОЩУЩАЕТСЯ</div>
-                <input id="wx_m_feels" type="number" placeholder="-9"
-                    style="width:100%;background:var(--panel);border:1px solid var(--border2);color:#E0EAF0;
-                           font-family:var(--font-mono);font-size:0.9rem;padding:5px 8px;border-radius:5px;margin-bottom:0;">
-            </div>
-            <div>
-                <div style="font-family:var(--font-head);font-size:0.55rem;color:var(--text);letter-spacing:1px;margin-bottom:3px;">ВЛАЖН %</div>
-                <input id="wx_m_hum" type="number" placeholder="72"
-                    style="width:100%;background:var(--panel);border:1px solid var(--border2);color:#E0EAF0;
-                           font-family:var(--font-mono);font-size:0.9rem;padding:5px 8px;border-radius:5px;margin-bottom:0;">
-            </div>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px;">
-            <div>
-                <div style="font-family:var(--font-head);font-size:0.55rem;color:var(--text);letter-spacing:1px;margin-bottom:3px;">ВЕТЕР М/С</div>
-                <input id="wx_m_wind" type="number" placeholder="5.2" step="0.1"
-                    style="width:100%;background:var(--panel);border:1px solid var(--border2);color:#E0EAF0;
-                           font-family:var(--font-mono);font-size:0.9rem;padding:5px 8px;border-radius:5px;margin-bottom:0;">
-            </div>
-            <div>
-                <div style="font-family:var(--font-head);font-size:0.55rem;color:var(--text);letter-spacing:1px;margin-bottom:3px;">НАПРАВЛЕНИЕ</div>
-                <select id="wx_m_dir"
-                    style="width:100%;background:var(--panel);border:1px solid var(--border2);color:#E0EAF0;
-                           font-family:var(--font-mono);font-size:0.85rem;padding:5px 8px;border-radius:5px;">
-                    <option>С</option><option>СВ</option><option>В</option><option>ЮВ</option>
-                    <option>Ю</option><option>ЮЗ</option><option>З</option><option>СЗ</option>
-                </select>
-            </div>
-        </div>
-        <div style="margin-bottom:8px;">
-            <div style="font-family:var(--font-head);font-size:0.55rem;color:var(--text);letter-spacing:1px;margin-bottom:3px;">УСЛОВИЯ</div>
-            <select id="wx_m_cond"
-                style="width:100%;background:var(--panel);border:1px solid var(--border2);color:#E0EAF0;
-                       font-family:var(--font-head);font-size:0.75rem;padding:5px 8px;border-radius:5px;">
-                <option value="☀️,Ясно">☀️ Ясно</option>
-                <option value="⛅,Переменная облачность">⛅ Переменная облачность</option>
-                <option value="☁️,Пасмурно">☁️ Пасмурно</option>
-                <option value="🌫,Туман">🌫 Туман</option>
-                <option value="🌦,Небольшой дождь">🌦 Небольшой дождь</option>
-                <option value="🌧,Дождь">🌧 Дождь</option>
-                <option value="🌨,Снег">🌨 Снег</option>
-                <option value="❄️,Сильный снег">❄️ Сильный снег</option>
-                <option value="⛈,Гроза">⛈ Гроза</option>
-                <option value="🌬️,Метель">🌬️ Метель</option>
-            </select>
-        </div>
-        <div style="display:flex;gap:6px;">
-            <input id="wx_m_city" type="text" placeholder="Название города"
-                style="flex:1;background:var(--panel);border:1px solid var(--border2);color:var(--gold);
-                       font-family:var(--font-head);font-size:0.75rem;padding:5px 8px;border-radius:5px;margin-bottom:0;">
-            <button type="button" onclick="applyManualWeather()"
-                style="flex-shrink:0;background:var(--green);border:none;color:#fff;
-                       font-family:var(--font-head);font-size:0.65rem;letter-spacing:1px;
-                       padding:6px 14px;border-radius:6px;cursor:pointer;">✓ ПРИМЕНИТЬ</button>
-        </div>
     </div>
 
     <!-- Дисплей погоды -->
@@ -555,7 +484,7 @@
             <div>
                 <div id="wx_main" style="font-family:var(--font-mono);font-size:1.1rem;color:#E0EAF0;">— °C</div>
                 <div id="wx_desc" style="font-family:var(--font-head);font-size:0.55rem;color:var(--text);
-                     letter-spacing:1px;max-width:200px;">Введи город 🔍 или нажми ✏️</div>
+                     letter-spacing:1px;max-width:200px;">Введи город 🔍 или нажми 📍</div>
             </div>
         </div>
         <div style="text-align:right;">
@@ -1901,31 +1830,6 @@ const WX_DESC = {
 };
 
 // ══ ПОГОДА ══
-function toggleWxManual() {
-    const el = document.getElementById('wx_manual');
-    el.style.display = el.style.display === 'none' ? 'block' : 'none';
-}
-
-function applyManualWeather() {
-    const temp  = document.getElementById('wx_m_temp').value;
-    const feels = document.getElementById('wx_m_feels').value;
-    const hum   = document.getElementById('wx_m_hum').value;
-    const wind  = document.getElementById('wx_m_wind').value;
-    const dir   = document.getElementById('wx_m_dir').value;
-    const cond  = document.getElementById('wx_m_cond').value.split(',');
-    const city  = document.getElementById('wx_m_city').value || 'Вручную';
-
-    document.getElementById('wx_icon').textContent  = cond[0] || '🌡';
-    document.getElementById('wx_main').textContent  = (temp || '—') + ' °C';
-    document.getElementById('wx_desc').textContent  =
-        (cond[1] || '—') +
-        (wind  ? '   💨 ' + parseFloat(wind).toFixed(1) + ' м/с ' + dir : '') +
-        (hum   ? '   💧 ' + hum + '%' : '');
-    document.getElementById('wx_feels').textContent = feels ? 'Ощущается ' + feels + ' °C' : '';
-    document.getElementById('wx_city').textContent  = '✏️ ' + city;
-    document.getElementById('wx_manual').style.display = 'none';
-}
-
 async function searchWeatherCity() {
     const query = document.getElementById('wx_city_input').value.trim();
     if (!query) return;
@@ -2200,5 +2104,6 @@ function fetchTimeout(url, ms, opts) {
 </script>
 </body>
 </html>
+
 
                                                            </html>
