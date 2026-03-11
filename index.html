@@ -501,6 +501,10 @@
 
 <!-- ===== TICKER BAR ===== -->
 <div id="ticker_bar" style="background:#050709;border-bottom:1px solid var(--border);padding:0;overflow:hidden;position:relative;height:36px;display:flex;align-items:center;">
+    <div style="flex-shrink:0;padding:0 8px;display:flex;align-items:center;gap:4px;z-index:2;background:#050709;">
+        <span id="ticker_status_dot" style="width:7px;height:7px;border-radius:50%;background:#555;display:inline-block;"></span>
+        <span id="ticker_status_txt" style="font-family:var(--font-head);font-size:0.45rem;color:#555;letter-spacing:1px;">...</span>
+    </div>
     <div id="ticker_track" style="display:flex;gap:0;white-space:nowrap;animation:ticker-scroll 60s linear infinite;will-change:transform;">
         <div class="tick-item"><span class="tick-label">$ USD/RUB</span><span class="tick-val" style="color:#E0943A" id="t_usd_rub">—</span></div>
         <div class="tick-item"><span class="tick-label">€ EUR/RUB</span><span class="tick-val" style="color:#5ABEEA" id="t_eur_rub">—</span></div>
@@ -1915,55 +1919,49 @@ function setTick(id, val, chg) {
 
 async function fetchTicker() {
     // ── КУРСЫ ВАЛЮТ ──
-    // Пробуем 3 способа по очереди: JSONP → fetch → XHR через прокси
+    // jsDelivr CDN — permissive CORS, работает с file:// на Android
     var gotRates = false;
 
-    // Способ 1: JSONP (работает с file://, обходит CORS полностью)
+    // Способ 1: jsDelivr CDN (бесплатный, без CORS ограничений)
     if (!gotRates) {
         try {
-            const d = await fetchJsonp('https://api.frankfurter.app/latest?from=USD&to=EUR,CNY,RUB');
-            if (d && d.rates && d.rates.RUB) {
-                const rub = d.rates.RUB, eur = d.rates.EUR, cny = d.rates.CNY;
-                setTick('usd_rub', rub.toFixed(2) + ' ₽', null);
-                setTick('eur_rub', (rub / eur).toFixed(2) + ' ₽', null);
-                setTick('cny_rub', (rub / cny).toFixed(2) + ' ₽', null);
-                oilRates = { eur, rub };
-                gotRates = true;
+            const urls = [
+                'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.json',
+                'https://latest.currency-api.pages.dev/v1/currencies/usd.json'
+            ];
+            for (const url of urls) {
+                try {
+                    const r = await fetchTimeout(url, 8000);
+                    const d = await r.json();
+                    if (d && d.usd && d.usd.rub) {
+                        const rub = d.usd.rub;
+                        const eur = d.usd.eur;
+                        const cny = d.usd.cny;
+                        setTick('usd_rub', rub.toFixed(2) + ' ₽', null);
+                        setTick('eur_rub', (rub / eur).toFixed(2) + ' ₽', null);
+                        setTick('cny_rub', (rub / cny).toFixed(2) + ' ₽', null);
+                        oilRates = { eur, rub };
+                        gotRates = true;
+                        break;
+                    }
+                } catch(e) {}
             }
         } catch(e) {}
     }
 
-    // Способ 2: обычный fetch
+    // Способ 2: XHR (иногда проходит там где fetch не работает)
     if (!gotRates) {
         try {
-            const r = await fetchTimeout('https://api.frankfurter.app/latest?from=USD&to=EUR,CNY,RUB', 8000);
-            const d = await r.json();
-            if (d && d.rates && d.rates.RUB) {
-                const rub = d.rates.RUB, eur = d.rates.EUR, cny = d.rates.CNY;
-                setTick('usd_rub', rub.toFixed(2) + ' ₽', null);
-                setTick('eur_rub', (rub / eur).toFixed(2) + ' ₽', null);
-                setTick('cny_rub', (rub / cny).toFixed(2) + ' ₽', null);
-                oilRates = { eur, rub };
-                gotRates = true;
-            }
-        } catch(e) {}
-    }
-
-    // Способ 3: XHR через прокси allorigins
-    if (!gotRates) {
-        try {
-            const proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://api.frankfurter.app/latest?from=USD&to=EUR,CNY,RUB');
             const d = await new Promise(function(resolve, reject) {
                 var x = new XMLHttpRequest();
-                x.open('GET', proxyUrl, true);
+                x.open('GET', 'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.json', true);
                 x.timeout = 8000;
                 x.onload  = function() { try { resolve(JSON.parse(x.responseText)); } catch(e){ reject(e); } };
                 x.onerror = x.ontimeout = function() { reject(new Error('xhr')); };
                 x.send();
             });
-            const inner = JSON.parse(d.contents);
-            if (inner && inner.rates && inner.rates.RUB) {
-                const rub = inner.rates.RUB, eur = inner.rates.EUR, cny = inner.rates.CNY;
+            if (d && d.usd && d.usd.rub) {
+                const rub = d.usd.rub, eur = d.usd.eur, cny = d.usd.cny;
                 setTick('usd_rub', rub.toFixed(2) + ' ₽', null);
                 setTick('eur_rub', (rub / eur).toFixed(2) + ' ₽', null);
                 setTick('cny_rub', (rub / cny).toFixed(2) + ' ₽', null);
@@ -1974,13 +1972,26 @@ async function fetchTicker() {
     }
 
     if (!gotRates) {
-        setTick('usd_rub', '— офлайн', null);
-        setTick('eur_rub', '— офлайн', null);
-        setTick('cny_rub', '— офлайн', null);
+        // Резервные курсы март 2026
+        setTick('usd_rub', '88.50 ₽', null);
+        setTick('eur_rub', '95.20 ₽', null);
+        setTick('cny_rub', '12.10 ₽', null);
+        oilRates = { eur: 0.929, rub: 88.50 };
+        // Статус: офлайн
+        var dot = document.getElementById('ticker_status_dot');
+        var txt = document.getElementById('ticker_status_txt');
+        if (dot) dot.style.background = '#C84040';
+        if (txt) { txt.textContent = 'КЭШ'; txt.style.color = '#C84040'; }
+    } else {
+        // Статус: онлайн
+        var dot = document.getElementById('ticker_status_dot');
+        var txt = document.getElementById('ticker_status_txt');
+        if (dot) dot.style.background = '#2EA84C';
+        if (txt) { txt.textContent = 'LIVE'; txt.style.color = '#2EA84C'; }
     }
 
     // ── НЕФТЬ + ЗОЛОТО ──
-    const fallback = { brent: 83.20, wti: 79.40, gold: 2180, urals: 69.20 };
+    const fallback = { brent: 73.50, wti: 69.80, gold: 2980, urals: 59.50 };
     setTick('brent', fallback.brent.toFixed(2) + ' $/bbl', null);
     setTick('wti',   fallback.wti.toFixed(2)   + ' $/bbl', null);
     setTick('urals', fallback.urals.toFixed(2) + ' $/bbl', null);
@@ -5873,6 +5884,7 @@ function setAppLang(l) {
 
 </script>
 </html>
+
 
 
 
