@@ -1914,43 +1914,53 @@ function setTick(id, val, chg) {
 }
 
 async function fetchTicker() {
-    // ── КУРСЫ ВАЛЮТ — несколько источников + XHR fallback ──
-    async function getJson(url) {
-        try {
-            const r = await fetchTimeout(url, 8000);
-            return await r.json();
-        } catch(e) {
-            // XHR fallback (иногда проходит там где fetch блокируется)
-            return new Promise(function(resolve, reject) {
-                var x = new XMLHttpRequest();
-                x.open('GET', url, true);
-                x.timeout = 8000;
-                x.onload  = function() { try { resolve(JSON.parse(x.responseText)); } catch(e){ reject(e); } };
-                x.onerror = x.ontimeout = function() { reject(new Error('xhr fail')); };
-                x.send();
-            });
-        }
-    }
-
-    // Источник 1: frankfurter.app
+    // ── КУРСЫ ВАЛЮТ ──
+    // Пробуем 3 способа по очереди: JSONP → fetch → XHR через прокси
     var gotRates = false;
-    try {
-        const d = await getJson('https://api.frankfurter.app/latest?from=USD&to=EUR,CNY,RUB');
-        if (d && d.rates && d.rates.RUB) {
-            const rub = d.rates.RUB, eur = d.rates.EUR, cny = d.rates.CNY;
-            setTick('usd_rub', rub.toFixed(2) + ' ₽', null);
-            setTick('eur_rub', (rub / eur).toFixed(2) + ' ₽', null);
-            setTick('cny_rub', (rub / cny).toFixed(2) + ' ₽', null);
-            oilRates = { eur, rub };
-            gotRates = true;
-        }
-    } catch(e) {}
 
-    // Источник 2: openexchangerates прокси через allorigins
+    // Способ 1: JSONP (работает с file://, обходит CORS полностью)
     if (!gotRates) {
         try {
-            const url = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://api.frankfurter.app/latest?from=USD&to=EUR,CNY,RUB');
-            const d = await getJson(url);
+            const d = await fetchJsonp('https://api.frankfurter.app/latest?from=USD&to=EUR,CNY,RUB');
+            if (d && d.rates && d.rates.RUB) {
+                const rub = d.rates.RUB, eur = d.rates.EUR, cny = d.rates.CNY;
+                setTick('usd_rub', rub.toFixed(2) + ' ₽', null);
+                setTick('eur_rub', (rub / eur).toFixed(2) + ' ₽', null);
+                setTick('cny_rub', (rub / cny).toFixed(2) + ' ₽', null);
+                oilRates = { eur, rub };
+                gotRates = true;
+            }
+        } catch(e) {}
+    }
+
+    // Способ 2: обычный fetch
+    if (!gotRates) {
+        try {
+            const r = await fetchTimeout('https://api.frankfurter.app/latest?from=USD&to=EUR,CNY,RUB', 8000);
+            const d = await r.json();
+            if (d && d.rates && d.rates.RUB) {
+                const rub = d.rates.RUB, eur = d.rates.EUR, cny = d.rates.CNY;
+                setTick('usd_rub', rub.toFixed(2) + ' ₽', null);
+                setTick('eur_rub', (rub / eur).toFixed(2) + ' ₽', null);
+                setTick('cny_rub', (rub / cny).toFixed(2) + ' ₽', null);
+                oilRates = { eur, rub };
+                gotRates = true;
+            }
+        } catch(e) {}
+    }
+
+    // Способ 3: XHR через прокси allorigins
+    if (!gotRates) {
+        try {
+            const proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://api.frankfurter.app/latest?from=USD&to=EUR,CNY,RUB');
+            const d = await new Promise(function(resolve, reject) {
+                var x = new XMLHttpRequest();
+                x.open('GET', proxyUrl, true);
+                x.timeout = 8000;
+                x.onload  = function() { try { resolve(JSON.parse(x.responseText)); } catch(e){ reject(e); } };
+                x.onerror = x.ontimeout = function() { reject(new Error('xhr')); };
+                x.send();
+            });
             const inner = JSON.parse(d.contents);
             if (inner && inner.rates && inner.rates.RUB) {
                 const rub = inner.rates.RUB, eur = inner.rates.EUR, cny = inner.rates.CNY;
@@ -2413,13 +2423,42 @@ function sendSMS() {
 
 // Таймаут без AbortSignal (совместимо со всеми браузерами Android)
 function fetchTimeout(url, ms, opts) {
-    const options = Object.assign({ mode: 'cors' }, opts || {});
+    const options = Object.assign({}, opts || {});
     const timeout = new Promise(function(_, reject) {
         setTimeout(function() { reject(new Error('timeout ' + ms + 'ms')); }, ms);
     });
     return Promise.race([fetch(url, options), timeout]);
 }
 
+// JSONP загрузчик — работает с file:// без CORS
+function fetchJsonp(url, callbackParam) {
+    return new Promise(function(resolve, reject) {
+        var cbName = '_jsonp' + Date.now();
+        var timer = setTimeout(function() {
+            delete window[cbName];
+            var s = document.getElementById(cbName);
+            if (s) s.remove();
+            reject(new Error('jsonp timeout'));
+        }, 8000);
+        window[cbName] = function(data) {
+            clearTimeout(timer);
+            delete window[cbName];
+            var s = document.getElementById(cbName);
+            if (s) s.remove();
+            resolve(data);
+        };
+        var s = document.createElement('script');
+        s.id = cbName;
+        s.onerror = function() {
+            clearTimeout(timer);
+            delete window[cbName];
+            s.remove();
+            reject(new Error('jsonp error'));
+        };
+        s.src = url + (url.indexOf('?') >= 0 ? '&' : '?') + (callbackParam||'callback') + '=' + cbName;
+        document.head.appendChild(s);
+    });
+}
 
 </script>
 
@@ -5834,6 +5873,7 @@ function setAppLang(l) {
 
 </script>
 </html>
+
 
 
 
