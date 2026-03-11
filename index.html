@@ -5752,12 +5752,21 @@ function renderAllCalcs() {
                 var lbl = typeof f.label==='object'? (f.label[appLang]||f.label.ru) : f.label;
                 var fid = 'acf_'+c.id+'_'+f.id;
                 h += '<div class="ac-field"><label>'+lbl+'</label>';
-                if (f.type==='select' && f.options) {
+                if (f.type==='select' && (f.options || f.opts)) {
+                    var defVal = f.def || '';
+                    var optArr = f.options || f.opts || [];
                     h += '<select id="'+fid+'">';
-                    f.options.forEach(function(o){
-                        var ol = typeof o==='object'? (o[appLang]||o.ru||o.label||String(o.value)) : String(o);
-                        var ov = typeof o==='object'? (o.value!==undefined?o.value:String(o.ru||o.label)) : String(o);
-                        h += '<option value="'+ov+'">'+ol+'</option>';
+                    optArr.forEach(function(o){
+                        var ol, ov;
+                        if (typeof o === 'object') {
+                            ol = o[appLang] || o.ru || o.en || o.l || o.label || String(o.v || o.value || '');
+                            ov = o.v !== undefined ? o.v : (o.value !== undefined ? o.value : String(o.ru || o.l || o.label || ''));
+                        } else {
+                            ol = String(o); ov = String(o);
+                        }
+                        if (!ol || ol === 'undefined') ol = String(ov);
+                        var sel = (String(ov) === String(defVal)) ? ' selected' : '';
+                        h += '<option value="'+ov+'"'+sel+'>'+ol+'<\/option>';
                     });
                     h += '<\/select>';
                 } else {
@@ -5884,6 +5893,7 @@ function setAppLang(l) {
 
 </script>
 </html>
+
 
 
 
