@@ -3631,7 +3631,94 @@ function calcTwin() {
 }
 
 // ===== GPS НАВИГАЦИЯ =====
-// ===== ЦИФРОВОЙ ДВОЙНИК =====
+
+function navigateTo(lat, lng) {
+    openMapPicker(lat, lng, false);
+}
+
+function satelliteView(lat, lng) {
+    openMapPicker(lat, lng, true);
+}
+
+function openMapPicker(lat, lng, satellite) {
+    // Remove old modal if exists
+    var old = document.getElementById('map_picker_modal');
+    if (old) old.remove();
+
+    var maps = [
+        { name: 'Яндекс Карты',  emoji: '🟡', color: '#F0A040',
+          url: satellite
+            ? 'https://maps.yandex.ru/?ll='+lng+','+lat+'&z=17&l=sat'
+            : 'https://maps.yandex.ru/?ll='+lng+','+lat+'&z=16&rtext=~'+lat+','+lng+'&rtt=auto' },
+        { name: '2ГИС',          emoji: '🟢', color: '#2EA84C',
+          url: 'https://2gis.ru/routeSearch/to/'+lng+','+lat+'/results' },
+        { name: 'Google Maps',   emoji: '🔵', color: '#3A9EC8',
+          url: satellite
+            ? 'https://www.google.com/maps/@'+lat+','+lng+',17z/data=!3m1!1e3'
+            : 'https://www.google.com/maps/dir/?api=1&destination='+lat+','+lng },
+        { name: 'Google Earth',  emoji: '🌍', color: '#34A853',
+          url: 'https://earth.google.com/web/@'+lat+','+lng+',500a,500d,35y,0h,45t,0r' },
+        { name: 'Maps.me (MAPS)', emoji: '🟠', color: '#C8A84B',
+          url: 'https://maps.me/route?sll=&saddr=&dll='+lat+','+lng+'&daddr=Точка+замера&type=vehicle' },
+        { name: 'Apple Maps',    emoji: '🍎', color: '#AAAAAA',
+          url: 'maps://?daddr='+lat+','+lng+'&dirflg=d' },
+        { name: 'OsmAnd',        emoji: '🗺', color: '#4CAF50',
+          url: 'osmandmaps://?lat='+lat+'&lon='+lng+'&z=16&title=Точка+замера' },
+        { name: 'OpenStreetMap', emoji: '⬜', color: '#8888AA',
+          url: 'https://www.openstreetmap.org/?mlat='+lat+'&mlon='+lng+'#map=16/'+lat+'/'+lng },
+        { name: 'Скопировать координаты', emoji: '📋', color: '#6A6AEA',
+          url: null },
+    ];
+
+    var modal = document.createElement('div');
+    modal.id = 'map_picker_modal';
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9999;display:flex;align-items:flex-end;justify-content:center;padding:0;';
+
+    var sheet = document.createElement('div');
+    sheet.style.cssText = 'background:#0D1219;border-radius:16px 16px 0 0;width:100%;max-width:480px;padding:16px 14px 28px;box-shadow:0 -4px 30px rgba(0,0,0,0.5);';
+
+    var title = satellite ? '🛰 Спутниковый снимок' : '🧭 Навигация к точке';
+    var coords = lat + ', ' + lng;
+
+    sheet.innerHTML = '<div style="text-align:center;margin-bottom:14px;">'
+        + '<div style="width:40px;height:4px;background:#3A4A5A;border-radius:2px;margin:0 auto 12px;"></div>'
+        + '<div style="font-family:var(--font-head);font-size:0.85rem;font-weight:700;color:#E0ECF4;letter-spacing:2px;">'+title+'</div>'
+        + '<div style="font-size:0.68rem;color:var(--text3);margin-top:4px;">📍 '+coords+'</div>'
+        + '</div>'
+        + maps.map(function(m) {
+            return '<button onclick="openMapApp(\''+encodeURIComponent(m.url||'')+'\',\''+encodeURIComponent(coords)+'\')" '
+                + 'style="display:flex;align-items:center;gap:12px;width:100%;background:#131D28;border:1px solid #1E2E3E;border-radius:8px;padding:12px 14px;margin-bottom:8px;cursor:pointer;text-align:left;">'
+                + '<span style="font-size:1.3rem;width:28px;text-align:center;">'+m.emoji+'</span>'
+                + '<span style="font-family:var(--font-head);font-size:0.78rem;color:'+m.color+';font-weight:700;letter-spacing:1px;">'+m.name+'</span>'
+                + '</button>';
+        }).join('')
+        + '<button onclick="document.getElementById(\'map_picker_modal\').remove()" '
+        + 'style="width:100%;margin-top:4px;background:transparent;border:1px solid #3A4A5A;border-radius:8px;padding:11px;color:#6A8AA0;font-family:var(--font-head);font-size:0.72rem;letter-spacing:1px;cursor:pointer;">ЗАКРЫТЬ</button>';
+
+    modal.appendChild(sheet);
+    modal.addEventListener('click', function(e){ if(e.target===modal) modal.remove(); });
+    document.body.appendChild(modal);
+}
+
+function openMapApp(encodedUrl, encodedCoords) {
+    var url = decodeURIComponent(encodedUrl);
+    var coords = decodeURIComponent(encodedCoords);
+    if (!url) {
+        // Copy coordinates
+        navigator.clipboard && navigator.clipboard.writeText(coords);
+        document.getElementById('map_picker_modal').remove();
+        var toast = document.createElement('div');
+        toast.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#131D28;border:1px solid var(--gold);color:var(--gold);padding:8px 18px;border-radius:20px;font-size:0.72rem;font-family:var(--font-head);z-index:9999;letter-spacing:1px;';
+        toast.textContent = '✓ Координаты скопированы';
+        document.body.appendChild(toast);
+        setTimeout(function(){ toast.remove(); }, 2000);
+        return;
+    }
+    document.getElementById('map_picker_modal').remove();
+    window.open(url, '_blank');
+}
+
+
 
 var twinModel = null; // Глобальная модель скважины
 
@@ -4773,6 +4860,7 @@ var OIL_GRADES_2 = {
 <script>
 </script>
 </html>
+
 
 
      
