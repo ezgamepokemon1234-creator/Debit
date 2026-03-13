@@ -262,6 +262,12 @@
             color: #DD88FF;
         }
         .nav-vision .nav-icon-wrap { color: #CC44FF; font-size: 1.6rem; }
+        .nav-manual {
+            background: linear-gradient(160deg, #101018 0%, #0C0C14 100%);
+            border-color: #2A2A5A; border-top: 2px solid #6A6AEA;
+            color: #9A9AEA;
+        }
+        .nav-manual .nav-icon-wrap { color: #6A6AEA; font-size: 1.4rem; }
 
         /* ─── CARDS ─── */
         .card {
@@ -637,6 +643,10 @@
             <div class="nav-icon-wrap">👁</div>
             <span class="nav-label">ИИ<br>КАМЕРА</span>
         </div>
+        <div class="nav-btn nav-manual" id="nav_manual_btn" onclick="nav('v_manual')">
+            <div class="nav-icon-wrap">📖</div>
+            <span class="nav-label" id="nav_manual_label">РУКО-<br>ВОДСТВО</span>
+        </div>
     </div>
 </div>
 
@@ -732,8 +742,8 @@
         </div>
 
         <div class="divider"></div>
-        <div style="display:flex;gap:8px;">
-            <button class="btn btn-outline back-btn" onclick="nav('dash')" style="margin-bottom:8px;">← В МЕНЮ</button>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+            <button class="btn btn-outline back-btn" onclick="nav('dash')" style="width:100%;">← В МЕНЮ</button>
             <div style="display:flex;gap:8px;">
                 <button class="btn btn-green" id="params_save_btn" onclick="saveJournalEntry()" style="flex:1;margin-bottom:0;">💾 СОХРАНИТЬ</button>
                 <button class="btn btn-gold" id="params_share_btn" onclick="shareFromParams()" style="flex:1;margin-bottom:0;">📤 ОТПРАВИТЬ</button>
@@ -1298,6 +1308,41 @@
     ⏳ Загрузка модели...
   </div>
 
+  <!-- РУЧНОЙ ВВОД (если журнал пустой) -->
+  <div id="twin_manual_input" style="display:none;margin-bottom:14px;">
+    <div style="background:var(--panel2);border:1px solid var(--gold3);border-radius:8px;padding:14px;">
+      <div style="font-family:var(--font-head);font-size:0.7rem;color:var(--gold);letter-spacing:1.5px;margin-bottom:10px;">✏️ ВВЕСТИ ПАРАМЕТРЫ ВРУЧНУЮ</div>
+      <div style="font-size:0.7rem;color:var(--text3);margin-bottom:12px;">Журнал пуст. Введи базовые параметры или сначала сохрани замер в разделе <b style="color:var(--gold)">ПАРАМЕТРЫ СКВАЖИНЫ</b></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div>
+          <label style="font-size:0.65rem;color:var(--text3);">Частота F (Гц)</label>
+          <input id="twin_man_f" type="number" placeholder="50" style="width:100%;background:var(--panel3);border:1px solid var(--border2);border-radius:4px;padding:7px 8px;color:var(--text1);font-size:0.85rem;box-sizing:border-box;">
+        </div>
+        <div>
+          <label style="font-size:0.65rem;color:var(--text3);">Дебит Q (м³/сут)</label>
+          <input id="twin_man_q" type="number" placeholder="80" style="width:100%;background:var(--panel3);border:1px solid var(--border2);border-radius:4px;padding:7px 8px;color:var(--text1);font-size:0.85rem;box-sizing:border-box;">
+        </div>
+        <div>
+          <label style="font-size:0.65rem;color:var(--text3);">Нд (м)</label>
+          <input id="twin_man_nd" type="number" placeholder="800" style="width:100%;background:var(--panel3);border:1px solid var(--border2);border-radius:4px;padding:7px 8px;color:var(--text1);font-size:0.85rem;box-sizing:border-box;">
+        </div>
+        <div>
+          <label style="font-size:0.65rem;color:var(--text3);">Глубина (м)</label>
+          <input id="twin_man_depth" type="number" placeholder="1500" style="width:100%;background:var(--panel3);border:1px solid var(--border2);border-radius:4px;padding:7px 8px;color:var(--text1);font-size:0.85rem;box-sizing:border-box;">
+        </div>
+        <div>
+          <label style="font-size:0.65rem;color:var(--text3);">Рпл (атм)</label>
+          <input id="twin_man_ppl" type="number" placeholder="150" style="width:100%;background:var(--panel3);border:1px solid var(--border2);border-radius:4px;padding:7px 8px;color:var(--text1);font-size:0.85rem;box-sizing:border-box;">
+        </div>
+        <div>
+          <label style="font-size:0.65rem;color:var(--text3);">Рз (атм)</label>
+          <input id="twin_man_rz" type="number" placeholder="40" style="width:100%;background:var(--panel3);border:1px solid var(--border2);border-radius:4px;padding:7px 8px;color:var(--text1);font-size:0.85rem;box-sizing:border-box;">
+        </div>
+      </div>
+      <button onclick="applyManualTwin()" style="width:100%;margin-top:12px;background:linear-gradient(135deg,#1A2A10,#1A2A18);border:1px solid var(--gold);border-radius:6px;padding:10px;color:var(--gold);font-family:var(--font-head);font-size:0.75rem;font-weight:700;letter-spacing:1.5px;cursor:pointer;">⚙ ПРИМЕНИТЬ И ПОСТРОИТЬ МОДЕЛЬ</button>
+    </div>
+  </div>
+
   <!-- ПАРАМЕТРЫ МОДЕЛИ -->
   <div id="twin_model_params" style="display:none;margin-bottom:14px;">
     <div style="font-family:var(--font-head);font-size:0.7rem;color:var(--text3);letter-spacing:1.5px;margin-bottom:8px;">ПАРАМЕТРЫ МОДЕЛИ</div>
@@ -1447,6 +1492,20 @@
   <button class="btn btn-outline back-btn" onclick="nav('dash')" style="margin-top:8px;">← В МЕНЮ</button>
 </div>
 
+
+<div id="v_manual" class="view">
+  <button class="btn btn-outline back-btn" onclick="nav('dash')" style="margin-bottom:16px;width:100%;">← В МЕНЮ</button>
+
+  <!-- Логотип и заголовок -->
+  <div style="text-align:center;padding:20px 0 16px;border-bottom:2px solid var(--gold3);margin-bottom:20px;">
+    <div style="font-family:var(--font-head);font-size:2.4rem;font-weight:900;color:var(--gold);letter-spacing:6px;text-shadow:0 0 20px rgba(200,168,75,0.5);">ATA</div>
+    <div style="font-family:var(--font-head);font-size:0.85rem;font-weight:700;color:#E0ECF4;letter-spacing:3px;margin-top:4px;" id="v_manual_title_el">📖 РУКОВОДСТВО ПОЛЬЗОВАТЕЛЯ</div>
+    <div style="font-size:0.72rem;color:var(--gold);margin-top:6px;letter-spacing:1px;" id="v_manual_sub_el">ATA Промысловый калькулятор</div>
+  </div>
+
+  <!-- Разделы -->
+  <div id="manual_sections"></div>
+</div>
 
 <div id="v_journal" class="view">
     <button class="back-btn" onclick="nav('dash')">← МЕНЮ</button>
@@ -1607,6 +1666,7 @@ function nav(id) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.getElementById(id).classList.add('active');
     window.scrollTo(0,0);
+    if (id === 'v_manual') buildManual();
 }
 
 function showResults(id, rows) {
@@ -3490,18 +3550,92 @@ function cvShare(encoded) {
 
 var twinModel = null; // Глобальная модель скважины
 
+function applyManualTwin() {
+    var f     = parseFloat(document.getElementById('twin_man_f').value)     || 50;
+    var q     = parseFloat(document.getElementById('twin_man_q').value)     || 0;
+    var nd    = parseFloat(document.getElementById('twin_man_nd').value)    || 0;
+    var depth = parseFloat(document.getElementById('twin_man_depth').value) || 1500;
+    var ppl   = parseFloat(document.getElementById('twin_man_ppl').value)   || 0;
+    var rz    = parseFloat(document.getElementById('twin_man_rz').value)    || 0;
+
+    if (!f || !q) {
+        alert(appLang==='ru' ? 'Введи частоту F и дебит Q' : 'Enter frequency F and flow rate Q');
+        return;
+    }
+
+    // Строим синтетический журнал из одной записи для расчётов
+    var now = Date.now();
+    var fakeJournal = [
+        { id: now, ts: now, f: f, qm3: q, nd: nd, depth: depth, ppr: ppl, rz: rz, i: 0, z: 0 },
+        { id: now-86400000, ts: now-86400000, f: f*0.98, qm3: q*0.98, nd: nd*1.01, depth: depth, ppr: ppl, rz: rz, i: 0, z: 0 }
+    ];
+
+    // Подставить в поля симулятора ЧРП
+    document.getElementById('twin_f1').value = f;
+    document.getElementById('twin_q1').value = q;
+    document.getElementById('twin_nkt_depth').value = depth;
+
+    // Скрыть блок ввода, показать статус
+    var manualDiv = document.getElementById('twin_manual_input');
+    if (manualDiv) manualDiv.style.display = 'none';
+
+    var status = document.getElementById('twin_model_status');
+    var rho = 870;
+    var pwf = nd > 0 ? (rho * 9.81 * nd) / 1e5 * 1.01972 : 0;
+    var kpr = (q > 0 && ppl > pwf) ? (q / (ppl - pwf)).toFixed(3) : '—';
+
+    status.innerHTML = appLang==='ru'
+        ? '✅ Модель построена по ручному вводу | F=' + f + ' Гц | Q=' + q + ' м³/сут | Kпр≈' + kpr
+        : '✅ Model built from manual input | F=' + f + ' Hz | Q=' + q + ' m³/d | Kpr≈' + kpr;
+    status.style.borderLeftColor = '#2ACA7A';
+
+    var paramsDiv = document.getElementById('twin_model_params');
+    var grid = document.getElementById('twin_params_grid');
+    if (paramsDiv && grid) {
+        paramsDiv.style.display = 'block';
+        var rows = appLang==='ru'
+            ? [['F базовая', f+' Гц'], ['Q базовый', q+' м³/сут'], ['Нд', nd+' м'], ['Глубина', depth+' м'], ['Kпр', kpr+' м³/сут/атм']]
+            : [['Base F', f+' Hz'], ['Base Q', q+' m³/d'], ['Dyn.level', nd+' m'], ['Depth', depth+' m'], ['Kpr', kpr+' m³/d/atm']];
+        grid.innerHTML = rows.map(function(r){
+            return '<div style="background:var(--panel3);border-radius:4px;padding:8px 10px;border:1px solid var(--border);">'
+                + '<div style="font-size:0.6rem;color:var(--text3);letter-spacing:1px;">'+r[0]+'</div>'
+                + '<div style="font-family:var(--font-mono);font-size:0.85rem;color:var(--gold);">'+r[1]+'</div>'
+                + '</div>';
+        }).join('');
+    }
+    drawIPR();
+}
+
 function buildTwin() {
     var journal = getJournal();
     var status  = document.getElementById('twin_model_status');
     var paramsDiv = document.getElementById('twin_model_params');
+    var manualDiv = document.getElementById('twin_manual_input');
 
     if (!journal || journal.length < 2) {
-        status.innerHTML = '⚠️ Недостаточно данных. Нужно минимум 2 замера в журнале.';
-        status.style.borderLeftColor = 'var(--red)';
-        paramsDiv.style.display = 'none';
+        status.innerHTML = appLang==='ru'
+            ? '⚠️ Нет данных журнала. Введи параметры вручную ↓ или сохрани замер в <b>ПАРАМЕТРЫ СКВАЖИНЫ</b>'
+            : '⚠️ No journal data. Enter parameters manually ↓ or save an entry in <b>WELL PARAMETERS</b>';
+        status.style.borderLeftColor = 'var(--gold)';
+        if (paramsDiv) paramsDiv.style.display = 'none';
+        if (manualDiv) manualDiv.style.display = 'block';
+
+        // Prefill from current params if available
+        var pf = document.getElementById('p_f');
+        var pq = document.getElementById('p_qm3');
+        var pnd = document.getElementById('p_nd');
+        var pd = document.getElementById('p_depth');
+        var prz = document.getElementById('p_rz');
+        if (pf && pf.value)  { var mf = document.getElementById('twin_man_f');     if(mf && !mf.value) mf.value = pf.value; }
+        if (pq && pq.value)  { var mq = document.getElementById('twin_man_q');     if(mq && !mq.value) mq.value = pq.value; }
+        if (pnd && pnd.value){ var mn = document.getElementById('twin_man_nd');    if(mn && !mn.value) mn.value = pnd.value; }
+        if (pd && pd.value)  { var md = document.getElementById('twin_man_depth'); if(md && !md.value) md.value = pd.value; }
+        if (prz && prz.value){ var mr = document.getElementById('twin_man_rz');    if(mr && !mr.value) mr.value = prz.value; }
+
         twinModel = null;
         return;
     }
+    if (manualDiv) manualDiv.style.display = 'none';
 
     // ── Собираем данные из журнала ──
     var entries = journal.filter(function(e) {
@@ -3798,6 +3932,260 @@ function drawIPR() {
 
     document.getElementById('twin_ipr_info').innerHTML =
         'Kпр = ' + kpr.toFixed(3) + ' м³/сут/атм  |  Рпл ≈ ' + ppl.toFixed(1) + ' атм  |  Qmax ≈ ' + (kpr*ppl).toFixed(1) + ' м³/сут';
+}
+
+// ===== РУКОВОДСТВО ПОЛЬЗОВАТЕЛЯ =====
+var MANUAL = {
+    ru: [
+        { icon:'⊞', title:'ПАРАМЕТРЫ СКВАЖИНЫ', body:[
+            'Раздел для ввода рабочих параметров скважины.',
+            '• <b>КП / СКВ</b> — номер куста и скважины',
+            '• <b>Нд</b> — динамический уровень (м)',
+            '• <b>Рз / Рб / Рл / Рпр</b> — давления (атм)',
+            '• <b>F</b> — частота ЧРП (Гц) | <b>I</b> — ток (А)',
+            '• <b>З</b> — загрузка (%) | <b>Тдв</b> — температура (°C)',
+            '• <b>💧 Н₂О</b> — визуальный % воды в пробе',
+            '💾 СОХРАНИТЬ — сохраняет замер в журнал с GPS',
+            '📤 ОТПРАВИТЬ — открывает меню телефона для отправки',
+        ]},
+        { icon:'◈', title:'ДЕБИТ — ЗАМЕР', body:[
+            'Расчёт дебита по объёму и времени.',
+            '• Введи объём (л) и время работы (мин)',
+            '• Результат: м³/сут, барр/сут, т/сут',
+            '• Блок ПКВ — расчёт периодической скважины',
+            '• Блок обводнённости — нефть и вода в дебите',
+        ]},
+        { icon:'◉', title:'ГЛУШЕНИЕ — РАСЧЁТ', body:[
+            'Расчёт плотности жидкости глушения.',
+            '• Введи пластовое давление Рпл (атм)',
+            '• Введи глубину скважины (м)',
+            '• Коэффициент запаса Кз (по умолчанию 1.07)',
+            '• Результат: плотность ρ (кг/м³)',
+        ]},
+        { icon:'⚡', title:'УЭЦН — РАСЧЁТ ЧРП', body:[
+            'Расчёт режимов работы частотного преобразователя.',
+            '• Законы подобия: Q ~ f, H ~ f², P ~ f³',
+            '• Введи f₁, Q₁ и желаемую f₂',
+            '• Получишь новый дебит Q₂ и изменение мощности',
+        ]},
+        { icon:'≡', title:'ВСЕ РАСЧЁТЫ', body:[
+            'Библиотека из 89+ инженерных расчётов по вкладкам:',
+            '• ДОБЫЧА / ДЕБИТ — замеры, КПД, ПКВ',
+            '• УЭЦН / ШГН / ГАЗЛИФТ — подбор насоса',
+            '• СКВАЖИНА / ГЛУШЕНИЕ — НКТ, жидкость глушения',
+            '• ДАВЛЕНИЕ / ГИДРАВЛ. — забойное давление',
+            '• ПЛАСТ / ГДИ / ГРП — КВД, продуктивность',
+            '• PVT / ФЛЮИДЫ — свойства нефти и газа',
+            '• ЕДИНИЦЫ / КОНВЕРТ. — перевод единиц',
+            '• ЭКОНОМИКА / МТО — стоимость добычи',
+        ]},
+        { icon:'⬡', title:'ЦИФРОВОЙ ДВОЙНИК', body:[
+            'Математическая модель скважины по журналу замеров.',
+            '⚡ Симулятор ЧРП — прогноз дебита при новой частоте',
+            '🔩 Симулятор НКТ — прогноз при замене трубы',
+            '📈 IPR-кривая — рабочая точка на кривой притока',
+            '⚠ Нужно минимум 2 замера в журнале',
+        ]},
+        { icon:'▤', title:'ЖУРНАЛ ЗАМЕРОВ', body:[
+            'Хранит до 200 замеров на устройстве.',
+            '📂 ЗАГРУЗИТЬ — восстановить параметры из замера',
+            '🧭 НАВИГАЦИЯ — маршрут до места замера',
+            '🛰 СПУТНИК — спутниковый снимок в Яндекс Картах',
+            '✕ — удалить запись | 🗑 ОЧИСТИТЬ ВСЁ',
+            '⚠ Журнал хранится в браузере. Не очищай кэш!',
+        ]},
+        { icon:'👁', title:'ИИ КАМЕРА', body:[
+            '🔵 МАНОМЕТР — сфотографируй, ИИ прочитает давление и предложит вставить в нужное поле',
+            '⚡ УЭЦН — сфотографируй шильдик, ИИ распознает марку, ток, напряжение',
+            '⚠️ ДЕФЕКТ — сфотографируй порыв/утечку, ИИ составит акт с GPS и рекомендациями',
+            '☁ Требует интернет-соединение',
+        ]},
+        { icon:'📤', title:'ОТПРАВИТЬ ПАРАМЕТРЫ', body:[
+            'Нажатие сразу открывает меню телефона (Telegram, WhatsApp, Макс, СМС).',
+            'Отчёт компактный — по 2 параметра в строку.',
+            '☁ Работает через HTTPS (GitHub Pages)',
+        ]},
+        { icon:'▣', title:'ЧИТАТЬ QR ИЗ ФОТО', body:[
+            'Выбери фото с QR-кодом из галереи.',
+            'Приложение декодирует QR без интернета.',
+            '🌐 Если QR содержит ссылку — появится кнопка открыть',
+            '📋 Скопировать или 📤 поделиться результатом',
+        ]},
+        { icon:'📍', title:'GPS И НАВИГАЦИЯ', body:[
+            'При сохранении замера автоматически запрашивается GPS.',
+            '🧭 НАВИГАЦИЯ — открывает маршрут в картах телефона',
+            '🛰 СПУТНИК — спутниковый снимок точки замера',
+            '⚠ Требуется разрешение на геолокацию в браузере',
+            '⚠ Работает только через HTTPS',
+        ]},
+        { icon:'💡', title:'СОВЕТЫ', body:[
+            '✅ Открывай через GitHub Pages (HTTPS) — работают GPS, ИИ Камера, Поделиться',
+            '✅ Сохраняй замер сразу — не откладывай',
+            '✅ При очистке кэша браузера журнал удалится — отправляй важные замеры',
+            '✅ Цифровой двойник точнее при большом количестве замеров',
+            '✅ Акт дефекта отправляй диспетчеру сразу',
+        ]},
+    ],
+    en: [
+        { icon:'⊞', title:'WELL PARAMETERS', body:[
+            'Enter current well operating parameters.',
+            '• <b>PAD / WELL</b> — pad and well number',
+            '• <b>Nd</b> — dynamic fluid level (m)',
+            '• <b>Rz / Rb / Rl / Rpr</b> — pressures (atm)',
+            '• <b>F</b> — VFD frequency (Hz) | <b>I</b> — current (A)',
+            '• <b>Load</b> — motor load (%) | <b>Tdv</b> — motor temp (°C)',
+            '• <b>💧 H₂O</b> — visual water cut % from sample',
+            '💾 SAVE — saves entry to journal with GPS',
+            '📤 SEND — opens phone share menu',
+        ]},
+        { icon:'◈', title:'FLOW RATE MEASUREMENT', body:[
+            'Calculate flow rate from volume and time.',
+            '• Enter volume (L) and operating time (min)',
+            '• Result: m³/day, bbl/day, t/day',
+            '• PCM block — intermittent well calculation',
+            '• Water cut block — oil and water in production',
+        ]},
+        { icon:'◉', title:'KILL FLUID CALCULATION', body:[
+            'Calculate kill fluid density.',
+            '• Enter reservoir pressure Rpl (atm)',
+            '• Enter well depth (m)',
+            '• Safety factor Kz (default 1.07)',
+            '• Result: density ρ (kg/m³)',
+        ]},
+        { icon:'⚡', title:'ESP — VFD CALCULATION', body:[
+            'Calculate VFD operating modes.',
+            '• Affinity laws: Q ~ f, H ~ f², P ~ f³',
+            '• Enter f₁, Q₁ and desired f₂',
+            '• Get new flow Q₂ and power change',
+        ]},
+        { icon:'≡', title:'ALL CALCULATIONS', body:[
+            'Library of 89+ engineering calculations:',
+            '• PRODUCTION / RATE — flow, efficiency, PCM',
+            '• ESP / SRP / GASLIFT — pump selection',
+            '• WELL / KILL FLUID — tubing, kill fluid',
+            '• PRESSURE / HYDRAUL. — bottomhole pressure',
+            '• RESERVOIR / PTA / FRAC — PTA, productivity',
+            '• PVT / FLUIDS — oil and gas properties',
+            '• UNITS / CONVERSION — unit conversion',
+            '• ECONOMICS / MTO — production cost',
+        ]},
+        { icon:'⬡', title:'DIGITAL TWIN', body:[
+            'Mathematical well model from journal data.',
+            '⚡ VFD Simulator — flow forecast at new frequency',
+            '🔩 Tubing Simulator — forecast when changing pipe size',
+            '📈 IPR Curve — operating point on inflow curve',
+            '⚠ Requires at least 2 saved entries in journal',
+        ]},
+        { icon:'▤', title:'MEASUREMENT JOURNAL', body:[
+            'Stores up to 200 entries on the device.',
+            '📂 LOAD — restore parameters from entry',
+            '🧭 NAVIGATION — route to measurement location',
+            '🛰 SATELLITE — satellite view in Yandex Maps',
+            '✕ — delete entry | 🗑 CLEAR ALL',
+            '⚠ Journal stored in browser. Do not clear cache!',
+        ]},
+        { icon:'👁', title:'AI CAMERA', body:[
+            '🔵 GAUGE — take photo, AI reads pressure and offers to insert into field',
+            '⚡ ESP — photo the nameplate, AI recognizes model, current, voltage',
+            '⚠️ DEFECT — photo a leak/failure, AI creates an act with GPS and recommendations',
+            '☁ Requires internet connection',
+        ]},
+        { icon:'📤', title:'SEND PARAMETERS', body:[
+            'Opens phone share menu directly (Telegram, WhatsApp, SMS).',
+            'Report is compact — 2 parameters per line.',
+            '☁ Works via HTTPS (GitHub Pages)',
+        ]},
+        { icon:'▣', title:'READ QR FROM PHOTO', body:[
+            'Select a photo with a QR code from gallery.',
+            'App decodes QR without internet.',
+            '🌐 If QR contains a link — open button appears',
+            '📋 Copy or 📤 share the result',
+        ]},
+        { icon:'📍', title:'GPS & NAVIGATION', body:[
+            'GPS coordinates are automatically saved with each entry.',
+            '🧭 NAVIGATION — opens route in phone maps app',
+            '🛰 SATELLITE — satellite view of measurement point',
+            '⚠ Location permission required in browser',
+            '⚠ Works only via HTTPS',
+        ]},
+        { icon:'💡', title:'TIPS', body:[
+            '✅ Open via GitHub Pages (HTTPS) — GPS, AI Camera, Share work',
+            '✅ Save entries immediately — do not delay',
+            '✅ Clearing browser cache deletes journal — send important entries first',
+            '✅ Digital Twin is more accurate with more journal entries',
+            '✅ Send defect acts to dispatcher immediately',
+        ]},
+    ]
+};
+
+function clearVisionPhoto(panel) {
+    var map = {
+        0: { preview:'vision_mano_preview', img:'vision_mano_img', status:'vision_mano_status', result:'vision_mano_result' },
+        1: { preview:'vision_esp_preview',  img:'vision_esp_img',  status:'vision_esp_status',  result:'vision_esp_result' },
+        2: { preview:'vision_def_preview',  img:'vision_def_img',  status:'vision_def_status',  result:'vision_def_result' },
+    };
+    var ids = map[panel];
+    if (!ids) return;
+    var prev = document.getElementById(ids.preview);
+    var img  = document.getElementById(ids.img);
+    var stat = document.getElementById(ids.status);
+    var res  = document.getElementById(ids.result);
+    if (prev) prev.style.display = 'none';
+    if (img)  img.src = '';
+    if (stat) { stat.style.display = 'none'; stat.innerHTML = ''; }
+    if (res)  { res.style.display  = 'none'; res.innerHTML  = ''; }
+    // Сбросить file input
+    var inputs = document.querySelectorAll('#vision_panel_'+panel+' input[type=file]');
+    inputs.forEach(function(inp) { inp.value = ''; });
+}
+
+function buildManual() {
+    var sections = MANUAL[appLang] || MANUAL.ru;
+    var container = document.getElementById('manual_sections');
+    if (!container) return;
+
+    var iconColors = ['#C8A84B','#3A9EC8','#2EA84C','#C8A84B','#3A9EC8','#C84040','#2EA84C','#CC44FF','#C8A84B','#3A9EC8','#3A9EC8','#E5C76B'];
+
+    container.innerHTML = sections.map(function(s, i) {
+        var col = iconColors[i] || '#C8A84B';
+        return '<div style="margin-bottom:10px;">'
+            + '<div onclick="toggleManualSection('+i+')" style="'
+                + 'display:flex;align-items:center;justify-content:space-between;'
+                + 'background:#131D28;'
+                + 'border:1px solid '+col+';'
+                + 'border-left:4px solid '+col+';'
+                + 'border-radius:8px;padding:14px 16px;cursor:pointer;'
+                + '-webkit-tap-highlight-color:transparent;">'
+            + '<div style="display:flex;align-items:center;gap:12px;">'
+            + '<span style="font-size:1.4rem;line-height:1;">'+s.icon+'</span>'
+            + '<span style="font-family:var(--font-head);font-size:0.82rem;font-weight:700;color:#FFFFFF;letter-spacing:1.5px;">'+s.title+'</span>'
+            + '</div>'
+            + '<span id="manual_arrow_'+i+'" style="color:'+col+';font-size:1rem;font-weight:700;">▼</span>'
+            + '</div>'
+            + '<div id="manual_body_'+i+'" style="'
+                + 'display:none;'
+                + 'background:#0E1820;'
+                + 'border:1px solid '+col+';border-top:none;'
+                + 'border-radius:0 0 8px 8px;'
+                + 'padding:14px 16px;">'
+            + s.body.map(function(line) {
+                var isNote = line.indexOf('⚠') === 0 || line.indexOf('☁') === 0;
+                var isTip  = line.indexOf('✅') === 0;
+                var c = isNote ? '#F0A040' : isTip ? '#2ECA6C' : '#D0E8F4';
+                return '<div style="font-size:0.8rem;color:'+c+';margin-bottom:8px;line-height:1.6;">' + line + '</div>';
+              }).join('')
+            + '</div>'
+            + '</div>';
+    }).join('');
+}
+
+function toggleManualSection(i) {
+    var body  = document.getElementById('manual_body_' + i);
+    var arrow = document.getElementById('manual_arrow_' + i);
+    if (!body) return;
+    var open = body.style.display !== 'none';
+    body.style.display = open ? 'none' : 'block';
+    arrow.textContent  = open ? '▼' : '▲';
 }
 
 function navigateTo(lat, lng) {
@@ -7479,7 +7867,7 @@ function setAppLang(l) {
             'nav_journal':  'ЖУРНАЛ\nЗАМЕРОВ',
             'nav_qrread':   'ЧИТАТЬ QR\nИЗ ФОТО',
             'nav_twin':     'ЦИФРОВОЙ\nДВОЙНИК',
-            'nav_vision':   'ИИ\nКАМЕРА',
+            'nav_manual':   'РУКО-\nВОДСТВО',
             // Кнопки назад
             'back': '← МЕНЮ',
             // Заголовки разделов
@@ -7499,6 +7887,8 @@ function setAppLang(l) {
             'v_twin_sub':      'Математическая модель на основе журнала замеров',
             'v_vision_title':  'ИИ КАМЕРА',
             'v_vision_sub':    'Компьютерное зрение — манометр, УЭЦН, дефекты',
+            'v_manual_title':  'РУКОВОДСТВО ПОЛЬЗОВАТЕЛЯ',
+            'v_manual_sub':    'ATA Промысловый калькулятор',
             // Вкладки ИИ Камеры
             'vision_tab0': 'МАНОМЕТР',
             'vision_tab1': 'УЭЦН',
@@ -7524,7 +7914,7 @@ function setAppLang(l) {
             'nav_journal':  'MEASURE\nJOURNAL',
             'nav_qrread':   'READ QR\nFROM PHOTO',
             'nav_twin':     'DIGITAL\nTWIN',
-            'nav_vision':   'AI\nCAMERA',
+            'nav_manual':   'USER\nMANUAL',
             'back': '← MENU',
             'v_params_title':  'WELL PARAMETERS',
             'v_params_sub':    'Operating parameters and measurements',
@@ -7542,6 +7932,8 @@ function setAppLang(l) {
             'v_twin_sub':      'Mathematical model based on journal data',
             'v_vision_title':  'AI CAMERA',
             'v_vision_sub':    'Computer vision — gauge, ESP, defects',
+            'v_manual_title':  'USER MANUAL',
+            'v_manual_sub':    'ATA Field Calculator',
             'vision_tab0': 'GAUGE',
             'vision_tab1': 'ESP',
             'vision_tab2': 'DEFECT',
@@ -7572,6 +7964,7 @@ function setAppLang(l) {
         'nav_qrread_btn':   'nav_qrread',
         'nav_twin_btn':     'nav_twin',
         'nav_vision_btn':   'nav_vision',
+        'nav_manual_btn':   'nav_manual',
     };
     Object.keys(navMap).forEach(function(id) {
         var el = document.getElementById(id);
@@ -7603,6 +7996,8 @@ function setAppLang(l) {
         'v_twin_sub_el':      'v_twin_sub',
         'v_vision_title_el':  'v_vision_title',
         'v_vision_sub_el':    'v_vision_sub',
+        'v_manual_title_el':  'v_manual_title',
+        'v_manual_sub_el':    'v_manual_sub',
     };
     Object.keys(sectMap).forEach(function(id) {
         var el = document.getElementById(id);
@@ -7641,6 +8036,8 @@ function setAppLang(l) {
 
     // Перерисовать журнал чтобы кнопка ЗАГРУЗИТЬ тоже обновилась
     if (typeof renderJournal === 'function') renderJournal();
+    // Перестроить руководство на новом языке
+    if (document.getElementById('v_manual') && document.getElementById('v_manual').classList.contains('active')) buildManual();
 
     // ── ПАРАМЕТРЫ СКВАЖИНЫ ──
     var isEn = l === 'en';
@@ -7737,6 +8134,7 @@ function setAppLang(l) {
       </label>
       <div id="vision_mano_preview" style="display:none;margin-top:12px;text-align:center;">
         <img id="vision_mano_img" style="max-width:100%;max-height:200px;border-radius:6px;border:1px solid var(--border);">
+        <button onclick="clearVisionPhoto(0)" style="margin-top:8px;background:var(--red2);border:1px solid var(--red);color:var(--red);border-radius:5px;padding:5px 14px;font-size:0.65rem;font-family:var(--font-head);letter-spacing:1px;cursor:pointer;">🗑 УДАЛИТЬ ФОТО</button>
       </div>
       <div id="vision_mano_status" style="display:none;margin-top:10px;"></div>
       <div id="vision_mano_result" style="display:none;margin-top:10px;"></div>
@@ -7753,6 +8151,7 @@ function setAppLang(l) {
       </label>
       <div id="vision_esp_preview" style="display:none;margin-top:12px;text-align:center;">
         <img id="vision_esp_img" style="max-width:100%;max-height:200px;border-radius:6px;border:1px solid var(--border);">
+        <button onclick="clearVisionPhoto(1)" style="margin-top:8px;background:var(--red2);border:1px solid var(--red);color:var(--red);border-radius:5px;padding:5px 14px;font-size:0.65rem;font-family:var(--font-head);letter-spacing:1px;cursor:pointer;">🗑 УДАЛИТЬ ФОТО</button>
       </div>
       <div id="vision_esp_status" style="display:none;margin-top:10px;"></div>
       <div id="vision_esp_result" style="display:none;margin-top:10px;"></div>
@@ -7769,6 +8168,7 @@ function setAppLang(l) {
       </label>
       <div id="vision_def_preview" style="display:none;margin-top:12px;text-align:center;">
         <img id="vision_def_img" style="max-width:100%;max-height:200px;border-radius:6px;border:1px solid var(--border);">
+        <button onclick="clearVisionPhoto(2)" style="margin-top:8px;background:var(--red2);border:1px solid var(--red);color:var(--red);border-radius:5px;padding:5px 14px;font-size:0.65rem;font-family:var(--font-head);letter-spacing:1px;cursor:pointer;">🗑 УДАЛИТЬ ФОТО</button>
       </div>
       <div id="vision_def_status" style="display:none;margin-top:10px;"></div>
       <div id="vision_def_result" style="display:none;margin-top:10px;"></div>
@@ -7894,468 +8294,7 @@ function setAppLang(l) {
         }
 
         /* ═══ ALL CALCS VIEW ═══ */
-        .ac-tabs { display:flex; flex-wrap:wrap; gap:4px; margin-bottom:14px; }
-        .ac-tab  { padding:6px 12px; background:var(--panel2); border:1px solid var(--border2);
-                   border-radius:4px; color:var(--text); font-family:var(--font-head);
-                   font-size:0.55rem; letter-spacing:1px; cursor:pointer; white-space:nowrap; }
-        .ac-tab.active { background:var(--gold3); border-color:var(--gold); color:var(--gold2); }
-        .ac-section { display:none; }
-        .ac-section.active { display:block; }
-        .ac-grid { display:grid; grid-template-columns:1fr; gap:12px; }
-        .ac-card { background:var(--panel); border:1px solid var(--border2); border-radius:8px;
-                   padding:14px; border-left:3px solid var(--gold3); }
-        .ac-card-title { font-family:var(--font-head); font-size:0.65rem; color:var(--gold2);
-                         letter-spacing:2px; margin-bottom:4px; }
-        .ac-formula { font-family:var(--font-mono); font-size:0.55rem; color:var(--text);
-                      margin-bottom:10px; opacity:0.7; }
-        .ac-field { margin-bottom:8px; }
-        .ac-field label { display:block; font-family:var(--font-head); font-size:0.55rem;
-                          color:var(--text); letter-spacing:1px; margin-bottom:3px; }
-        .ac-field input, .ac-field select {
-            width:100%; background:var(--bg); border:1px solid var(--border2); border-radius:5px;
-            padding:7px 10px; color:#E0EAF0; font-family:var(--font-mono); font-size:0.9rem;
-            outline:none; margin-bottom:0; }
-        .ac-field input:focus { border-color:var(--gold); }
-        .ac-two { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
-        .ac-result { margin-top:8px; padding:10px; background:var(--bg); border-radius:5px;
-                     border-left:3px solid var(--gold); display:none; }
-        .ac-result.show { display:block; }
-        .ac-result-row { display:flex; justify-content:space-between; align-items:baseline;
-                         padding:3px 0; border-bottom:1px solid var(--border); }
-        .ac-result-row:last-child { border-bottom:none; }
-        .ac-result-label { font-family:var(--font-head); font-size:0.55rem; color:var(--text); }
-        .ac-result-val { font-family:var(--font-mono); font-size:0.9rem; color:var(--gold2); font-weight:bold; }
-        @keyframes slideUp {
-            from { transform: translateY(100%); }
-            to   { transform: translateY(0); }
-        }
-        @keyframes ticker-scroll {
-            0%   { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
-        .tick-item {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 0 20px;
-            border-right: 1px solid var(--border);
-            height: 36px;
-        }
-        .tick-label {
-            font-family: var(--font-head);
-            font-size: 0.6rem;
-            color: var(--text);
-            letter-spacing: 1px;
-        }
-        .tick-val {
-            font-family: var(--font-mono);
-            font-size: 0.85rem;
-            color: #E0EAF0;
-        }
-        .tick-chg { font-family: var(--font-mono); font-size: 0.65rem; }
-        .tick-up   { color: #4ACA6A; }
-        .tick-down { color: #E05050; }
-        .tick-sep { color: var(--border2); font-size: 0.7rem; }
-
-
-        /* ─── VIEWS ─── */
-        .view { display: none; padding: 14px; }
-        .view.active { display: block; }
-
-        /* ─── NAV GRID ─── */
-        .nav-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .nav-btn {
-            border-radius: 8px;
-            padding: 16px 8px 14px;
-            text-align: center;
-            font-family: var(--font-head);
-            font-size: 0.72rem; font-weight: 700;
-            letter-spacing: 1.5px;
-            cursor: pointer;
-            transition: all 0.12s;
-            position: relative;
-            overflow: hidden;
-            border: 1px solid var(--border);
-            background: var(--panel2);
-            color: var(--text2);
-            user-select: none;
-        }
-        .nav-btn::after {
-            content: '';
-            position: absolute; top: 0; left: 0; right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(200,168,75,0.15), transparent);
-        }
-        .nav-btn:active { transform: scale(0.96); opacity: 0.85; }
-        .nav-icon-wrap {
-            font-size: 1.5rem; line-height: 1;
-            margin-bottom: 8px; color: var(--gold);
-            font-family: monospace; font-weight: 400;
-            display: block;
-        }
-        .nav-primary {
-            background: linear-gradient(160deg, #0F1822 0%, #0A1018 100%);
-            border-color: var(--border2);
-            border-top: 2px solid var(--gold3);
-        }
-        .nav-primary .nav-icon-wrap { color: var(--gold); }
-        .nav-accent {
-            background: linear-gradient(160deg, #0C1620 0%, #08101A 100%);
-            border-color: var(--border2);
-            border-top: 2px solid var(--cyan);
-            color: #7ACAE0;
-        }
-        .nav-accent .nav-icon-wrap { color: var(--cyan); font-size: 1.8rem; }
-        .nav-journal {
-            background: linear-gradient(160deg, #0A1520 0%, #081018 100%);
-            border-color: #1E4A6A; border-top: 2px solid var(--cyan);
-            color: #5ABEEA;
-        }
-        .nav-journal .nav-icon-wrap { color: var(--cyan); }
-        .nav-share {
-            background: linear-gradient(160deg, #0A180E 0%, #081210 100%);
-            border-color: #1A4A28; border-top: 2px solid var(--green);
-            color: #4ACA6A;
-        }
-        .nav-share .nav-icon-wrap { color: var(--green); font-size: 1.5rem; }
-        .nav-qr {
-            background: linear-gradient(160deg, #150A20 0%, #100818 100%);
-            border-color: #3A1A5A; border-top: 2px solid #9C5AC8;
-            color: #B87AE0;
-        }
-        .nav-qr .nav-icon-wrap { color: #9C5AC8; }
-        .nav-twin {
-            background: linear-gradient(160deg, #0A1A12 0%, #081510 100%);
-            border-color: #1A5A3A; border-top: 2px solid #2ACA7A;
-            color: #4AEA9A;
-        }
-        .nav-twin .nav-icon-wrap { color: #2ACA7A; font-size: 1.6rem; }
-        .nav-vision {
-            background: linear-gradient(160deg, #1A0A1A 0%, #120810 100%);
-            border-color: #5A1A7A; border-top: 2px solid #CC44FF;
-            color: #DD88FF;
-        }
-        .nav-vision .nav-icon-wrap { color: #CC44FF; font-size: 1.6rem; }
-
-        /* ─── CARDS ─── */
-        .card {
-            background: var(--panel);
-            border: 1px solid var(--border);
-            border-left: 3px solid var(--gold3);
-            border-radius: 8px;
-            padding: 16px;
-            margin-bottom: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.03);
-            position: relative;
-        }
-        .card-title {
-            font-family: var(--font-head);
-            font-size: 0.75rem; font-weight: 700;
-            color: var(--gold);
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            margin-bottom: 14px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid var(--border);
-            display: flex; align-items: center; gap: 8px;
-        }
-        .card-title::before {
-            content: '';
-            display: inline-block;
-            width: 3px; height: 14px;
-            background: var(--gold);
-            border-radius: 2px;
-            flex-shrink: 0;
-        }
-
-        /* ─── LABELS & INPUTS ─── */
-        label {
-            display: block;
-            font-family: var(--font-head);
-            font-size: 0.65rem; font-weight: 600;
-            color: var(--text); letter-spacing: 1.5px;
-            text-transform: uppercase;
-            margin-bottom: 4px;
-        }
-        input[type=number], input[type=text], select {
-            width: 100%;
-            background: var(--bg);
-            border: 1px solid var(--border2);
-            border-bottom: 2px solid var(--border2);
-            padding: 11px 12px;
-            border-radius: 5px;
-            color: #E0EAF0;
-            margin-bottom: 10px;
-            font-family: var(--font-mono);
-            font-size: 1.05rem;
-            -moz-appearance: textfield;
-            box-shadow: inset 0 3px 8px rgba(0,0,0,0.5);
-            transition: border-color 0.15s, box-shadow 0.15s;
-        }
-        input::-webkit-outer-spin-button,
-        input::-webkit-inner-spin-button { -webkit-appearance: none; }
-        input:focus, select:focus {
-            border-color: var(--gold);
-            border-bottom-color: var(--gold2);
-            outline: none;
-            box-shadow: inset 0 3px 8px rgba(0,0,0,0.5), 0 0 0 2px rgba(200,168,75,0.1);
-        }
-        select option { background: #0D1219; }
-
-        /* ─── GRID ─── */
-        .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: end; }
-        .grid2 > div { display: flex; flex-direction: column; justify-content: flex-end; }
-        .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; align-items: start; }
-        .grid2 > div, .grid3 > div { display: flex; flex-direction: column; }
-        .grid2 input, .grid3 input { flex: 1; }
-
-        /* ─── BUTTONS ─── */
-        .btn {
-            width: 100%; padding: 14px;
-            border: none; border-radius: 6px;
-            font-family: var(--font-head);
-            font-size: 0.85rem; font-weight: 700;
-            letter-spacing: 3px; text-transform: uppercase;
-            cursor: pointer; margin-bottom: 8px;
-            transition: all 0.12s;
-            position: relative; overflow: hidden;
-        }
-        .btn:active { transform: scale(0.98); }
-        .btn-gold {
-            background: linear-gradient(180deg, #D4A94E 0%, #A07828 100%);
-            color: #000;
-            box-shadow: 0 3px 0 #5A4010, 0 4px 12px rgba(200,168,75,0.3);
-            border-bottom: 2px solid #5A4010;
-            text-shadow: 0 1px 0 rgba(255,255,255,0.2);
-        }
-        .btn-gold:active {
-            box-shadow: 0 1px 0 #5A4010, 0 2px 6px rgba(200,168,75,0.2);
-            transform: translateY(2px);
-        }
-        .btn-outline {
-            background: transparent;
-            border: 1px solid var(--border2);
-            color: var(--text);
-        }
-        .btn-outline:active { background: var(--panel2); }
-        .btn-green {
-            background: linear-gradient(180deg, #2EA84C 0%, #1A6630 100%);
-            color: #fff;
-            box-shadow: 0 3px 0 #0D3D1A, 0 4px 12px rgba(46,168,76,0.25);
-            border-bottom: 2px solid #0D3D1A;
-        }
-        .btn-green:active { transform: translateY(2px); box-shadow: 0 1px 0 #0D3D1A; }
-        .btn-blue {
-            background: linear-gradient(180deg, #4A9EE0 0%, #2060A0 100%);
-            color: #fff;
-            box-shadow: 0 3px 0 #103060, 0 4px 12px rgba(74,158,224,0.25);
-            border-bottom: 2px solid #103060;
-        }
-        .btn-orange {
-            background: linear-gradient(180deg, #D07A30 0%, #8A4A10 100%);
-            color: #fff;
-            box-shadow: 0 3px 0 #4A2008, 0 4px 12px rgba(208,122,48,0.25);
-            border-bottom: 2px solid #4A2008;
-        }
-
-        /* ─── RESULTS ─── */
-        .result-box {
-            background: var(--bg);
-            border: 1px solid var(--border2);
-            border-top: 2px solid var(--gold3);
-            border-radius: 6px;
-            padding: 4px 0;
-            margin-top: 10px;
-            box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
-        }
-        .result-row {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 9px 14px;
-            border-bottom: 1px solid var(--border);
-        }
-        .result-row:last-child { border-bottom: none; }
-        .result-label {
-            font-family: var(--font-head);
-            font-size: 0.65rem; font-weight: 600;
-            color: var(--text); letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-        .result-val {
-            font-family: var(--font-mono);
-            font-size: 1rem; font-weight: 400;
-            color: var(--gold2);
-            text-align: right;
-        }
-        .result-val.green { color: #4ACA6A; text-shadow: 0 0 8px rgba(74,202,106,0.4); }
-        .result-val.red   { color: #E05050; text-shadow: 0 0 8px rgba(224,80,80,0.4); }
-        .result-val.cyan  { color: #5ABEEA; text-shadow: 0 0 8px rgba(90,190,234,0.4); }
-        .result-val.blue  { color: #6ABAF0; text-shadow: 0 0 8px rgba(106,186,240,0.4); }
-        .result-val.orange{ color: #E0943A; text-shadow: 0 0 8px rgba(224,148,58,0.4); }
-        .result-val.gold  { color: var(--gold2); }
-
-        /* ─── BACK BUTTON ─── */
-        .back-btn {
-            display: inline-flex; align-items: center; gap: 8px;
-            color: var(--gold); font-size: 0.75rem; font-weight: 600;
-            font-family: var(--font-head); letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-bottom: 14px; cursor: pointer;
-            background: none; border: none;
-            padding: 6px 0;
-        }
-
-        /* ─── DIVIDERS & LABELS ─── */
-        .divider {
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--border2), transparent);
-            margin: 14px 0;
-        }
-        .section-label {
-            font-family: var(--font-head);
-            font-size: 0.6rem; font-weight: 700;
-            color: var(--text); letter-spacing: 3px;
-            text-transform: uppercase;
-            margin-bottom: 10px;
-        }
-
-        /* ─── REPORT TEXT ─── */
-        .report-text {
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            padding: 14px;
-            font-family: var(--font-mono);
-            font-size: 0.7rem;
-            white-space: pre-wrap;
-            margin: 10px 0;
-            color: var(--text2);
-            max-height: 280px;
-            overflow-y: auto;
-            box-shadow: inset 0 2px 8px rgba(0,0,0,0.4);
-        }
-
-        /* ─── FOOTER ─── */
-        footer {
-            text-align: center; padding: 24px;
-            font-family: var(--font-head);
-            font-size: 0.6rem; color: var(--border2);
-            letter-spacing: 3px; text-transform: uppercase;
-        }
-
-        /* ─── SHARE COPIED ─── */
-        #qs_copied {
-            font-family: var(--font-head);
-            font-size: 0.8rem; letter-spacing: 2px;
-        }
-    </style>
-</head>
-<body>
-
-<header>
-    <div class="logo" style="display:flex;align-items:center;gap:8px;">
-        <div style="transform:scale(0.95);transform-origin:left center;margin-right:18px;"><svg width="90" height="90" viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
-      <!-- Outer border -->
-      <rect x="3" y="3" width="84" height="84" rx="10" ry="10"
-            fill="#0a1220" stroke="#c8952a" stroke-width="1.5"/>
-      <!-- Inner corner accents -->
-      <line x1="3" y1="18" x2="18" y2="3" stroke="#c8952a" stroke-width="1" opacity="0.4"/>
-      <line x1="72" y1="3" x2="87" y2="18" stroke="#c8952a" stroke-width="1" opacity="0.4"/>
-      <line x1="3" y1="72" x2="18" y2="87" stroke="#c8952a" stroke-width="1" opacity="0.4"/>
-      <line x1="72" y1="87" x2="87" y2="72" stroke="#c8952a" stroke-width="1" opacity="0.4"/>
-      <!-- Gold top accent line -->
-      <line x1="20" y1="14" x2="70" y2="14" stroke="#c8952a" stroke-width="1" opacity="0.5"/>
-      <!-- ATA text -->
-      <text x="45" y="52" text-anchor="middle"
-            font-family="'Courier New', monospace"
-            font-size="28" font-weight="900" letter-spacing="4"
-            fill="url(#goldGrad)">ATA</text>
-      <!-- Subtitle -->
-      <text x="45" y="65" text-anchor="middle"
-            font-family="'Courier New', monospace"
-            font-size="5.5" letter-spacing="1.5"
-            fill="#c8952a" opacity="0.85">ANVAROV TIMUR</text>
-      <text x="45" y="74" text-anchor="middle"
-            font-family="'Courier New', monospace"
-            font-size="5.5" letter-spacing="1.5"
-            fill="#c8952a" opacity="0.85">AKRAMOVICH</text>
-      <!-- Bottom accent line -->
-      <line x1="20" y1="79" x2="70" y2="79" stroke="#c8952a" stroke-width="1" opacity="0.5"/>
-      <!-- Gradient def -->
-      <defs>
-        <linearGradient id="goldGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" style="stop-color:#f0d070;stop-opacity:1"/>
-          <stop offset="50%" style="stop-color:#c8952a;stop-opacity:1"/>
-          <stop offset="100%" style="stop-color:#a07020;stop-opacity:1"/>
-        </linearGradient>
-      </defs>
-    </svg></div>
-        <div style="line-height:1.2;"><div style="font-size:0.7rem;letter-spacing:2px;color:var(--gold);">ATA v47.0</div></div>
-    </div>
-    <div class="header-right" style="display:flex;align-items:center;gap:8px;">
-        <div style="display:flex;gap:3px;" id="lang_switch">
-            <button id="btn_ru" onclick="setAppLang('ru')" style="padding:4px 10px;border:1px solid var(--gold);background:var(--gold);color:var(--bg);font-family:var(--font-head);font-size:0.6rem;letter-spacing:2px;border-radius:4px;cursor:pointer;">РУС</button>
-            <button id="btn_en" onclick="setAppLang('en')" style="padding:4px 10px;border:1px solid var(--border2);background:transparent;color:var(--text);font-family:var(--font-head);font-size:0.6rem;letter-spacing:2px;border-radius:4px;cursor:pointer;">ENG</button>
-        </div>
-        <div class="header-name" id="header-name-el">ANVAROV T.A.</div>
-        <div class="header-sub" id="header-sub-el">OIL &amp; GAS FIELD CALCULATOR</div>
-    </div>
-</header>
-
-<!-- скрытые поля для КП/Скв (используются в отчёте) -->
-<input type="hidden" id="reg_kp" value="">
-<input type="hidden" id="reg_skv" value="">
-<span id="well_display" style="display:none"></span>
-
-<!-- ===== TICKER BAR ===== -->
-<div id="ticker_bar" style="background:#050709;border-bottom:1px solid var(--border);padding:0;overflow:hidden;position:relative;height:36px;display:flex;align-items:center;">
-    <div style="flex-shrink:0;padding:0 8px;display:flex;align-items:center;gap:4px;z-index:2;background:#050709;">
-        <span id="ticker_status_dot" style="width:7px;height:7px;border-radius:50%;background:#555;display:inline-block;"></span>
-        <span id="ticker_status_txt" style="font-family:var(--font-head);font-size:0.45rem;color:#555;letter-spacing:1px;">...</span>
-    </div>
-    <div id="ticker_track" style="display:flex;gap:0;white-space:nowrap;animation:ticker-scroll 60s linear infinite;will-change:transform;">
-        <div class="tick-item"><span class="tick-label">$ USD/RUB</span><span class="tick-val" style="color:#E0943A" id="t_usd_rub">—</span></div>
-        <div class="tick-item"><span class="tick-label">€ EUR/RUB</span><span class="tick-val" style="color:#5ABEEA" id="t_eur_rub">—</span></div>
-        <div class="tick-item"><span class="tick-label">¥ CNY/RUB</span><span class="tick-val" style="color:#E0E06A" id="t_cny_rub">—</span></div>
-        <div class="tick-item"><span class="tick-label">🛢 BRENT</span><span class="tick-val" style="color:#E0943A" id="t_brent">—</span><span class="tick-chg" id="t_brent_chg"></span></div>
-        <div class="tick-item"><span class="tick-label">🛢 URALS</span><span class="tick-val" style="color:#C84040" id="t_urals">—</span><span class="tick-chg" id="t_urals_chg"></span></div>
-        <div class="tick-item"><span class="tick-label">🛢 WTI</span><span class="tick-val" style="color:#C8A84B" id="t_wti">—</span><span class="tick-chg" id="t_wti_chg"></span></div>
-        <div class="tick-item"><span class="tick-label">🥇 GOLD</span><span class="tick-val" style="color:#E5C76B" id="t_gold">—</span><span class="tick-chg" id="t_gold_chg"></span></div>
-        <div class="tick-item"><span class="tick-label">$ USD/RUB</span><span class="tick-val" style="color:#E0943A" id="t_usd_rub2">—</span></div>
-        <div class="tick-item"><span class="tick-label">€ EUR/RUB</span><span class="tick-val" style="color:#5ABEEA" id="t_eur_rub2">—</span></div>
-        <div class="tick-item"><span class="tick-label">¥ CNY/RUB</span><span class="tick-val" style="color:#E0E06A" id="t_cny_rub2">—</span></div>
-        <div class="tick-item"><span class="tick-label">🛢 BRENT</span><span class="tick-val" style="color:#E0943A" id="t_brent2">—</span><span class="tick-chg" id="t_brent_chg2"></span></div>
-        <div class="tick-item"><span class="tick-label">🛢 URALS</span><span class="tick-val" style="color:#C84040" id="t_urals2">—</span></div>
-        <div class="tick-item"><span class="tick-label">🛢 WTI</span><span class="tick-val" style="color:#C8A84B" id="t_wti2">—</span></div>
-        <div class="tick-item"><span class="tick-label">🥇 GOLD</span><span class="tick-val" style="color:#E5C76B" id="t_gold2">—</span></div>
-    </div>
-    <div style="position:absolute;left:0;top:0;bottom:0;width:30px;background:linear-gradient(90deg,#050709,transparent);pointer-events:none;z-index:1;"></div>
-    <div style="position:absolute;right:0;top:0;bottom:0;width:30px;background:linear-gradient(270deg,#050709,transparent);pointer-events:none;z-index:1;"></div>
-</div>
-
-<!-- ПОГОДА -->
-<div id="weather_bar" style="background:var(--panel);border-bottom:1px solid var(--border);padding:8px 16px;">
-
-    <!-- Авто строка поиска -->
-    <div style="display:flex;gap:6px;align-items:center;margin-bottom:8px;">
-        <input id="wx_city_input" type="text" placeholder="Город (Москва, Ноябрьск...)"
-            style="flex:1;background:var(--bg);border:1px solid var(--border2);color:#E0EAF0;
-                   font-family:var(--font-head);font-size:0.75rem;padding:7px 10px;border-radius:6px;
-                   letter-spacing:1px;margin-bottom:0;"
-            onkeydown="if(event.key==='Enter'){event.preventDefault();searchWeatherCity();}">
-        <button type="button" onclick="searchWeatherCity()"
-            style="flex-shrink:0;background:var(--panel2);border:1px solid var(--border2);
-                   color:var(--gold);font-size:1rem;padding:6px 12px;border-radius:6px;cursor:pointer;">🔍</button>
-        <button type="button" onclick="requestWeather()" id="wx_btn"
-            style="flex-shrink:0;background:var(--panel2);border:1px solid var(--border2);
-                   color:var(--gold);font-size:1rem;padding:6px 10px;border-radius:6px;cursor:pointer;">📍</button>
-
-    </div>
-
-    <!-- Дисплей погоды -->
-    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
-        <div style="display:flex;align-items:center;gap:10px;">
-            <span id="wx_icon" style="font-size:1.6rem;">🌡</span>
-            <div>
+        .ac-
      
 
 
