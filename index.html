@@ -2055,8 +2055,7 @@ function buildReportText() {
     const h2oVis = document.getElementById('p_h2o_vis').value;
     if(h2oVis !== '') {
         const h2o = parseFloat(h2oVis);
-        const bar = '█'.repeat(Math.round(h2o/10))+'░'.repeat(10-Math.round(h2o/10));
-        lines.push('Н₂О: '+h2o.toFixed(0)+'% ['+bar+']  Нефть: '+(100-h2o).toFixed(0)+'%');
+        lines.push('💧 Н₂О: '+h2o.toFixed(0)+'%');
     }
 
     // ДЕБИТ
@@ -6308,6 +6307,7 @@ function setAppLang(l) {
 
 </script>
 </html>
+
 
 
 
