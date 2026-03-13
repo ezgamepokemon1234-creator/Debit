@@ -2250,6 +2250,45 @@ const WX_ICONS = {
     71:'🌨',73:'🌨',75:'❄️',80:'🌦',81:'🌧',82:'⛈',
     95:'⛈',96:'⛈',99:'⛈'
 };
+
+// Умная иконка: учитывает время суток + погодный код
+function getWxIcon(code) {
+    var h = new Date().getHours();
+    var isNight   = h >= 22 || h < 6;
+    var isMorning = h >= 6  && h < 9;
+    var isEvening = h >= 19 && h < 22;
+
+    // Осадки и экстремальные — одинаково в любое время
+    if (code === 95 || code === 96 || code === 99) return '⛈';
+    if (code === 82 || code === 81) return '🌧';
+    if (code === 80) return '🌦';
+    if (code === 75) return '❄️';
+    if (code === 73 || code === 71) return '🌨';
+    if (code === 65 || code === 63 || code === 61) return '🌧';
+    if (code === 55 || code === 53 || code === 51) return '🌦';
+    if (code === 45 || code === 48) return '🌫';
+
+    // Облачность — зависит от времени
+    if (code === 3) return '☁️';
+    if (code === 2) return isNight ? '☁️' : '⛅';
+
+    // Ясно/почти ясно — зависит от времени
+    if (isNight)   {
+        if (code === 0) return '🌙';
+        if (code === 1) return '🌙';
+    }
+    if (isMorning) {
+        if (code === 0) return '🌅';
+        if (code === 1) return '🌤';
+    }
+    if (isEvening) {
+        if (code === 0) return '🌆';
+        if (code === 1) return '🌤';
+    }
+    if (code === 0) return '☀️';
+    if (code === 1) return '🌤';
+    return '🌡';
+}
 const WX_DESC = {
     0:'Ясно',1:'Почти ясно',2:'Переменная облачность',3:'Пасмурно',
     45:'Туман',48:'Туман',51:'Слабая морось',53:'Морось',55:'Морось',
@@ -2314,7 +2353,7 @@ async function fetchWxOpenMeteo(query) {
     if (!c || c.temperature_2m === undefined) return false;
     var dirs = ['С','СВ','В','ЮВ','Ю','ЮЗ','З','СЗ'];
     var code = c.weather_code;
-    document.getElementById('wx_icon').textContent  = WX_ICONS[code] || '🌡';
+    document.getElementById('wx_icon').textContent  = getWxIcon(code);
     document.getElementById('wx_main').textContent  = Math.round(c.temperature_2m) + ' °C';
     document.getElementById('wx_desc').textContent  = (WX_DESC[code]||'—') + '   💨 ' + c.wind_speed_10m.toFixed(1) + ' ' + dirs[Math.round(c.wind_direction_10m/45)%8] + ' м/с   💧 ' + c.relative_humidity_2m + '%';
     document.getElementById('wx_feels').textContent = 'Ощущается ' + Math.round(c.apparent_temperature) + ' °C';
@@ -2375,7 +2414,7 @@ async function loadWeatherByCoords(lat, lon, cityName) {
         if (!c || c.temperature_2m === undefined) throw new Error('нет данных');
         const dirs = ['С','СВ','В','ЮВ','Ю','ЮЗ','З','СЗ'];
         const code = c.weather_code;
-        document.getElementById('wx_icon').textContent  = WX_ICONS[code] || '🌡';
+        document.getElementById('wx_icon').textContent  = getWxIcon(code);
         document.getElementById('wx_main').textContent  = Math.round(c.temperature_2m) + ' °C';
         document.getElementById('wx_desc').textContent  = (WX_DESC[code]||'—') + '   💨 ' + c.wind_speed_10m.toFixed(1) + ' ' + dirs[Math.round(c.wind_direction_10m/45)%8] + ' м/с   💧 ' + c.relative_humidity_2m + '%';
         document.getElementById('wx_feels').textContent = 'Ощущается ' + Math.round(c.apparent_temperature) + ' °C';
@@ -6260,6 +6299,7 @@ function setAppLang(l) {
 
 </script>
 </html>
+
 
 
 
