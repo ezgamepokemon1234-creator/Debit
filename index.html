@@ -610,7 +610,7 @@
             <span class="nav-label" id="nav_journal_label">ЖУРНАЛ<br>ЗАМЕРОВ</span>
         </div>
         <div class="nav-btn nav-share" id="nav_share_btn" onclick="openQuickShare()">
-            <div class="nav-icon-wrap">↗</div>
+            <div class="nav-icon-wrap">📤</div>
             <span class="nav-label">ОТПРАВИТЬ<br>ПАРАМЕТРЫ</span>
         </div>
         <div class="nav-btn nav-qr" id="nav_qrread_btn" onclick="nav('v_qrread')">
@@ -713,9 +713,11 @@
 
         <div class="divider"></div>
         <div style="display:flex;gap:8px;">
-            <button class="btn btn-outline" onclick="nav('dash')" style="flex:1;">← В МЕНЮ</button>
-            <button class="btn btn-green" onclick="saveJournalEntry()" style="flex:1;">💾 СОХРАНИТЬ</button>
-            <button class="btn btn-gold" id="params_share_btn" onclick="shareFromParams()" style="flex:1;">📤 ОТПРАВИТЬ</button>
+            <button class="btn btn-outline" onclick="nav('dash')" style="margin-bottom:8px;">← В МЕНЮ</button>
+            <div style="display:flex;gap:8px;">
+                <button class="btn btn-green" onclick="saveJournalEntry()" style="flex:1;margin-bottom:0;">💾 СОХРАНИТЬ</button>
+                <button class="btn btn-gold" id="params_share_btn" onclick="shareFromParams()" style="flex:1;margin-bottom:0;">📤 ОТПРАВИТЬ</button>
+            </div>
         </div>
         <div id="journal_save_msg" style="display:none;text-align:center;color:#2EA84C;font-size:0.8rem;padding:8px;letter-spacing:1px;">✓ ЗАМЕР СОХРАНЁН</div>
     </div>
@@ -2019,101 +2021,85 @@ function calcNST() {
 let finalData = '';
 
 function buildReportText() {
-    const kp = document.getElementById('reg_kp').value || '--';
+    const kp  = document.getElementById('reg_kp').value  || '--';
     const skv = document.getElementById('reg_skv').value || '--';
-    let out = `═══════════════════════════\n`;
-    out += `ОТЧЁТ ПО СКВАЖИНЕ\n`;
-    out += `КП-${kp}  СКВ-${skv}\n`;
-    out += `${new Date().toLocaleDateString('ru-RU')}  ${new Date().toLocaleTimeString('ru-RU')}\n`;
-    out += `═══════════════════════════\n`;
+    const now = new Date();
+    const pad = n => n<10?'0'+n:n;
+    const dt  = pad(now.getDate())+'.'+pad(now.getMonth()+1)+'.'+now.getFullYear()
+              + ' '+pad(now.getHours())+':'+pad(now.getMinutes());
+
+    let lines = [];
+    lines.push('▪ КП-'+kp+' СКВ-'+skv+' | '+dt);
+    lines.push('─────────────────');
 
     // ПАРАМЕТРЫ
-    const params = [
-        ['Нд','p_nd','м'], ['Рз','p_rz','атм'],
-        ['Рб','p_rb','атм'], ['Рл','p_rl','атм'],
-        ['Частота F','p_f','Гц'], ['Ток I','p_i','А'],
-        ['Загрузка З','p_z','%'], ['Рпр','p_ppr','атм'],
-        ['Нст зат.','p_nst_zat','м'], ['Нст нкт.','p_nst_nkt','м'],
-        ['Глубина','p_depth','м'], ['Тдв.','p_tdv','°C'],
-        ['Замер Q','p_qm3','м³'],
+    const pmap = [
+        ['Нд','p_nd','м'],['Рз','p_rz','атм'],['Рб','p_rb','атм'],['Рл','p_rl','атм'],
+        ['Q','p_qm3','м³/сут'],['F','p_f','Гц'],['I','p_i','А'],['З','p_z','%'],
+        ['Рпр','p_ppr','атм'],['Тдв','p_tdv','°C'],
+        ['Нст зат','p_nst_zat','м'],['Нст нкт','p_nst_nkt','м'],['Глуб','p_depth','м'],
     ];
-    let hasParams = params.some(p => document.getElementById(p[1]).value);
-    if(hasParams) {
-        out += `\n📊 ПАРАМЕТРЫ:\n`;
-        params.forEach(p => {
-            const v = document.getElementById(p[1]).value;
-            if(v) out += `  ${p[0]}: ${v} ${p[2]}\n`;
-        });
+    const pvals = pmap.filter(p => document.getElementById(p[1]) && document.getElementById(p[1]).value);
+    if(pvals.length) {
+        // По 2 параметра в строку
+        for(let i=0; i<pvals.length; i+=2) {
+            const a = pvals[i],   va = document.getElementById(a[1]).value;
+            const b = pvals[i+1];
+            let row = a[0]+': '+va+' '+a[2];
+            if(b) { const vb = document.getElementById(b[1]).value; row += '  '+b[0]+': '+vb+' '+b[2]; }
+            lines.push(row);
+        }
     }
 
-    // ВИЗУАЛЬНЫЙ % Н2О
+    // Н2О
     const h2oVis = document.getElementById('p_h2o_vis').value;
     if(h2oVis !== '') {
         const h2o = parseFloat(h2oVis);
-        const oil = (100 - h2o).toFixed(0);
-        const bar = '█'.repeat(Math.round(h2o/10)) + '░'.repeat(10 - Math.round(h2o/10));
-        out += `\n💧 ВИЗУАЛЬНЫЙ % Н₂О (ПРОБА):\n`;
-        out += `  Вода:  ${h2o.toFixed(0)}%\n`;
-        out += `  Нефть: ${oil}%\n`;
-        out += `  [${bar}] ${h2o.toFixed(0)}% Н₂О\n`;
+        const bar = '█'.repeat(Math.round(h2o/10))+'░'.repeat(10-Math.round(h2o/10));
+        lines.push('Н₂О: '+h2o.toFixed(0)+'% ['+bar+']  Нефть: '+(100-h2o).toFixed(0)+'%');
     }
 
     // ДЕБИТ
     const ql = document.getElementById('q_liters').value;
     const qt = document.getElementById('q_work').value;
-    const wcq = document.getElementById('wc_q').value;
-    const wcwc = document.getElementById('wc_wc').value;
     if(ql && qt) {
         const day = (ql/qt)*1440/1000;
-        out += `\n💧 ДЕБИТ:\n`;
-        out += `  Объём: ${ql} л / ${qt} мин\n`;
-        out += `  Дебит: ${day.toFixed(2)} м³/сут\n`;
-        out += `  Дебит: ${(day/0.159).toFixed(1)} барр/сут\n`;
+        lines.push('─────────────────');
+        lines.push('💧 Дебит: '+day.toFixed(2)+' м³/сут  ('+( day/0.159).toFixed(1)+' барр)');
+        const wcq=document.getElementById('wc_q').value, wcwc=document.getElementById('wc_wc').value;
         if(wcq && wcwc) {
-            const qo = wcq*(1-wcwc/100);
-            const ro = +document.getElementById('wc_ro').value || 870;
-            out += `  Нефть: ${(qo*ro/1000).toFixed(2)} т/сут\n`;
-            out += `  Обв-сть: ${wcwc}%\n`;
+            const ro = +document.getElementById('wc_ro').value||870;
+            lines.push('Нефть: '+(wcq*(1-wcwc/100)*ro/1000).toFixed(2)+' т/сут  Обв: '+wcwc+'%');
         }
     }
 
     // ПКВ
-    const pkv_vol = document.getElementById('pkv_vol').value;
-    const pkv_work = document.getElementById('pkv_work').value;
-    const pkv_off = document.getElementById('pkv_off').value;
-    if(pkv_vol && pkv_work && pkv_off) {
-        const day = (pkv_vol/(+pkv_work)) * (1440/(+pkv_work + +pkv_off)) / 1000;
-        out += `\n⏱ ПКВ:\n`;
-        out += `  Объём цикла: ${pkv_vol} л\n`;
-        out += `  Работа/простой: ${pkv_work}/${pkv_off} мин\n`;
-        out += `  Дебит ПКВ: ${day.toFixed(2)} м³/сут\n`;
+    const pv=document.getElementById('pkv_vol').value, pw=document.getElementById('pkv_work').value, po=document.getElementById('pkv_off').value;
+    if(pv && pw && po) {
+        const day=(pv/(+pw))*(1440/((+pw)+(+po)))/1000;
+        lines.push('⏱ ПКВ: '+day.toFixed(2)+' м³/сут  ('+pw+'/'+po+' мин)');
     }
 
     // ГЛУШЕНИЕ
-    const g_ppl = document.getElementById('g_ppl').value;
-    const g_hpl = document.getElementById('g_hpl').value;
-    if(g_ppl && g_hpl) {
-        const kz = +document.getElementById('g_kz').value || 1.07;
-        const rho = (g_ppl * kz * 1e5) / (9.81 * g_hpl);
-        out += `\n🔧 ГЛУШЕНИЕ:\n`;
-        out += `  Рпл: ${g_ppl} атм / Глуб: ${g_hpl} м\n`;
-        out += `  Плотность: ${rho.toFixed(0)} кг/м³\n`;
+    const gp=document.getElementById('g_ppl').value, gh=document.getElementById('g_hpl').value;
+    if(gp && gh) {
+        const rho=(gp*(+document.getElementById('g_kz').value||1.07)*1e5)/(9.81*gh);
+        lines.push('─────────────────');
+        lines.push('🔧 Глушение: Рпл='+gp+' атм  ρ='+rho.toFixed(0)+' кг/м³');
     }
 
-    // УЭЦН
-    const vsd_f1 = document.getElementById('vsd_f1').value;
-    const vsd_f2 = document.getElementById('vsd_f2').value;
-    if(vsd_f1 && vsd_f2) {
-        const k = +vsd_f2 / +vsd_f1;
-        const q1 = +document.getElementById('vsd_q1').value;
-        out += `\n⚡ ЧРП:\n`;
-        out += `  f1/f2: ${vsd_f1}/${vsd_f2} Гц\n`;
-        if(q1) out += `  Q1→Q2: ${q1} → ${(q1*k).toFixed(1)} м³/сут\n`;
+    // УЭЦН ЧРП
+    const vf1=document.getElementById('vsd_f1').value, vf2=document.getElementById('vsd_f2').value;
+    if(vf1 && vf2) {
+        const q1=+document.getElementById('vsd_q1').value;
+        let row='⚡ ЧРП: '+vf1+'→'+vf2+' Гц';
+        if(q1) row+='  Q: '+q1+'→'+((q1*vf2/vf1).toFixed(1))+' м³/сут';
+        lines.push(row);
     }
 
-    out += `\n═══════════════════════════\n`;
-    out += `ATA v47.0 | ANVAROV T.A.\n`;
-    return out;
+    lines.push('─────────────────');
+    lines.push('ATA | ANVAROV T.A.');
+    return lines.join('\n');
 }
 
 // ═══ TICKER + WEATHER ═══
@@ -2620,8 +2606,20 @@ function copyToClipboard(text) {
 }
 function getQuickText() { return buildReportText(); }
 function openQuickShare() {
-    document.getElementById('qs_preview').textContent = buildReportText();
-    nav('v_quickshare');
+    // Сразу открываем нативное меню телефона
+    const text = buildReportText();
+    const kp  = document.getElementById('reg_kp').value  || '--';
+    const skv = document.getElementById('reg_skv').value || '--';
+    if (navigator.share) {
+        navigator.share({
+            title: 'АТА | КП-' + kp + ' СКВ-' + skv,
+            text: text
+        }).catch(function(){});
+    } else {
+        // Если нативный шаринг недоступен (file://) — показываем экран с кнопками
+        document.getElementById('qs_preview').textContent = text;
+        nav('v_quickshare');
+    }
 }
 function quickShareWA() {
     window.open('https://wa.me/?text=' + encodeURIComponent(getQuickText()), '_blank');
@@ -6310,6 +6308,7 @@ function setAppLang(l) {
 
 </script>
 </html>
+
 
 
 
