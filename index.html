@@ -189,46 +189,67 @@
         .view.active { display: block; }
 
         /* ─── NAV GRID ─── */
-        .nav-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .nav-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
         .nav-btn {
-            background: var(--panel2);
-            border: 1px solid var(--border2);
-            border-top: 2px solid var(--border2);
             border-radius: 8px;
-            padding: 18px 8px 16px;
-            color: var(--text2);
+            padding: 16px 8px 14px;
             text-align: center;
             font-family: var(--font-head);
-            font-size: 0.75rem; font-weight: 700;
+            font-size: 0.72rem; font-weight: 700;
             letter-spacing: 1.5px;
             cursor: pointer;
-            transition: all 0.15s;
+            transition: all 0.12s;
             position: relative;
             overflow: hidden;
+            border: 1px solid var(--border);
+            background: var(--panel2);
+            color: var(--text2);
+            user-select: none;
         }
-        .nav-btn::before {
+        .nav-btn::after {
             content: '';
             position: absolute; top: 0; left: 0; right: 0;
             height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(200,168,75,0.4), transparent);
+            background: linear-gradient(90deg, transparent, rgba(200,168,75,0.15), transparent);
         }
-        .nav-btn:active {
-            background: var(--panel3);
-            transform: scale(0.97);
-            border-top-color: var(--gold3);
+        .nav-btn:active { transform: scale(0.96); opacity: 0.85; }
+        .nav-icon-wrap {
+            font-size: 1.5rem; line-height: 1;
+            margin-bottom: 8px; color: var(--gold);
+            font-family: monospace; font-weight: 400;
+            display: block;
         }
-        .nav-btn .icon {
-            font-size: 1.6rem; display: block; margin-bottom: 8px;
-            filter: drop-shadow(0 0 4px rgba(200,168,75,0.3));
+        .nav-primary {
+            background: linear-gradient(160deg, #0F1822 0%, #0A1018 100%);
+            border-color: var(--border2);
+            border-top: 2px solid var(--gold3);
         }
-        .nav-btn.share {
-            background: linear-gradient(135deg, #0A1F0E 0%, #0D1A12 100%);
-            border-color: var(--green2); border-top-color: var(--green);
+        .nav-primary .nav-icon-wrap { color: var(--gold); }
+        .nav-accent {
+            background: linear-gradient(160deg, #0C1620 0%, #08101A 100%);
+            border-color: var(--border2);
+            border-top: 2px solid var(--cyan);
+            color: #7ACAE0;
+        }
+        .nav-accent .nav-icon-wrap { color: var(--cyan); font-size: 1.8rem; }
+        .nav-journal {
+            background: linear-gradient(160deg, #0A1520 0%, #081018 100%);
+            border-color: #1E4A6A; border-top: 2px solid var(--cyan);
+            color: #5ABEEA;
+        }
+        .nav-journal .nav-icon-wrap { color: var(--cyan); }
+        .nav-share {
+            background: linear-gradient(160deg, #0A180E 0%, #081210 100%);
+            border-color: #1A4A28; border-top: 2px solid var(--green);
             color: #4ACA6A;
         }
-        .nav-btn.share::before {
-            background: linear-gradient(90deg, transparent, rgba(46,168,76,0.4), transparent);
+        .nav-share .nav-icon-wrap { color: var(--green); font-size: 1.5rem; }
+        .nav-qr {
+            background: linear-gradient(160deg, #150A20 0%, #100818 100%);
+            border-color: #3A1A5A; border-top: 2px solid #9C5AC8;
+            color: #B87AE0;
         }
+        .nav-qr .nav-icon-wrap { color: #9C5AC8; }
 
         /* ─── CARDS ─── */
         .card {
@@ -564,38 +585,37 @@
 
 <div id="dash" class="view active">
     <div class="nav-grid">
-        <div class="nav-btn" id="nav_params_btn" onclick="nav('v_params')">
-            <span class="icon">📊</span><span class="nav-label">ПАРАМЕТРЫ<br>СКВАЖИНЫ</span>
+        <div class="nav-btn nav-primary" id="nav_params_btn" onclick="nav('v_params')">
+            <div class="nav-icon-wrap">⊞</div>
+            <span class="nav-label">ПАРАМЕТРЫ<br>СКВАЖИНЫ</span>
         </div>
-        <div class="nav-btn" id="nav_debit_btn" onclick="nav('v_debit')">
-            <span class="icon">💧</span><span class="nav-label">ДЕБИТ<br>ЗАМЕР</span>
+        <div class="nav-btn nav-primary" id="nav_debit_btn" onclick="nav('v_debit')">
+            <div class="nav-icon-wrap">◈</div>
+            <span class="nav-label">ДЕБИТ<br>ЗАМЕР</span>
         </div>
-        <div class="nav-btn" id="nav_glush_btn" onclick="nav('v_glush')">
-            <span class="icon">🔧</span><span class="nav-label">ГЛУШЕНИЕ<br>РАСЧЁТ</span>
+        <div class="nav-btn nav-primary" id="nav_glush_btn" onclick="nav('v_glush')">
+            <div class="nav-icon-wrap">◉</div>
+            <span class="nav-label">ГЛУШЕНИЕ<br>РАСЧЁТ</span>
         </div>
-        <div class="nav-btn" id="nav_uezn_btn" onclick="nav('v_uezn')">
-            <span class="icon">⚡</span><span class="nav-label">УЭЦН<br>РАСЧЁТ</span>
+        <div class="nav-btn nav-primary" id="nav_uezn_btn" onclick="nav('v_uezn')">
+            <div class="nav-icon-wrap">⚡</div>
+            <span class="nav-label">УЭЦН<br>РАСЧЁТ</span>
         </div>
-        <div class="nav-btn" id="nav_nkt_btn" onclick="nav('v_nkt')">
-            <span class="icon">🔩</span><span class="nav-label">НКТ<br>ОБЪЁМ</span>
+        <div class="nav-btn nav-accent" id="nav_allcalcs_btn" onclick="nav('v_allcalcs')">
+            <div class="nav-icon-wrap">≡</div>
+            <span class="nav-label">ВСЕ<br>РАСЧЁТЫ</span>
         </div>
-        <div class="nav-btn" id="nav_pvt_btn" onclick="nav('v_pvt')">
-            <span class="icon">🧪</span><span class="nav-label">PVT<br>ФЛЮИДЫ</span>
+        <div class="nav-btn nav-journal" id="nav_journal_btn" onclick="nav('v_journal'); renderJournal();">
+            <div class="nav-icon-wrap">▤</div>
+            <span class="nav-label" id="nav_journal_label">ЖУРНАЛ<br>ЗАМЕРОВ</span>
         </div>
-        <div class="nav-btn" id="nav_press_btn" onclick="nav('v_press')">
-            <span class="icon">🌡️</span><span class="nav-label">ДАВЛЕНИЕ<br>УРОВНИ</span>
+        <div class="nav-btn nav-share" id="nav_share_btn" onclick="openQuickShare()">
+            <div class="nav-icon-wrap">↗</div>
+            <span class="nav-label">ОТПРАВИТЬ<br>ПАРАМЕТРЫ</span>
         </div>
-        <div class="nav-btn" id="nav_allcalcs_btn" onclick="nav('v_allcalcs')">
-            <span class="icon">📐</span><span class="nav-label">ВСЕ<br>РАСЧЁТЫ</span>
-        </div>
-        <div class="nav-btn share" id="nav_share_btn" onclick="openQuickShare()">
-            <span class="icon">📤</span><span class="nav-label">ОТПРАВИТЬ<br>ПАРАМЕТРЫ</span>
-        </div>
-        <div class="nav-btn" id="nav_journal_btn" onclick="nav('v_journal'); renderJournal();" style="background:linear-gradient(135deg,#0A1A2A 0%,#0D1A28 100%);border-color:#1E4A6A;border-top-color:#3A9EC8;">
-            <span class="icon">📋</span><span class="nav-label" id="nav_journal_label">ЖУРНАЛ<br>ЗАМЕРОВ</span>
-        </div>
-        <div class="nav-btn" id="nav_qrread_btn" onclick="nav('v_qrread')" style="background:linear-gradient(135deg,#1A0A2A 0%,#1A0D28 100%);border-color:#4A1E6A;border-top-color:#9C3AC8;">
-            <span class="icon">🔍</span><span class="nav-label" id="nav_qrread_label">ЧИТАТЬ QR<br>ИЗ ФОТО</span>
+        <div class="nav-btn nav-qr" id="nav_qrread_btn" onclick="nav('v_qrread')">
+            <div class="nav-icon-wrap">▣</div>
+            <span class="nav-label" id="nav_qrread_label">ЧИТАТЬ QR<br>ИЗ ФОТО</span>
         </div>
     </div>
 </div>
@@ -6235,9 +6255,6 @@ function setAppLang(l) {
             'nav_debit':   'ДЕБИТ\nЗАМЕР',
             'nav_glush':   'ГЛУШЕНИЕ\nРАСЧЁТ',
             'nav_uezn':    'УЭЦН\nРАСЧЁТ',
-            'nav_nkt':     'НКТ\nОБЪЁМ',
-            'nav_pvt':     'PVT\nФЛЮИДЫ',
-            'nav_press':   'ДАВЛЕНИЕ\nУРОВНИ',
             'nav_allcalcs':'ВСЕ\nРАСЧЁТЫ',
             'nav_share':   'ОТПРАВИТЬ\nПАРАМЕТРЫ',
             // Кнопки назад
@@ -6250,9 +6267,6 @@ function setAppLang(l) {
             'nav_debit':   'FLOW\nMEASURE',
             'nav_glush':   'KILL FLUID\nCALC',
             'nav_uezn':    'ESP\nCALC',
-            'nav_nkt':     'TUBING\nVOLUME',
-            'nav_pvt':     'PVT\nFLUIDS',
-            'nav_press':   'PRESSURE\nLEVELS',
             'nav_allcalcs':'ALL\nCALCS',
             'nav_share':   'SEND\nPARAMS',
             'back':        '← MENU',
@@ -6272,9 +6286,6 @@ function setAppLang(l) {
         'nav_debit_btn':    'nav_debit',
         'nav_glush_btn':    'nav_glush',
         'nav_uezn_btn':     'nav_uezn',
-        'nav_nkt_btn':      'nav_nkt',
-        'nav_pvt_btn':      'nav_pvt',
-        'nav_press_btn':    'nav_press',
         'nav_allcalcs_btn': 'nav_allcalcs',
         'nav_share_btn':    'nav_share',
     };
@@ -6299,6 +6310,7 @@ function setAppLang(l) {
 
 </script>
 </html>
+
 
 
 
