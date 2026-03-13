@@ -1173,133 +1173,6 @@
 <!-- ===== ЧИТАТЬ QR ИЗ ФОТО ===== -->
 <!-- ===== ЦИФРОВОЙ ДВОЙНИК ===== -->
 <div id="v_twin" class="view">
-    <button class="back-btn" onclick="nav('dash')">← МЕНЮ</button>
-    <div class="card" style="border-left-color:#3ACA6A;">
-        <div class="card-title" style="color:#3ACA6A;">⬡ ЦИФРОВОЙ ДВОЙНИК СКВАЖИНЫ</div>
-        <div id="twin_no_data" style="display:none;text-align:center;padding:30px 0;color:var(--text);font-size:0.75rem;letter-spacing:1px;">
-            Недостаточно данных.<br>Сохрани минимум 2 замера в журнале.
-        </div>
-        <div id="twin_model_info" style="display:none;margin-bottom:14px;"></div>
-
-        <!-- Сценарий: смена частоты -->
-        <div id="twin_body" style="display:none;">
-            <div class="section-label">СЦЕНАРИЙ 1 — ИЗМЕНЕНИЕ ЧАСТОТЫ ЧРП</div>
-            <div class="grid2" style="margin-bottom:4px;">
-                <div>
-                    <label>Текущая частота (Гц)</label>
-                    <input type="number" id="twin_f_cur" placeholder="48" oninput="calcTwin()">
-                </div>
-                <div>
-                    <label>Новая частота (Гц)</label>
-                    <input type="number" id="twin_f_new" placeholder="52" oninput="calcTwin()">
-                </div>
-            </div>
-
-            <div class="divider"></div>
-            <div class="section-label">СЦЕНАРИЙ 2 — СМЕНА НКТ</div>
-            <div class="grid2" style="margin-bottom:4px;">
-                <div>
-                    <label>Текущий НКТ (мм вн. диам.)</label>
-                    <input type="number" id="twin_nkt_cur" placeholder="59" oninput="calcTwin()">
-                </div>
-                <div>
-                    <label>Новый НКТ (мм вн. диам.)</label>
-                    <input type="number" id="twin_nkt_new" placeholder="76" oninput="calcTwin()">
-                </div>
-            </div>
-
-            <div class="divider"></div>
-            <div id="twin_result" style="display:none;">
-                <div class="section-label">ПРОГНОЗ</div>
-
-                <div id="twin_freq_result" style="display:none;margin-bottom:10px;">
-                    <div style="font-size:0.65rem;color:var(--cyan);letter-spacing:2px;margin-bottom:6px;">⚡ СМЕНА ЧАСТОТЫ</div>
-                    <div id="twin_freq_rows" class="result-box"></div>
-                </div>
-
-                <div id="twin_nkt_result" style="display:none;">
-                    <div style="font-size:0.65rem;color:#3ACA6A;letter-spacing:2px;margin-bottom:6px;">🔩 СМЕНА НКТ</div>
-                    <div id="twin_nkt_rows" class="result-box"></div>
-                </div>
-
-                <div id="twin_recommendation" style="margin-top:10px;padding:12px;border-radius:6px;font-size:0.78rem;line-height:1.6;"></div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div id="v_qrread" class="view">
-    <button class="back-btn" onclick="nav('dash')">← МЕНЮ</button>
-    <div class="card">
-        <div class="card-title">🔍 ЧИТАТЬ QR-КОД ИЗ ФОТО</div>
-        <p style="font-size:0.75rem;color:var(--text);margin-bottom:14px;line-height:1.6;">
-            Выбери фото из галереи, скриншот, документ или картинку из письма — приложение само найдёт QR-код и прочитает его содержимое.
-        </p>
-
-        <!-- Зона выбора файла -->
-        <label for="qr_file_input" style="cursor:pointer;">
-            <div id="qr_drop_zone" style="
-                border: 2px dashed var(--border2);
-                border-radius: 10px;
-                padding: 32px 16px;
-                text-align: center;
-                background: var(--bg);
-                transition: border-color 0.2s;
-                margin-bottom: 14px;
-            ">
-                <div style="font-size:2.5rem;margin-bottom:10px;">📁</div>
-                <div style="font-family:var(--font-head);font-size:0.85rem;color:var(--gold);letter-spacing:2px;font-weight:700;">ВЫБРАТЬ ФОТО</div>
-                <div style="font-size:0.65rem;color:var(--text);margin-top:6px;letter-spacing:1px;">из галереи · скриншот · документ · письмо</div>
-            </div>
-        </label>
-        <input type="file" id="qr_file_input" accept="image/*" style="display:none;" onchange="readQrFromFile(this)">
-
-        <!-- Превью изображения -->
-        <div id="qr_preview_wrap" style="display:none;margin-bottom:14px;text-align:center;">
-            <img id="qr_preview_img" style="max-width:100%;max-height:240px;border-radius:8px;border:1px solid var(--border);">
-            <canvas id="qr_canvas" style="display:none;"></canvas>
-        </div>
-
-        <!-- Статус -->
-        <div id="qr_status" style="display:none;text-align:center;padding:10px;font-size:0.75rem;letter-spacing:1px;border-radius:6px;margin-bottom:10px;"></div>
-
-        <!-- Результат -->
-        <div id="qr_result_wrap" style="display:none;">
-            <div class="section-label">СОДЕРЖИМОЕ QR-КОДА</div>
-            <div id="qr_result_text" style="
-                background:var(--bg);
-                border:1px solid var(--green);
-                border-left:3px solid var(--green);
-                border-radius:6px;
-                padding:14px;
-                font-family:var(--font-mono);
-                font-size:0.8rem;
-                color:var(--text2);
-                white-space:pre-wrap;
-                word-break:break-all;
-                margin-bottom:10px;
-                min-height:60px;
-            "></div>
-            <div id="qr_link_wrap" style="display:none;margin-bottom:10px;">
-                <a id="qr_link" href="#" target="_blank" style="
-                    display:block;
-                    background:linear-gradient(180deg,#2EA84C 0%,#1A6630 100%);
-                    color:#fff;padding:12px;border-radius:6px;
-                    text-align:center;font-family:var(--font-head);
-                    font-size:0.8rem;font-weight:700;letter-spacing:2px;
-                    text-decoration:none;
-                ">🌐 ОТКРЫТЬ ССЫЛКУ</a>
-            </div>
-            <div style="display:flex;gap:8px;">
-                <button onclick="copyQrResult()" class="btn btn-outline" style="flex:1;">📋 КОПИРОВАТЬ</button>
-                <button onclick="shareQrResult()" class="btn btn-gold" style="flex:1;">📤 ПОДЕЛИТЬСЯ</button>
-            </div>
-            <div id="qr_copy_msg" style="display:none;text-align:center;color:var(--green);font-size:0.75rem;padding:6px;letter-spacing:1px;">✓ СКОПИРОВАНО</div>
-        </div>
-    </div>
-</div>
-
-<div id="v_twin" class="view">
   <div style="padding:12px 0 8px;border-bottom:1px solid var(--border);margin-bottom:14px;">
     <div style="font-family:var(--font-head);font-size:1rem;font-weight:700;color:var(--gold);letter-spacing:2px;" id="v_twin_title_el">⬡ ЦИФРОВОЙ ДВОЙНИК</div>
     <div style="font-size:0.7rem;color:var(--text3);margin-top:2px;" id="v_twin_sub_el">Математическая модель на основе журнала замеров</div>
@@ -1415,6 +1288,8 @@
   </div>
 
   <button class="btn btn-outline back-btn" onclick="nav('dash')" style="margin-top:8px;">← В МЕНЮ</button>
+</div>
+
 <div id="v_manual" class="view">
   <button class="btn btn-outline back-btn" onclick="nav('dash')" style="margin-bottom:16px;width:100%;">← В МЕНЮ</button>
 
@@ -4860,6 +4735,7 @@ var OIL_GRADES_2 = {
 <script>
 </script>
 </html>
+
 
 
 
