@@ -59,13 +59,109 @@
             color: var(--text2);
         }
         body.light-theme header {
-            background: linear-gradient(180deg,#E8EEF4 0%,#F0F4F8 100%);
+            background: linear-gradient(180deg,#E0E8F0 0%,#F0F4F8 100%);
             border-bottom-color: var(--gold3);
         }
-        body.light-theme .ac-field input,
-        body.light-theme .ac-field select {
-            color: #1A2030;
+
+        /* ── Карточки и панели ── */
+        body.light-theme .card {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
+        body.light-theme .report-text {
+            box-shadow: inset 0 1px 4px rgba(0,0,0,0.08);
+        }
+
+        /* ── Все инпуты и селекты ── */
+        body.light-theme input,
+        body.light-theme select,
+        body.light-theme textarea,
+        body.light-theme .ac-field input,
+        body.light-theme .ac-field select,
+        body.light-theme .well-bar input {
+            color: #1A2030;
+            background: #FFFFFF;
+            border-color: #A8B8C8;
+        }
+        body.light-theme input::placeholder { color: #8AA0B0; }
+
+        /* ── Бегущая строка ── */
+        body.light-theme #ticker_bar,
+        body.light-theme #ticker_bar > div:first-child {
+            background: #D8E4EE !important;
+        }
+        body.light-theme .tick-label { color: #4A6070; }
+        body.light-theme .tick-val   { color: #1A2030; }
+
+        /* ── Навигация ── */
+        body.light-theme .nav-btn {
+            background: #FFFFFF;
+            border-color: #C0CDD8;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        body.light-theme .nav-btn:active { background: #EEF4FA; }
+
+        /* ── Погода / well-bar ── */
+        body.light-theme #weather_bar { background: #E8EEF4; }
+        body.light-theme .well-bar    { background: #E0E8F0; }
+
+        /* ── Результаты расчётов ── */
+        body.light-theme .ac-result      { background: #F4F8FC; border-left-color: #9A6C10; }
+        body.light-theme .ac-result-label { color: #4A6070; }
+        body.light-theme .ac-result-val   { color: #7A5010; }
+        body.light-theme .ac-result-row   { border-bottom-color: #D0DCE8; }
+
+        /* ── Карточки калькулятора ── */
+        body.light-theme .ac-card {
+            background: #FFFFFF;
+            border-color: #C0CDD8;
+            border-left-color: #D4A84B;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        body.light-theme .ac-card-title { color: #7A5010; }
+        body.light-theme .ac-field label { color: #4A6070; }
+
+        /* ── Таблицы ГОСТ ── */
+        body.light-theme table thead tr { background: #D8E4EE !important; }
+        body.light-theme table tbody tr { border-bottom-color: #D0DCE8; }
+
+        /* ── Табы ── */
+        body.light-theme .ac-tab {
+            background: #E8EEF4;
+            border-color: #C0CDD8;
+            color: #4A6070;
+        }
+        body.light-theme .ac-tab.active {
+            background: #D4A84B;
+            border-color: #D4A84B;
+            color: #FFFFFF;
+        }
+
+        /* ── Кнопка назад ── */
+        body.light-theme .back-btn { color: #9A6C10; }
+
+        /* ── Журнал / отчёт ── */
+        body.light-theme .journal-entry { background: #F4F8FC; border-color: #C0CDD8; }
+
+        /* ── Модальное окно ── */
+        body.light-theme #share_modal > div:last-child { background: #F0F4F8; }
+
+        /* ── Графики canvas ── */
+        body.light-theme canvas { filter: none; }
+
+        /* ── Разделители ── */
+        body.light-theme .divider { background: linear-gradient(90deg,transparent,#A8B8C8,transparent); }
+        body.light-theme .section-label { color: #4A6070; }
+
+        /* ── Тикер статус ── */
+        body.light-theme #ticker_bar { border-bottom-color: #C0CDD8; }
+
+        /* ── Кнопки рассчитать ── */
+        body.light-theme .btn-outline {
+            border-color: #A8B8C8;
+            color: #4A6070;
+        }
+        body.light-theme .btn-outline:active { background: #E8EEF4; }
+
 
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
@@ -1612,7 +1708,25 @@ function nav(id) {
     if (id === 'v_favorites') { renderAllCalcs(); renderFavorites(); }
     if (id === 'v_history') renderHistory();
     if (id === 'v_graphs') { setTimeout(function(){ drawIPR(); }, 100); }
-    if (id === 'v_gost')   { setTimeout(function(){ var s=document.getElementById('gost_sec_0'); if(s&&!s.dataset.built){buildGostTable(0);s.dataset.built='1';} }, 100); }
+    if (id === 'v_gost') {
+        setTimeout(function(){
+            var s = document.getElementById('gost_sec_0');
+            if(s && !s.dataset.built) {
+                if(typeof GOST_DATA !== 'undefined') {
+                    buildGostTable(0);
+                    s.dataset.built = '1';
+                } else {
+                    // GOST_DATA ещё не загружен — повторить через 300мс
+                    setTimeout(function(){
+                        if(!s.dataset.built && typeof GOST_DATA !== 'undefined') {
+                            buildGostTable(0);
+                            s.dataset.built = '1';
+                        }
+                    }, 300);
+                }
+            }
+        }, 50);
+    }
 }
 
 function showResults(id, rows) {
@@ -4592,7 +4706,25 @@ function nav(id) {
     if (id === 'v_favorites') { renderAllCalcs(); renderFavorites(); }
     if (id === 'v_history') renderHistory();
     if (id === 'v_graphs') { setTimeout(function(){ drawIPR(); }, 100); }
-    if (id === 'v_gost')   { setTimeout(function(){ var s=document.getElementById('gost_sec_0'); if(s&&!s.dataset.built){buildGostTable(0);s.dataset.built='1';} }, 100); }
+    if (id === 'v_gost') {
+        setTimeout(function(){
+            var s = document.getElementById('gost_sec_0');
+            if(s && !s.dataset.built) {
+                if(typeof GOST_DATA !== 'undefined') {
+                    buildGostTable(0);
+                    s.dataset.built = '1';
+                } else {
+                    // GOST_DATA ещё не загружен — повторить через 300мс
+                    setTimeout(function(){
+                        if(!s.dataset.built && typeof GOST_DATA !== 'undefined') {
+                            buildGostTable(0);
+                            s.dataset.built = '1';
+                        }
+                    }, 300);
+                }
+            }
+        }, 50);
+    }
 }
 
 function showResults(id, rows) {
@@ -8088,95 +8220,7 @@ title: {ru:'ТЕПЛООБМЕННИК — ПЛОЩАДЬ И LMTD',en:'HEAT EXCH
 fields: [
 { id: 'Th1', label:{ ru: 'Горячий — вход Tг1 (°C)', en: 'Hot inlet Th1 (°C)' }, def: '' },
 { id: 'Th2', label:{ ru: 'Горячий — выход Tг2 (°C)', en: 'Hot outlet Th2 (°C)' }, def: '' },
-{ id: 'Tc1', label:{ ru: 'Холодный — вход Тх1 (°C)', en: 'Cold inlet Tc1 (°C)' }, def: '' },
-{ id: 'Tc2', label:{ ru: 'Холодный — выход Тх2 (°C)', en: 'Cold outlet Tc2 (°C)' }, def: '' },
-{ id: 'Q_kw',label:{ ru: 'Тепловая нагрузка Q (кВт)', en: 'Heat duty Q (kW)' }, def: '' },
-{ id: 'k_htc',label:{ ru: 'Коэфф. теплопередачи k (Вт/м²·К)', en: 'Overall HTC k (W/m²·K)' }, def: '300',
-type:'select', options:[
-{v:'150',l:'150 — нефть/нефть'},{v:'250',l:'250 — нефть/вода'},
-{v:'300',l:'300 — вода/вода'},{v:'500',l:'500 — пар/вода'},{v:'custom',l:'Другой — вручную'},
-]},
-{ id: 'k_custom', label:'k вручную (Вт/м²·К)', def: '' },
-{ id: 'flow', label:{ ru: 'Схема потоков', en: 'Flow arrangement' }, def: '1',
-type:'select', options:[{v:'1',l:'Противоток (эффективнее)'},{v:'2',l:'Прямоток'}]},
-],
-calc(v) {
-const Th1=+v.Th1,Th2=+v.Th2,Tc1=+v.Tc1,Tc2=+v.Tc2,Q=+v.Q_kw*1000;
-const k=v.k_htc==='custom'?+v.k_custom:+v.k_htc, fl=+v.flow;
-if(!Th1||!Th2||!Tc1||!Tc2||!Q||!k) return null;
-const dT1=fl===1?Th1-Tc2:Th1-Tc1, dT2=fl===1?Th2-Tc1:Th2-Tc2;
-if(dT1<=0||dT2<=0) return [[L('Ошибка: проверьте температуры','Error: check temperatures'),'']];
-const LMTD=Math.abs(dT1-dT2)<0.01?dT1:(dT1-dT2)/Math.log(dT1/dT2);
-const F=Q/(k*LMTD);
-return [
-['dT1 / dT2', dT1.toFixed(1)+' / '+dT2.toFixed(1)+' °C'],
-['LMTD', LMTD.toFixed(2)+' °C'],
-[{ru:'ПЛОЩАДЬ ТЕПЛООБМЕНА F',en:'HEAT TRANSFER AREA F'}[lang], F.toFixed(2)+' м²'],
-[{ru:'Кол-во трубок (25х2, L=6м)',en:'Tube count (25x2, L=6m)'}[lang], Math.ceil(F/(Math.PI*0.025*6))+' шт'],
-[{ru:'Эффективность',en:'Efficiency'}[lang], ((Tc2-Tc1)/(Th1-Tc1)*100).toFixed(1)+'%'],
-];
-}
-},
-
-{
-tab: 9,
-id: 'chem_dosing',
-title: {ru:'НАСОС ДОЗИРОВАНИЯ ХИМРЕАГЕНТОВ',en:'CHEMICAL DOSING PUMP'},
-fields: [
-{ id: 'Q_fl', label:{ ru: 'Дебит флюида (м³/сут)', en: 'Fluid rate (m³/d)' }, def: '' },
-{ id: 'dose', label:{ ru: 'Доза реагента (мг/л = ppm)', en: 'Chemical dose (mg/L = ppm)' }, def: '' },
-{ id: 'rho_c', label:{ ru: 'Плотность реагента (кг/л)', en: 'Chemical density (kg/L)' }, def: '1.05' },
-{ id: 'conc', label:{ ru: 'Концентрация раствора (%)', en: 'Solution concentration (%)' }, def: '100' },
-{ id: 'chem', label:{ ru: 'Тип реагента', en: 'Chemical type' }, def: 'inhib',
-type:'select', options:[
-{v:'inhib',l:'Ингибитор коррозии — 20-100 ppm'},{v:'scale',l:'Ингибитор солеотложений — 10-50 ppm'},
-{v:'deemul',l:'Деэмульгатор — 30-200 ppm'},{v:'bact',l:'Бактерицид — 50-500 ppm'},
-{v:'asph',l:'Депрессатор АСПО — 100-500 ppm'},{v:'methol',l:'Метанол (гидраты)'},
-{v:'other',l:'Другой реагент'},
-]},
-],
-calc(v) {
-const Qf=+v.Q_fl,dose=+v.dose,rho=+v.rho_c,conc=+v.conc/100;
-if(!Qf||!dose||!rho||!conc) return null;
-const Vd=Qf*1000*dose/1e6/conc, Vh=Vd/24, md=Vd*rho;
-const sa=[0.1,0.5,1,2,4,8,16,25,40,63,100,160,250];
-const Qp=sa.find(q=>q>=Vh)||250;
-const nm={inhib:'Ингибитор коррозии',scale:'Ингиб. солеотл.',deemul:'Деэмульгатор',bact:'Бактерицид',asph:'Деп. АСПО',methol:'Метанол',other:'Реагент'};
-return [
-[{ru:'Тип реагента',en:'Chemical type'}[lang], nm[v.chem]||'Реагент'],
-[{ru:'РАСХОД л/сут',en:'RATE L/d'}[lang], Vd.toFixed(3)+' л/сут'],
-[{ru:'Расход л/ч',en:'Rate L/h'}[lang], Vh.toFixed(4)+' л/ч'],
-[{ru:'Расход мл/мин',en:'Rate mL/min'}[lang], (Vd/1440*1000).toFixed(2)+' мл/мин'],
-[{ru:'Масса кг/сут',en:'Mass kg/d'}[lang], md.toFixed(3)+' кг/сут'],
-[{ru:'Расход кг/мес',en:'Consumption kg/month'}[lang], (md*30).toFixed(1)+' кг'],
-[{ru:'Расход кг/год',en:'Consumption kg/year'}[lang], (md*365).toFixed(0)+' кг'],
-[{ru:'НАСОС-ДОЗАТОР подача',en:'DOSING PUMP rate'}[lang], Qp+' л/ч'],
-];
-}
-},
-
-{
-tab: 9,
-id: 'choke_dp',
-title: {ru:'ШТУЦЕР — ДРОССЕЛИРОВАНИЕ И РАСХОД',en:'CHOKE — THROTTLING & FLOW'},
-fields: [
-{ id: 'mode', label:{ ru: 'Режим расчёта', en: 'Calculation mode' }, def: 'q_from_dp',
-type:'select', options:[
-{v:'q_from_dp',l:'Расход → по ΔP и диаметру'},
-{v:'dp_from_q',l:'ΔP → по расходу и диаметру'},
-{v:'d_from_q', l:'Диаметр → по расходу и ΔP'},
-]},
-{ id: 'D_ch', label:{ ru: 'Диаметр штуцера (мм)', en: 'Choke diameter (mm)' }, def: '' },
-{ id: 'P1', label:'P1 до штуцера (атм)', def: '' },
-{ id: 'P2', label:'P2 после штуцера (атм)', def: '' },
-{ id: 'Q_m3d', label:{ ru: 'Расход Q (м³/сут) — для режима ΔP или D', en: 'Rate Q (m³/d) — for ΔP or D mode' }, def: '' },
-{ id: 'rho', label:{ ru: 'Плотность флюида (кг/м³)', en: 'Fluid density (kg/m³)' }, def: '870' },
-{ id: 'Cd', label:{ ru: 'Коэфф. расхода Cd (0.60-0.85)', en: 'Discharge coeff. Cd (0.60-0.85)' }, def: '0.75' },
-],
-calc(v) {
-const mode=v.mode, D=+v.D_ch/1000, P1=+v.P1*101325, P2=+v.P2*101325;
-const Qi=+v.Q_m3d/86400, rho=+v.rho, Cd=+v.Cd;
-if(!rho||!Cd) return null;
+{ id: 'Tc1', label:{ ru: 'Холодный — вход Тх1 (°C)', en: 'Cold inlet Tc1
 
 
 
