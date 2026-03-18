@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="author" content="Anvarov Timur Akramovich">
     <title>ATA v47.0 | ANVAROV T.A.</title>
+    <!-- ── PWA ── -->
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiQVRBIC0gT2lsICYgR2FzIEZpZWxkIENhbGN1bGF0b3IiLCJzaG9ydF9uYW1lIjoiQVRBIHY0NyIsInN0YXJ0X3VybCI6Ii4iLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSIsImJhY2tncm91bmRfY29sb3IiOiIjMDcwOTBEIiwidGhlbWVfY29sb3IiOiIjQzhBODRCIiwiaWNvbnMiOlt7InNyYyI6ImRhdGE6aW1hZ2Uvc3ZnK3htbDtiYXNlNjQsUEhOMlp5QjJhV1YzUW05NFBTSTBNQ0F3SURRd0lpQjNhV1IwYUQwaU5EQWlJR2hsYVdkb2REMGlOREFpSVhaMGVUMGlNaUlnYzJWeWhtRnVaeTFpWVhObGJHbHVaVDBpWldsa0lpQmlZWE5sYkc1cVpXUXRZMkZzSUhOMlp5QjJhV1YzUW05NFBTSVVOW1l3YVhRd1lWY3dNREE5SWpBbU1TMHdJakVpSUM4K1BIUmxlSFF0WVcxbGJuUlBibVU5SW1Ga1pua2lJSFJsZUhRdFptOXliUzFpWVhObFBTSmxaV1l0TlRBaUlIUmxlSFF0Wm05eWJTMXpkR0Z5ZEQwaU1TNDRNREloSUhOMFpXNGlMamtpSUhSbGVIUXRjR0Z3YUQwaUxqUXVOREFpSUgrVGNHRndJR0ZrSUhRaElFRlVRUzgyTXlBNE9UQWlMejQ5YzNabklBPT0iLCJzaXplcyI6IjE5MngxOTIiLCJ0eXBlIjoiaW1hZ2Uvc3ZnK3htbCJ9XX0=">
+    <meta name="theme-color" content="#07090D">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="ATA v47">
     <style>
         :root {
             --font-head: 'Trebuchet MS', 'Arial Narrow', 'Roboto Condensed', 'Roboto', Arial, sans-serif;
@@ -524,6 +530,13 @@
     </svg></div>
         <div style="line-height:1.2;"><div style="font-size:0.7rem;letter-spacing:2px;color:var(--gold);">ATA v47.0</div></div>
     </div>
+    <!-- PWA Install btn (hidden until browser triggers beforeinstallprompt) -->
+    <button id="pwa_install_btn" onclick="installPWA()" title="Установить приложение"
+        style="display:none;align-items:center;gap:4px;background:var(--gold3);border:1px solid var(--gold);
+        color:var(--gold2);font-family:var(--font-head);font-size:0.55rem;letter-spacing:1px;
+        padding:4px 8px;border-radius:4px;cursor:pointer;flex-shrink:0;">
+        ⊕ УСТАНОВИТЬ
+    </button>
     <div class="header-right" style="display:flex;align-items:center;gap:8px;">
         <div style="display:flex;gap:3px;" id="lang_switch">
             <button id="btn_ru" onclick="setAppLang('ru')" style="padding:4px 10px;border:1px solid var(--gold);background:var(--gold);color:var(--bg);font-family:var(--font-head);font-size:0.6rem;letter-spacing:2px;border-radius:4px;cursor:pointer;">РУС</button>
@@ -648,10 +661,41 @@
             <div class="nav-icon-wrap">⚠️</div>
             <span class="nav-label" id="nav_defect_label">АКТ<br>ДЕФЕКТА</span>
         </div>
+        <div class="nav-btn" id="nav_favorites_btn" onclick="nav('v_favorites')" style="border-color:#C8A84B;">
+            <div class="nav-icon-wrap" style="color:#C8A84B;">★</div>
+            <span class="nav-label">ИЗБРАННЫЕ<br>РАСЧЁТЫ</span>
+        </div>
+        <div class="nav-btn" id="nav_history_btn" onclick="nav('v_history'); renderHistory();" style="border-color:#3A9EC8;">
+            <div class="nav-icon-wrap" style="color:#3A9EC8;">⏱</div>
+            <span class="nav-label">ИСТОРИЯ<br>РАСЧЁТОВ</span>
+        </div>
 
     </div>
 </div>
 
+
+<!-- ===== ИЗБРАННЫЕ РАСЧЁТЫ ===== -->
+<div id="v_favorites" class="view">
+  <button class="back-btn" onclick="nav('dash')">← МЕНЮ</button>
+  <div style="font-family:var(--font-head);font-size:0.6rem;color:var(--gold);letter-spacing:2px;margin-bottom:12px;">★ ИЗБРАННЫЕ КАЛЬКУЛЯТОРЫ</div>
+  <div id="fav_empty" style="display:none;text-align:center;padding:40px 16px;color:var(--text);font-size:0.7rem;font-family:var(--font-head);letter-spacing:1px;">
+    Нет избранных.<br><span style="color:var(--text);opacity:0.5;font-size:0.6rem;">Нажми ★ на любом калькуляторе в разделе ВСЕ РАСЧЁТЫ</span>
+  </div>
+  <div class="ac-grid" id="fav_grid"></div>
+</div>
+
+<!-- ===== ИСТОРИЯ РАСЧЁТОВ ===== -->
+<div id="v_history" class="view">
+  <button class="back-btn" onclick="nav('dash')">← МЕНЮ</button>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+    <div style="font-family:var(--font-head);font-size:0.6rem;color:var(--cyan);letter-spacing:2px;">⏱ ИСТОРИЯ РАСЧЁТОВ</div>
+    <button onclick="clearHistory()" style="background:var(--red2);border:1px solid var(--red);color:var(--red);font-family:var(--font-head);font-size:0.55rem;letter-spacing:1px;padding:4px 10px;border-radius:4px;cursor:pointer;">✕ ОЧИСТИТЬ</button>
+  </div>
+  <div id="history_empty" style="display:none;text-align:center;padding:40px 16px;color:var(--text);font-size:0.7rem;font-family:var(--font-head);letter-spacing:1px;">
+    История пуста.<br><span style="opacity:0.5;font-size:0.6rem;">Результаты расчётов из блока ВСЕ РАСЧЁТЫ будут здесь</span>
+  </div>
+  <div id="history_list"></div>
+</div>
 <!-- ===== ПАРАМЕТРЫ СКВАЖИНЫ ===== -->
 <div id="v_params" class="view">
     <button class="back-btn" onclick="nav('dash')">← МЕНЮ</button>
@@ -1515,6 +1559,8 @@ function nav(id) {
     window.scrollTo(0,0);
     if (id === 'v_manual') buildManual();
     if (id === 'v_allcalcs') renderAllCalcs();
+    if (id === 'v_favorites') { renderAllCalcs(); renderFavorites(); }
+    if (id === 'v_history') renderHistory();
 }
 
 function showResults(id, rows) {
@@ -1755,7 +1801,7 @@ async function fetchOilPrice() {
         renderOilData(grade);
     } else {
         // РЕЗЕРВНЫЕ ЦЕНЫ — встроенные (обновляй раз в месяц)
-        const fallback = { brent:82.5, wti:78.2, urals:68.5, espo:78.5, dubai:81.0 };
+        const fallback = { brent:70.2, wti:66.8, urals:56.2, espo:66.2, dubai:69.7 };
         const base = fallback[grade] || 80;
         // Генерируем реалистичную историю вокруг базовой цены
         const hist = Array.from({length:30}, (_,i) => base + (Math.sin(i*0.4)*2.5) + (Math.random()-0.5)*1.5);
@@ -2319,10 +2365,10 @@ async function fetchTicker() {
 
     if (!gotRates) {
         // Резервные курсы март 2026
-        setTick('usd_rub', '88.50 ₽', null);
-        setTick('eur_rub', '95.20 ₽', null);
-        setTick('cny_rub', '12.10 ₽', null);
-        oilRates = { eur: 0.929, rub: 88.50 };
+        setTick('usd_rub', '89.20 ₽', null);
+        setTick('eur_rub', '96.50 ₽', null);
+        setTick('cny_rub', '12.30 ₽', null);
+        oilRates = { eur: 0.925, rub: 89.20 };
         // Статус: офлайн
         var dot = document.getElementById('ticker_status_dot');
         var txt = document.getElementById('ticker_status_txt');
@@ -2337,7 +2383,7 @@ async function fetchTicker() {
     }
 
     // ── НЕФТЬ + ЗОЛОТО ──
-    const fallback = { brent: 73.50, wti: 69.80, gold: 2980, urals: 59.50 };
+    const fallback = { brent: 70.20, wti: 66.80, gold: 3030, urals: 56.20 };
     setTick('brent', fallback.brent.toFixed(2) + ' $/bbl', null);
     setTick('wti',   fallback.wti.toFixed(2)   + ' $/bbl', null);
     setTick('urals', fallback.urals.toFixed(2) + ' $/bbl', null);
@@ -2359,12 +2405,13 @@ async function fetchOilLive(fallback) {
     // Источник 2: open.er-api.com даёт XAU тоже
     // Источник 3: coinbase для сравнения BTC/USD (не нужно)
 
-    // Нефть: пробуем allorigins → corsproxy → cdn77
+    // Нефть: пробуем несколько источников
     const brentUrl = 'https://query1.finance.yahoo.com/v8/finance/chart/BZ=F?interval=1d&range=2d';
     const proxies = [
         'https://api.allorigins.win/raw?url=' + encodeURIComponent(brentUrl),
         'https://corsproxy.io/?'              + encodeURIComponent(brentUrl),
-        'https://cors-anywhere.herokuapp.com/'+ brentUrl,
+        'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(brentUrl),
+        'https://thingproxy.freeboard.io/fetch/' + brentUrl,
     ];
     for (const proxy of proxies) {
         try {
@@ -4490,6 +4537,8 @@ function nav(id) {
     window.scrollTo(0,0);
     if (id === 'v_manual') buildManual();
     if (id === 'v_allcalcs') renderAllCalcs();
+    if (id === 'v_favorites') { renderAllCalcs(); renderFavorites(); }
+    if (id === 'v_history') renderHistory();
 }
 
 function showResults(id, rows) {
@@ -7972,22 +8021,40 @@ function renderAllCalcs() {
     });
 }
 
-function buildAcCard(c) {
+function buildAcCard(c, _fromFav) {
     const card = document.createElement('div');
     card.className = 'ac-card';
 
-    const title = document.createElement('div');
-    title.className = 'ac-card-title';
-    title.textContent = typeof c.title === 'object' ? c.title['ru'] : c.title;
-    card.appendChild(title);
+    // Header row: title + fav star
+    const titleRow = document.createElement('div');
+    titleRow.style.cssText = 'display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;';
+    const titleEl = document.createElement('div');
+    titleEl.className = 'ac-card-title';
+    titleEl.style.marginBottom = '0';
+    titleEl.textContent = typeof c.title === 'object' ? c.title['ru'] : c.title;
+    titleRow.appendChild(titleEl);
+
+    // ★ Favorite button
+    const favBtn = document.createElement('button');
+    favBtn.style.cssText = 'background:none;border:none;cursor:pointer;font-size:1rem;padding:0 2px;color:'+(isFav(c.id)?'var(--gold)':'var(--text)')+';';
+    favBtn.textContent = isFav(c.id) ? '★' : '☆';
+    favBtn.title = 'В избранное';
+    favBtn.onclick = function(e) { e.stopPropagation(); toggleFav(c.id, favBtn); };
+    titleRow.appendChild(favBtn);
+    card.appendChild(titleRow);
 
     const vals = {};
     c.fields.forEach(f => {
         const div = document.createElement('div');
         div.className = 'ac-field';
+        // Label row with optional mic button
+        const labelRow = document.createElement('div');
+        labelRow.style.cssText = 'display:flex;justify-content:space-between;align-items:center;';
         const label = document.createElement('label');
+        label.style.marginBottom = '0';
         label.textContent = typeof f.label === 'object' ? f.label['ru'] : f.label;
-        div.appendChild(label);
+        labelRow.appendChild(label);
+        div.appendChild(labelRow);
 
         let input;
         if (f.type === 'select') {
@@ -8011,6 +8078,15 @@ function buildAcCard(c) {
             input.step = 'any';
             if (f.def) input.value = f.def;
             input.placeholder = '0';
+
+            // 🎤 Voice button (only for number inputs)
+            const micBtn = document.createElement('button');
+            micBtn.style.cssText = 'background:none;border:none;cursor:pointer;font-size:0.85rem;padding:0 2px;color:var(--cyan);opacity:0.6;';
+            micBtn.textContent = '🎤';
+            micBtn.title = 'Голосовой ввод';
+            micBtn.type = 'button';
+            micBtn.onclick = function(e) { e.stopPropagation(); startVoiceInput(input, micBtn); };
+            labelRow.appendChild(micBtn);
         }
         input.id = 'ac_' + c.id + '_' + f.id;
         vals[f.id] = input;
@@ -8054,14 +8130,166 @@ function buildAcCard(c) {
             rd.appendChild(vel);
             resultBox.appendChild(rd);
         });
+        // Save to history
+        const title = typeof c.title === 'object' ? c.title['ru'] : c.title;
+        addToHistory(title, res);
     }
 
     btn.onclick = doCalc;
     return card;
 }
 
+
+// ═══════════════════════════════════════════════════════════════
+// ★  ИЗБРАННЫЕ КАЛЬКУЛЯТОРЫ
+// ═══════════════════════════════════════════════════════════════
+function getFavs() {
+    try { return JSON.parse(localStorage.getItem('ata_favorites') || '[]'); } catch(e) { return []; }
+}
+function saveFavs(arr) {
+    try { localStorage.setItem('ata_favorites', JSON.stringify(arr)); } catch(e) {}
+}
+function isFav(id) { return getFavs().indexOf(id) !== -1; }
+function toggleFav(id, btnEl) {
+    var favs = getFavs();
+    var idx = favs.indexOf(id);
+    if (idx === -1) { favs.push(id); if (btnEl) { btnEl.textContent = '★'; btnEl.style.color = 'var(--gold)'; } }
+    else { favs.splice(idx, 1); if (btnEl) { btnEl.textContent = '☆'; btnEl.style.color = 'var(--text)'; } }
+    saveFavs(favs);
+}
+function renderFavorites() {
+    var favs = getFavs();
+    var grid = document.getElementById('fav_grid');
+    var empty = document.getElementById('fav_empty');
+    if (!grid) return;
+    grid.innerHTML = '';
+    var favCalcs = (typeof calcs !== 'undefined') ? calcs.filter(function(c){ return favs.indexOf(c.id) !== -1; }) : [];
+    if (favCalcs.length === 0) { if (empty) empty.style.display = 'block'; return; }
+    if (empty) empty.style.display = 'none';
+    favCalcs.forEach(function(c) { grid.appendChild(buildAcCard(c, true)); });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ⏱  ИСТОРИЯ РАСЧЁТОВ
+// ═══════════════════════════════════════════════════════════════
+function getHistory() {
+    try { return JSON.parse(localStorage.getItem('ata_calc_history') || '[]'); } catch(e) { return []; }
+}
+function saveHistory(arr) {
+    try { localStorage.setItem('ata_calc_history', JSON.stringify(arr.slice(0, 20))); } catch(e) {}
+}
+function addToHistory(calcTitle, results) {
+    var hist = getHistory();
+    hist.unshift({
+        title: calcTitle,
+        time: new Date().toLocaleString('ru-RU', {day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}),
+        rows: results.slice(0, 8)
+    });
+    saveHistory(hist);
+}
+function renderHistory() {
+    var hist = getHistory();
+    var list = document.getElementById('history_list');
+    var empty = document.getElementById('history_empty');
+    if (!list) return;
+    list.innerHTML = '';
+    if (hist.length === 0) { if (empty) empty.style.display = 'block'; return; }
+    if (empty) empty.style.display = 'none';
+    hist.forEach(function(h) {
+        var card = document.createElement('div');
+        card.className = 'ac-card';
+        card.style.marginBottom = '10px';
+        var rows = (h.rows||[]).map(function(r) {
+            if (!r[0] && !r[1]) return '';
+            return '<div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid var(--border);">'
+                + '<span style="font-size:0.55rem;color:var(--text);">' + (r[0]||'') + '</span>'
+                + '<span style="font-family:var(--font-mono);font-size:0.8rem;color:var(--gold2);">' + (r[1]||'') + '</span>'
+                + '</div>';
+        }).join('');
+        card.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">'
+            + '<div style="font-family:var(--font-head);font-size:0.6rem;color:var(--gold);letter-spacing:1px;">' + (h.title||'') + '</div>'
+            + '<div style="font-size:0.55rem;color:var(--text);opacity:0.6;">' + (h.time||'') + '</div>'
+            + '</div>' + rows;
+        list.appendChild(card);
+    });
+}
+function clearHistory() {
+    if (!confirm('Очистить всю историю расчётов?')) return;
+    localStorage.removeItem('ata_calc_history');
+    renderHistory();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 🎤  ГОЛОСОВОЙ ВВОД
+// ═══════════════════════════════════════════════════════════════
+var _voiceRecog = null;
+function startVoiceInput(inputEl, btnEl) {
+    var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) { alert('Голосовой ввод не поддерживается в этом браузере'); return; }
+    if (_voiceRecog) { try { _voiceRecog.abort(); } catch(e) {} }
+    var r = new SR();
+    _voiceRecog = r;
+    r.lang = 'ru-RU';
+    r.interimResults = false;
+    r.maxAlternatives = 1;
+    if (btnEl) { btnEl.textContent = '🔴'; btnEl.style.color = 'var(--red)'; }
+    r.onresult = function(e) {
+        var spoken = e.results[0][0].transcript.trim().replace(/,/g, '.');
+        var num = spoken.replace(/[^0-9.\-]/g, '');
+        inputEl.value = (!isNaN(parseFloat(num)) && num) ? parseFloat(num) : spoken;
+        inputEl.dispatchEvent(new Event('input'));
+        if (btnEl) { btnEl.textContent = '🎤'; btnEl.style.color = 'var(--cyan)'; }
+    };
+    r.onerror = r.onend = function() {
+        if (btnEl) { btnEl.textContent = '🎤'; btnEl.style.color = 'var(--cyan)'; }
+    };
+    r.start();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PWA Install button
+// ═══════════════════════════════════════════════════════════════
+var _pwaPrompt = null;
+window.addEventListener('beforeinstallprompt', function(e) {
+    e.preventDefault();
+    _pwaPrompt = e;
+    var btn = document.getElementById('pwa_install_btn');
+    if (btn) btn.style.display = 'flex';
+});
+function installPWA() {
+    if (!_pwaPrompt) return;
+    _pwaPrompt.prompt();
+    _pwaPrompt.userChoice.then(function() { _pwaPrompt = null; });
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+// 📶  ОНЛАЙН / ОФЛАЙН ИНДИКАТОР
+// Service Worker требует отдельный sw.js файл — не работает в single HTML
+// ═══════════════════════════════════════════════════════════════
+(function() {
+    function setTickerStatus(online) {
+        var dot = document.getElementById('ticker_status_dot');
+        var txt = document.getElementById('ticker_status_txt');
+        if (online) {
+            if (dot) dot.style.background = '#2EA84C';
+            if (txt) { txt.textContent = 'LIVE'; txt.style.color = '#2EA84C'; }
+        } else {
+            if (dot) dot.style.background = '#C84040';
+            if (txt) { txt.textContent = 'ОФЛАЙН'; txt.style.color = '#C84040'; }
+        }
+    }
+    setTickerStatus(navigator.onLine);
+    window.addEventListener('offline', () => setTickerStatus(false));
+    window.addEventListener('online',  () => {
+        setTickerStatus(true);
+        if (typeof fetchTicker === 'function') fetchTicker();
+    });
+})();
+
 </script>
 </html>
+
 
 
 
