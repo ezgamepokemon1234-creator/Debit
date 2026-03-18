@@ -1,4 +1,4 @@
-DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -2570,9 +2570,7 @@ async function loadWeatherByCoords(lat, lon, cityName) {
         document.getElementById('wx_desc').textContent  = (WX_DESC[code]||'—') + '   💨 ' + c.wind_speed_10m.toFixed(1) + ' ' + dirs[Math.round(c.wind_direction_10m/45)%8] + ' м/с   💧 ' + c.relative_humidity_2m + '%';
         document.getElementById('wx_feels').textContent = 'Ощущается ' + Math.round(c.apparent_temperature) + ' °C';
         document.getElementById('wx_city').textContent  = '📍 ' + cityName;
-        // Шапка — название города
-        var subEl = document.getElementById('header-sub-el');
-        if (subEl) subEl.textContent = '📍 ' + cityName;
+        // Шапка — название города (не перезаписываем, оно в wx_city)
     } catch(e) {
         document.getElementById('wx_desc').textContent = '❌ Нет сети. Нажми ✏️ — введи вручную';
     }
@@ -2616,8 +2614,7 @@ function requestWeather() {
             }
             if (!city) city = lat.toFixed(2) + '°N ' + lon.toFixed(2) + '°E';
             // Обновляем шапку — показываем название города
-            var subEl = document.getElementById('header-sub-el');
-            if (subEl) subEl.textContent = '📍 ' + city;
+            // Город показан в wx_city, шапку не трогаем
             await loadWeatherByCoords(lat, lon, city);
         },
         err => {
@@ -8065,5 +8062,6 @@ function buildAcCard(c) {
 
 </script>
 </html>
+
 
 
