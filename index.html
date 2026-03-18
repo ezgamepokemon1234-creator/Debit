@@ -54,14 +54,21 @@
             --red2:    #D05050;
             --blue:    #1A6090;
             --orange:  #A05010;
-            background-image: none;
-            background-color: var(--bg);
-            color: var(--text2);
+            background: #F0F4F8 !important;
+            background-image: none !important;
+            color: #2A4050;
         }
         body.light-theme header {
-            background: linear-gradient(180deg,#E0E8F0 0%,#F0F4F8 100%);
-            border-bottom-color: var(--gold3);
+            background: linear-gradient(180deg, #D8E8F4 0%, #E8F0F8 100%) !important;
+            border-bottom: 1px solid #D4A84B !important;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1) !important;
         }
+        body.light-theme header .logo { color: #7A5010; }
+        body.light-theme header .logo-hex { background: #D4A84B; }
+        body.light-theme header .header-name { color: #2A4050; }
+        body.light-theme header .header-sub  { color: #4A6070; }
+        body.light-theme header .well-tag    { color: #7A5010; }
+        body.light-theme #theme_toggle_btn { background: #D8E4EE; border-color: #A8B8C8; }
 
         /* ── Карточки и панели ── */
         body.light-theme .card {
@@ -167,7 +174,7 @@
 
         body {
             font-family: var(--font-head);
-            background: var(--bg);
+            background-color: var(--bg);
             color: var(--text2);
             padding-bottom: 80px;
             background-image:
@@ -1579,6 +1586,8 @@
 <script>
 // ===== ЯЗЫК ПРИЛОЖЕНИЯ =====
 var appLang = localStorage.getItem('ata_lang') || 'ru';
+// Применяем сохранённый язык сразу при загрузке
+if (appLang === 'en' && typeof lang !== 'undefined') lang = 'en';
 
 function setAppLang(l) {
     appLang = l;
@@ -1687,8 +1696,84 @@ function setAppLang(l) {
     var tnkt = document.getElementById('twin_nkt_calc_btn');
     if (tnkt) tnkt.textContent = _t('▶ РАССЧИТАТЬ ПРОГНОЗ', '▶ CALCULATE FORECAST');
 
+    // Синхронизируем lang (используется в 89 калькуляторах)
+    if (typeof lang !== 'undefined') lang = l;
+
+    // Перерисовываем калькуляторы если раздел открыт
+    if (typeof _acRendered !== 'undefined' && _acRendered) {
+        _acRendered = false;
+        renderAllCalcs();
+    }
+
     renderJournal();
     if (document.getElementById('v_manual') && document.getElementById('v_manual').classList.contains('active')) buildManual();
+
+    // Переводим новые кнопки меню
+    var newNavLabels = {
+        'nav_graphs_btn':  _t('ГРАФИКИ\nАНАЛИЗ',        'GRAPHS\nANALYSIS'),
+        'nav_gost_btn':    _t('ГОСТ/API\nСПРАВОЧНИК',   'GOST/API\nREFERENCE'),
+        'nav_cluster_btn': _t('КАРТА\nКУСТА',            'CLUSTER\nMAP'),
+        'nav_favorites_btn': _t('ИЗБРАННЫЕ\nРАСЧЁТЫ',   'FAVOURITE\nCALCS'),
+        'nav_history_btn': _t('ИСТОРИЯ\nРАСЧЁТОВ',      'CALC\nHISTORY'),
+    };
+    // Переводим заголовок карты куста
+    var cmTitle = document.querySelector('#v_cluster_map div[style*="КАРТА КУСТА"], #v_cluster_map div[style*="CLUSTER"]');
+    var cmCardTitle = document.querySelector('#v_cluster_map .ac-card-title');
+    if(cmCardTitle) cmCardTitle.textContent = _t('ДОБАВИТЬ СКВАЖИНУ / ОБЪЕКТ КУСТА','ADD WELL / CLUSTER OBJECT');
+    // Переводим optgroup labels в select
+    var cmSel = document.getElementById('cm_well_status');
+    if(cmSel) {
+        var grps = cmSel.querySelectorAll('optgroup');
+        if(grps[0]) grps[0].label = _t('── СКВАЖИНЫ ──','── WELLS ──');
+        if(grps[1]) grps[1].label = _t('── ОБЪЕКТЫ КУСТА ──','── CLUSTER OBJECTS ──');
+        // Переводим опции скважин
+        var optMap = {
+            oil_well: _t('⚫ Скв. нефтяная (работает)','⚫ Oil well (producing)'),
+            oil_stop: _t('○ Скв. нефтяная (остановлена)','○ Oil well (shut-in)'),
+            ppd_well: _t('▼ Скв. ППД (нагнетат.)','▼ Water injection well'),
+            gas_well: _t('▲ Скв. газовая','▲ Gas well'),
+            liq_well: _t('⬛ Скв. ликвидированная','⬛ Abandoned well'),
+            work:     _t('🟢 Скв. в работе (общ.)','🟢 Well operating (gen.)'),
+            stop:     _t('🔴 Скв. остановлена','🔴 Well shut-in'),
+            repair:   _t('🟠 Скв. КРС/ремонт','🟠 Well workover/repair'),
+            agzu:     _t('🟣 АГЗУ','🟣 FGMS (AGZU)'),
+            bng:      _t('🔵 БНГ','🔵 GTS (BNG)'),
+            rostv:    _t('⬛ Ростверк / КТПН','⬛ Foundation / KTPN'),
+            su:       _t('🟡 С.У. (Станция упр.)','🟡 Control Unit'),
+            pku:      _t('🔶 ПКУ','🔶 PKU'),
+            udr:      _t('☠️ УДР','☠️ UDR'),
+            brh:      _t('☠️ БРХ','☠️ BRH'),
+        };
+        Array.from(cmSel.options).forEach(function(opt){ if(optMap[opt.value]) opt.textContent = optMap[opt.value]; });
+    }
+    // Кнопки GPS и добавить
+    var gpsBtn = document.querySelector('#v_cluster_map button[onclick="cmAddGPS()"]');
+    if(gpsBtn) gpsBtn.innerHTML = _t('📍 МОЙ GPS','📍 MY GPS');
+    var addBtn = document.querySelector('#v_cluster_map button[onclick="cmAddManual()"]');
+    if(addBtn) addBtn.textContent = _t('+ ДОБАВИТЬ ВРУЧНУЮ','+ ADD MANUALLY');
+    // Переводим вкладки ГОСТ
+    var gostTabBtns = document.querySelectorAll('#v_gost > div:nth-child(3) .ac-tab, #v_gost .ac-tab');
+    var gostTabNames = isEn
+        ? ['NKT GOST 633-80','CASING GOST 632-80','SRP RODS','ESP SIZES','🔧 O&G PIPELINES','💧 WI PIPELINES','🔩 O&G VALVES']
+        : ['НКТ ГОСТ 633-80','ЭК ГОСТ 632-80','ШТАНГИ ШГН','УЭЦН ТИПОРАЗМЕРЫ','🔧 ТРУБОПРОВОДЫ НГО','💧 ТРУБЫ ППД','🔩 АРМАТУРА НГО'];
+    gostTabBtns.forEach(function(btn,idx){ if(gostTabNames[idx]) btn.textContent = gostTabNames[idx]; });
+    Object.keys(newNavLabels).forEach(function(id) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        var lbl = el.querySelector('.nav-label');
+        if (lbl) lbl.innerHTML = newNavLabels[id].replace('\n','<br>');
+    });
+
+    // Переводим заголовки новых разделов
+    var newTitles = {
+        'v_qrread_title_el': _t('▣ ЧИТАТЬ QR ИЗ ФОТО',         '▣ READ QR FROM PHOTO'),
+        'v_qrread_sub_el':   _t('Сканер QR-кодов из галереи',   'QR code scanner from gallery'),
+        'ac_lang_label':     _t('93 калькуляторов',              '93 calculators'),
+    };
+    Object.keys(newTitles).forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) el.textContent = newTitles[id];
+    });
 }
 
 // Применить язык при старте
@@ -4214,6 +4299,71 @@ var MANUAL = {
             '✅ Цифровой двойник точнее при большом количестве замеров',
             '⚠ При очистке кэша браузера журнал и акты удалятся',
         ]},
+        { icon:'📊', title:'ГРАФИКИ И АНАЛИЗ', body:[
+            'Раздел визуализации скважинных данных — три вкладки:',
+            '• IPR-КРИВАЯ (ВОГЕЛЬ) — кривая притока с рабочими точками',
+            '  Введи Qmax, Рпл и два Рзаб — строит график на Canvas',
+            '• ПАДЕНИЕ ДЕБИТА (АРПС) — прогноз на 1–10 лет',
+            '  Параметр b: 0 = экспоненциальное, 1 = гармоническое',
+            '  Красная линия = предельный нерентабельный дебит',
+            '• ДИНАМИКА УРОВНЕЙ — до 10 замеров НСТ/НД во времени',
+            '  Синяя линия = НСТ | Золотая = НД',
+            '✅ Нажми ПОСТРОИТЬ для отрисовки графика уровней',
+        ]},
+        { icon:'📖', title:'ГОСТ/API СПРАВОЧНИК', body:[
+            'Встроенные таблицы по 7 разделам:',
+            '• НКТ ГОСТ 633-80 — 12 типоразмеров 33–140 мм',
+            '• ЭК ГОСТ 632-80 — 12 типоразмеров 114–324 мм',
+            '• Штанги ШГН ГОСТ 13877-96 — диаметры 16–36 мм',
+            '• УЭЦН — типоразмеры ЭЦН5, 5А, 5Б, 6, 6А',
+            '• Трубопроводы НГО — нефте/газопроводы, выкидные линии, манифольд',
+            '• Трубы ППД — ВВД (до 25 МПа) и ВНД, арматура КНС',
+            '• Арматура НГО — задвижки, шаровые краны, обратные кл., предохр. кл., фланцы API/ГОСТ',
+            '⚠ Таблицы открываются мгновенно — данные зашиты в файл',
+        ]},
+        { icon:'🗺', title:'КАРТА КУСТА', body:[
+            'Схема расположения объектов куста с GPS-метками.',
+            '📍 МОЙ GPS — автоматически определяет координаты',
+            'Или введи широту/долготу вручную (формат DD.dddd)',
+            'Типы объектов:',
+            '• ⚫ Нефтяная (●) | ○ Остановленная (по ГОСТ)',
+            '• ▼ ППД нагнетательная (синий) | ▲ Газовая (жёлтый)',
+            '• ◑ КРС/ремонт | ■ Ликвидированная (чёрный квадрат+X)',
+            '• ◆ АГЗУ/БНГ | △ КТПН (жёлтый) | ■ С.У./ПКУ/☠УДР/☠БРХ',
+            '+ / − — масштаб | Перетащи карту пальцем',
+            '✅ Расстояние между объектами считается автоматически',
+        ]},
+        { icon:'★', title:'ИЗБРАННЫЕ РАСЧЁТЫ И ИСТОРИЯ', body:[
+            'Быстрый доступ к часто используемым калькуляторам.',
+            '★ — нажми на звёздочку на любом калькуляторе чтобы добавить',
+            '☆ — нажми снова чтобы убрать из избранного',
+            '⏱ ИСТОРИЯ — последние 20 расчётов с временем и результатами',
+            '  Сохраняется автоматически при каждом нажатии РАССЧИТАТЬ',
+            '✅ Избранное и история хранятся в памяти браузера',
+            '⚠ Очистка кэша удалит избранное и историю',
+        ]},
+        { icon:'🎤', title:'ГОЛОСОВОЙ ВВОД И ТЕМА', body:[
+            '🎤 ГОЛОСОВОЙ ВВОД:',
+            '  Значок 🎤 у каждого числового поля в разделе ВСЕ РАСЧЁТЫ',
+            '  Нажми → произнеси число → поле заполнится автоматически',
+            '  Работает в Chrome/Edge на Android и ПК',
+            '  Говори: "сто пятьдесят" или просто "150"',
+            '',
+            '🌙/☀️ ТЕМА:',
+            '  Кнопка в правом верхнем углу шапки',
+            '  🌙 = тёмная (по умолчанию) | ☀️ = светлая',
+            '  Выбор сохраняется и применяется при следующем открытии',
+        ]},
+        { icon:'📲', title:'УСТАНОВКА КАК ПРИЛОЖЕНИЕ (PWA)', body:[
+            'Калькулятор можно установить как приложение на телефон.',
+            '⊕ УСТАНОВИТЬ — кнопка появляется в шапке автоматически',
+            '  (только в Chrome/Edge при открытии через HTTPS)',
+            'Для iOS (Safari):',
+            '  Нажми "Поделиться" → "На экран Домой"',
+            '✅ После установки работает без браузера',
+            '✅ Иконка на рабочем столе — логотип ATA',
+            '⚠ Офлайн работает если открывал при наличии интернета',
+        ]},
     ],
     en: [
         { icon:'⊞', title:'WELL PARAMETERS', body:[
@@ -4308,6 +4458,71 @@ var MANUAL = {
             '✅ Send defect acts to dispatcher immediately on site',
             '✅ Digital Twin is more accurate with more journal entries',
             '⚠ Clearing browser cache deletes journal and acts',
+        ]},
+        { icon:'📊', title:'GRAPHS & ANALYSIS', body:[
+            'Well data visualization — three tabs:',
+            '• IPR CURVE (VOGEL) — inflow curve with operating points',
+            '  Enter Qmax, Pres and two Pwf values — draws on Canvas',
+            '• DECLINE CURVE (ARPS) — forecast for 1–10 years',
+            '  b exponent: 0 = exponential, 1 = harmonic decline',
+            '  Red line = economic limit (Qlim)',
+            '• LEVEL DYNAMICS — up to 10 static/dynamic level readings',
+            '  Blue line = static level | Gold = dynamic level',
+            '✅ Press BUILD to draw the level trend chart',
+        ]},
+        { icon:'📖', title:'GOST/API REFERENCE', body:[
+            'Built-in tables across 7 sections:',
+            '• Tubing GOST 633-80 — 12 sizes 33–140 mm',
+            '• Casing GOST 632-80 — 12 sizes 114–324 mm',
+            '• SRP Rods GOST 13877-96 — diameters 16–36 mm',
+            '• ESP — sizes ESP5, 5A, 5B, 6, 6A',
+            '• O&G Pipelines — oil/gas lines, flowlines, manifold',
+            '• WI Pipelines — HDP (up to 25 MPa) and LDP, KNS fittings',
+            '• O&G Valves — gate valves, ball valves, check valves, PSV, API/GOST flanges',
+            '⚠ Tables load instantly — data is embedded in file',
+        ]},
+        { icon:'🗺', title:'CLUSTER MAP', body:[
+            'Well pad layout with GPS markers.',
+            '📍 MY GPS — auto-determines your coordinates',
+            'Or enter latitude/longitude manually (DD.dddd format)',
+            'Object types:',
+            '• ⚫ Oil well (●) | ○ Shut-in (GOST standard)',
+            '• ▼ Water injection (blue) | ▲ Gas well (yellow triangle)',
+            '• ◑ Workover/KRS | ■ Abandoned well (black square + X)',
+            '• ◆ FGMS/GTS | △ KTPN (yellow) | ■ Control unit/PKU/☠UDR/☠BRH',
+            '+ / − to zoom | Drag map with finger',
+            '✅ Distance between objects is calculated automatically',
+        ]},
+        { icon:'★', title:'FAVOURITES & HISTORY', body:[
+            'Quick access to frequently used calculators.',
+            '★ — tap the star on any calculator to add to favourites',
+            '☆ — tap again to remove from favourites',
+            '⏱ HISTORY — last 20 calculations with time and results',
+            '  Saved automatically every time you press CALCULATE',
+            '✅ Favourites and history stored in browser memory',
+            '⚠ Clearing browser cache will delete favourites and history',
+        ]},
+        { icon:'🎤', title:'VOICE INPUT & THEME', body:[
+            '🎤 VOICE INPUT:',
+            '  Microphone icon 🎤 next to each number field in ALL CALCS',
+            '  Tap → speak a number → field fills automatically',
+            '  Works in Chrome/Edge on Android and PC',
+            '  Say: "one hundred fifty" or just "150"',
+            '',
+            '🌙/☀️ THEME:',
+            '  Button in the top-right corner of the header',
+            '  🌙 = dark (default) | ☀️ = light',
+            '  Your choice is saved and applied on next open',
+        ]},
+        { icon:'📲', title:'INSTALL AS APP (PWA)', body:[
+            'The calculator can be installed as an app on your phone.',
+            '⊕ INSTALL — button appears in header automatically',
+            '  (Chrome/Edge only, when opened via HTTPS)',
+            'For iOS (Safari):',
+            '  Tap "Share" → "Add to Home Screen"',
+            '✅ After installation works without browser',
+            '✅ Home screen icon — ATA logo',
+            '⚠ Offline works if you opened the app with internet first',
         ]},
     ]
 };
@@ -4975,9 +5190,10 @@ var OIL_GRADES_2 = {
     <button class="ac-tab" onclick="gostTab(3,this)">УЭЦН ТИПОРАЗМЕРЫ</button>
     <button class="ac-tab" onclick="gostTab(4,this)">🔧 ТРУБОПРОВОДЫ НГО</button>
     <button class="ac-tab" onclick="gostTab(5,this)">💧 ТРУБЫ ППД</button>
+    <button class="ac-tab" onclick="gostTab(6,this)">🔩 АРМАТУРА НГО</button>
   </div>
 
-  <div id="gost_sec_0">
+  <div id="gost_sec_0" data-built="1">
     <div class="ac-card">
       <div class="ac-card-title">НКТ — НАСОСНО-КОМПРЕССОРНЫЕ ТРУБЫ (ГОСТ 633-80)</div>
       <div style="overflow-x:auto;">
@@ -4990,13 +5206,13 @@ var OIL_GRADES_2 = {
             <th style="padding:6px 4px;text-align:right;border-bottom:1px solid var(--border2);">Масса кг/м</th>
             <th style="padding:6px 4px;text-align:right;border-bottom:1px solid var(--border2);">Vвн л/м</th>
           </tr></thead>
-          <tbody id="gost_nkt_body"></tbody>
+          <tbody id="gost_nkt_body"><tr style="border-bottom:1px solid var(--border);"><td style="padding:5px 4px;text-align:left;color:var(--gold2);">33×4</td><td style="padding:5px 4px;text-align:right;color:#E0EAF0;">33</td><td style="padding:5px 4px;text-align:right;color:#3A9EC8;">25.0</td><td style="padding:5px 4px;text-align:right;color:var(--text);">4.0</td><td style="padding:5px 4px;text-align:left;color:var(--gold2);">2.9</td><td style="padding:5px 4px;text-align:right;color:#2EA84C;">491.0</td></tr><tr style="border-bottom:1px solid var(--border);"><td style="padding:5px 4px;text-align:left;color:var(--gold2);">42×5</td><td style="padding:5px 4px;text-align:right;color:#E0EAF0;">42</td><td style="padding:5px 4px;text-align:right;color:#3A9EC8;">32.0</td><td style="padding:5px 4px;text-align:right;color:var(--text);">5.0</td><td style="padding:5px 4px;text-align:left;color:var(--gold2);">4.57</td><td style="padding:5px 4px;text-align:right;color:#2EA84C;">804.0</td></tr><tr style="border-bottom:1px solid var(--border);"><td style="padding:5px 4px;text-align:left;color:var(--gold2);">48×4</td><td style="padding:5px 4px;text-align:right;color:#E0EAF0;">48</td><td style="padding:5px 4px;text-align:right;color:#3A9EC8;">40.0</td><td style="padding:5px 4px;text-align:right;color:var(--text);">4.0</td><td style="padding:5px 4px;text-align:left;color:var(--gold2);">4.37</td><td style="padding:5px 4px;text-align:right;color:#2EA84C;">1257.0</td></tr><tr style="border-bottom:1px solid var(--border);"><td style="padding:5px 4px;text-align:left;color:var(--gold2);">60×5</td><td style="padding:5px 4px;text-align:right;color:#E0EAF0;">60</td><td style="padding:5px 4px;text-align:right;color:#3A9EC8;">50.3</td><td style="padding:5px 4px;text-align:right;color:var(--text);">4.85</td><td style="padding:5px 4px;text-align:left;color:var(--gold2);">6.73</td><td style="padding:5px 4px;text-align:right;color:#2EA84C;">1987.0</td></tr><tr style="border-bottom:1px solid var(--border);"><td style="padding:5px 4px;text-align:left;color:var(--gold2);">73×5.5</td><td style="padding:5px 4px;text-align:right;color:#E0EAF0;">73</td><td style="padding:5px 4px;text-align:right;color:#3A9EC8;">62.0</td><td style="padding:5px 4px;text-align:right;color:var(--text);">5.5</td><td style="padding:5px 4px;text-align:left;color:var(--gold2);">9.19</td><td style="padding:5px 4px;text-align:right;color:#2EA84C;">3019.0</td></tr><tr style="border-bottom:1px solid var(--border);"><td style="padding:5px 4px;text-align:left;color:var(--gold2);">73×7</td><td style="padding:5px 4px;text-align:right;color:#E0EAF0;">73</td><td style="padding:5px 4px;text-align:right;color:#3A9EC8;">59.0</td><td style="padding:5px 4px;text-align:right;color:var(--text);">7.0</td><td style="padding:5px 4px;text-align:left;color:var(--gold2);">11.4</td><td style="padding:5px 4px;text-align:right;color:#2EA84C;">2734.0</td></tr><tr style="border-bottom:1px solid var(--border);"><td style="padding:5px 4px;text-align:left;color:var(--gold2);">89×6.5</td><td style="padding:5px 4px;text-align:right;color:#E0EAF0;">89</td><td style="padding:5px 4px;text-align:right;color:#3A9EC8;">76.0</td><td style="padding:5px 4px;text-align:right;color:var(--text);">6.5</td><td style="padding:5px 4px;text-align:left;color:var(--gold2);">13.5</td><td style="padding:5px 4px;text-align:right;color:#2EA84C;">4536.0</td></tr><tr style="border-bottom:1px solid var(--border);"><td style="padding:5px 4px;text-align:left;color:var(--gold2);">89×8</td><td style="padding:5px 4px;text-align:right;color:#E0EAF0;">89</td><td style="padding:5px 4px;text-align:right;color:#3A9EC8;">73.0</td><td style="padding:5px 4px;text-align:right;color:var(--text);">8.0</td><td style="padding:5px 4px;text-align:left;color:var(--gold2);">16.4</td><td style="padding:5px 4px;text-align:right;color:#2EA84C;">4185.0</td></tr><tr style="border-bottom:1px solid var(--border);"><td style="padding:5px 4px;text-align:left;color:var(--gold2);">102×6.5</td><td style="padding:5px 4px;text-align:right;color:#E0EAF0;">102</td><td style="padding:5px 4px;text-align:right;color:#3A9EC8;">89.0</td><td style="padding:5px 4px;text-align:right;color:var(--text);">6.5</td><td style="padding:5px 4px;text-align:left;color:var(--gold2);">15.6</td><td style="padding:5px 4px;text-align:right;color:#2EA84C;">6221.0</td></tr><tr style="border-bottom:1px solid var(--border);"><td style="padding:5px 4px;text-align:left;color:var(--gold2);">114×7</td><td style="padding:5px 4px;text-align:right;color:#E0EAF0;">114</td><td style="padding:5px 4px;text-align:right;color:#3A9EC8;">100.0</td><td style="padding:5px 4px;text-align:right;color:var(--text);">7.0</td><td style="padding:5px 4px;text-align:left;color:var(--gold2);">18.5</td><td style="padding:5px 4px;text-align:right;color:#2EA84C;">7854.0</td></tr><tr style="border-bottom:1px solid var(--border);"><td style="padding:5px 4px;text-align:left;color:var(--gold2);">114×8</td><td style="padding:5px 4px;text-align:right;color:#E0EAF0;">114</td><td style="padding:5px 4px;text-align:right;color:#3A9EC8;">98.0</td><td style="padding:5px 4px;text-align:right;color:var(--text);">8.0</td><td style="padding:5px 4px;text-align:left;color:var(--gold2);">21.0</td><td style="padding:5px 4px;text-align:right;color:#2EA84C;">7543.0</td></tr><tr style="border-bottom:1px solid var(--border);"><td style="padding:5px 4px;text-align:left;color:var(--gold2);">140×7</td><td style="padding:5px 4px;text-align:right;color:#E0EAF0;">140</td><td style="padding:5px 4px;text-align:right;color:#3A9EC8;">126.0</td><td style="padding:5px 4px;text-align:right;color:var(--text);">7.0</td><td style="padding:5px 4px;text-align:left;color:var(--gold2);">23.2</td><td style="padding:5px 4px;text-align:right;color:#2EA84C;">12469.0</td></tr></tbody>
         </table>
       </div>
     </div>
   </div>
 
-  <div id="gost_sec_1" style="display:none;">
+  <div id="gost_sec_1" style="display:none;" data-built="1">
     <div class="ac-card">
       <div class="ac-card-title">ЭК — ЭКСПЛУАТАЦИОННЫЕ КОЛОННЫ (ГОСТ 632-80)</div>
       <div style="overflow-x:auto;">
@@ -5009,13 +5225,13 @@ var OIL_GRADES_2 = {
             <th style="padding:6px 4px;text-align:right;border-bottom:1px solid var(--border2);">Масса кг/м</th>
             <th style="padding:6px 4px;text-align:right;border-bottom:1px solid var(--border2);">Vвн л/м</th>
           </tr></thead>
-          <tbody id="gost_ek_body"></tbody>
+          <tbody id="gost_ek_body"><tr style="border-bottom:1px solid var(--border);"><td style="padding:5px 4px;text-align:left;color:var(--gold2);">114×7</td><td style="padding:5px 4px;text-align:right;color:#E0EAF0;">114</td><td style="padding:5px 4px;text-align:right;color:#3A9EC8;">100.0</td><td style="padding:5px 4px;text-align:right;color:var(--text);">7.0</td><td style="padding:5px 4px;text-align:left;color:var(--gold2);">18.5</td><td style="padding:5px 4px;text-align:right;color:#2EA84C;">7854.0</td></tr><tr style="border-bottom:1px solid var(--border);"><td style="padding:5px 4px;text-align:left;color:var(--gold2);">127×7</td><td style="padding:5px 4px;text-align:right;color:#E0EAF0;">127</td><td style="padding:5px 4px;text-align:right;color:#3A9EC8;">113.0</td><td style="padding:5px 4px;text-align:right;color:var(--text);">7.0</td><td style="padding:5px 4px;text-align:left;color:var(--gold2);">20.8</td><td style="padding:5px 4px;text-align:right;color:#2EA84C;">10030.0</td></tr><tr style="border-bottom:1px solid var(--border);"><td style="padding:5px 4px;text-align:left;color:var(--gold2);">140×7</td><td style="padding:5px 4px;text-align:right;color:#E0EAF0;">140</td><td style="padding:5px 4px;text-align:right;color:#3A9EC8;">126.0</td><td style="padding:5px 4px;text-align:right;color:var(--text);">7.0</td><td style="padding:5px 4px;text-align:left;color:var(--gold2);">23.2</td><td style="padding:5px 4px;text-align:right;color:#2EA84C;">12470.0</td></tr><tr style="border-bottom:1px solid var(--border);"><td style="padding:5px 4px;text-align:left;color:var(--gold2);">146×7</td><td style="padding:5px 4px;text-align:right;color:#E0EAF0;">146</td><td style="padding:5px 4px;text-align:right;color:#3A9EC8;">132.0</td><td style="padding:5px 4px;text-align:right;color:var(--text);">7.0</td><td style="padding:5px 4px;text-align:left;color:var(--gold2);">24.2</td><td style="padding:5px 4px;text-align:right;color:#2EA84C;">13680.0</td></tr><tr style="border-bottom:1px solid var(--border);"><td style="padding:5px 4px;text-align:left;color:var(--gold2);">146×8</td><td style="padding:5px 4px;text-align:right;color:#E0EAF0;">146</td><td style="padding:5px 4px;text-align:right;color:#3A9EC8;">130.0</td><td style="padding:5px 4px;text-align:right;color:var(--text);">8.0</td><td style="padding:5px 4px;text-align:left;color:var(--gold2);">27.4</td><td style="padding:5px 4px;text-align:right;color:#2EA84C;">13270.0</td></tr><tr style="border-bottom:1px solid var(--border);"><td style="padding:5px 4px;text-align:left;color:var(--gold2);">168×8</td><td style="padding:5px 4px;text-align:right;color:#E0EAF0;">168</td><td style="padding:5px 4px;text-align:right;color:#3A9EC8;">152.0</td><td style="padding:5px 4px;text-align:right;color:var(--text);">8.0</td><td style="padding:5px 4px;text-align:left;color:var(--gold2);">31.9</td><td style="padding:5px 4px;text-align:right;color:#2EA84C;">18140.0</td></tr><tr style="border-bottom:1px solid var(--border);"><td style="padding:5px 4px;text-align:left;color:var(--gold2);">178×9</td><td style="padding:5px 4px;text-align:right;color:#E0EAF0;">178</td><td style="padding:5px 4px;text-align:right;color:#3A9EC8;">160.0</td><td style="padding:5px 4px;text-align:right;color:var(--text);">9.0</td><td style="padding:5px 4px;text-align:left;color:var(--gold2);">38.0</td><td style="padding:5px 4px;text-align:right;color:#2EA84C;">20110.0</td></tr><tr style="border-bottom:1px solid var(--border);"><td style="padding:5px 4px;text-align:left;color:var(--gold2);">194×8</td><td style="padding:5px 4px;text-align:right;color:#E0EAF0;">194</td><td style="padding:5px 4px;text-align:right;color:#3A9EC8;">178.0</td><td style="padding:5px 4px;text-align:right;color:var(--text);">8.0</td><td style="padding:5px 4px;text-align:left;color:var(--gold2);">37.2</td><td style="padding:5px 4px;text-align:right;color:#2EA84C;">24880.0</td></tr><tr style="border-bottom:1px solid var(--border);"><td style="padding:5px 4px;text-align:left;color:var(--gold2);">219×8</td><td style="padding:5px 4px;text-align:right;color:#E0EAF0;">219</td><td style="padding:5px 4px;text-align:right;color:#3A9EC8;">203.0</td><td style="padding:5px 4px;text-align:right;color:var(--text);">8.0</td><td style="padding:5px 4px;text-align:left;color:var(--gold2);">42.2</td><td style="padding:5px 4px;text-align:right;color:#2EA84C;">32370.0</td></tr><tr style="border-bottom:1px solid var(--border);"><td style="padding:5px 4px;text-align:left;color:var(--gold2);">245×8</td><td style="padding:5px 4px;text-align:right;color:#E0EAF0;">245</td><td style="padding:5px 4px;text-align:right;color:#3A9EC8;">229.0</td><td style="padding:5px 4px;text-align:right;color:var(--text);">8.0</td><td style="padding:5px 4px;text-align:left;color:var(--gold2);">47.5</td><td style="padding:5px 4px;text-align:right;color:#2EA84C;">41180.0</td></tr><tr style="border-bottom:1px solid var(--border);"><td style="padding:5px 4px;text-align:left;color:var(--gold2);">273×9</td><td style="padding:5px 4px;text-align:right;color:#E0EAF0;">273</td><td style="padding:5px 4px;text-align:right;color:#3A9EC8;">255.0</td><td style="padding:5px 4px;text-align:right;color:var(--text);">9.0</td><td style="padding:5px 4px;text-align:left;color:var(--gold2);">59.4</td><td style="padding:5px 4px;text-align:right;color:#2EA84C;">51070.0</td></tr><tr style="border-bottom:1px solid var(--border);"><td style="padding:5px 4px;text-align:left;color:var(--gold2);">324×9</td><td style="padding:5px 4px;text-align:right;color:#E0EAF0;">324</td><td style="padding:5px 4px;text-align:right;color:#3A9EC8;">306.0</td><td style="padding:5px 4px;text-align:right;color:var(--text);">9.0</td><td style="padding:5px 4px;text-align:left;color:var(--gold2);">70.7</td><td style="padding:5px 4px;text-align:right;color:#2EA84C;">73580.0</td></tr></tbody>
         </table>
       </div>
     </div>
   </div>
 
-  <div id="gost_sec_2" style="display:none;">
+  <div id="gost_sec_2" style="display:none;" data-built="1">
     <div class="ac-card">
       <div class="ac-card-title">ШТАНГИ НАСОСНЫЕ (ГОСТ 13877-96)</div>
       <div style="overflow-x:auto;">
@@ -5027,13 +5243,13 @@ var OIL_GRADES_2 = {
             <th style="padding:6px 4px;text-align:right;border-bottom:1px solid var(--border2);">Доп. нагр. кН</th>
             <th style="padding:6px 4px;text-align:right;border-bottom:1px solid var(--border2);">Резьба</th>
           </tr></thead>
-          <tbody id="gost_rod_body"></tbody>
+          <tbody id="gost_rod_body"><tr style="border-bottom:1px solid var(--border);"><td style="padding:5px 4px;text-align:left;color:var(--gold2);">16 мм (ШН16)</td><td style="padding:5px 4px;text-align:right;color:#3A9EC8;">2.01</td><td style="padding:5px 4px;text-align:left;color:var(--gold2);">1.58</td><td style="padding:5px 4px;text-align:right;color:#2EA84C;">18.5</td><td style="padding:5px 4px;text-align:right;color:var(--text);">ШН16</td></tr><tr style="border-bottom:1px solid var(--border);"><td style="padding:5px 4px;text-align:left;color:var(--gold2);">19 мм (ШН19)</td><td style="padding:5px 4px;text-align:right;color:#3A9EC8;">2.84</td><td style="padding:5px 4px;text-align:left;color:var(--gold2);">2.23</td><td style="padding:5px 4px;text-align:right;color:#2EA84C;">26.2</td><td style="padding:5px 4px;text-align:right;color:var(--text);">ШН19</td></tr><tr style="border-bottom:1px solid var(--border);"><td style="padding:5px 4px;text-align:left;color:var(--gold2);">22 мм (ШН22)</td><td style="padding:5px 4px;text-align:right;color:#3A9EC8;">3.8</td><td style="padding:5px 4px;text-align:left;color:var(--gold2);">2.99</td><td style="padding:5px 4px;text-align:right;color:#2EA84C;">34.0</td><td style="padding:5px 4px;text-align:right;color:var(--text);">ШН22</td></tr><tr style="border-bottom:1px solid var(--border);"><td style="padding:5px 4px;text-align:left;color:var(--gold2);">25 мм (ШН25)</td><td style="padding:5px 4px;text-align:right;color:#3A9EC8;">4.91</td><td style="padding:5px 4px;text-align:left;color:var(--gold2);">3.85</td><td style="padding:5px 4px;text-align:right;color:#2EA84C;">44.1</td><td style="padding:5px 4px;text-align:right;color:var(--text);">ШН25</td></tr><tr style="border-bottom:1px solid var(--border);"><td style="padding:5px 4px;text-align:left;color:var(--gold2);">28 мм (ШН28)</td><td style="padding:5px 4px;text-align:right;color:#3A9EC8;">6.16</td><td style="padding:5px 4px;text-align:left;color:var(--gold2);">4.83</td><td style="padding:5px 4px;text-align:right;color:#2EA84C;">55.4</td><td style="padding:5px 4px;text-align:right;color:var(--text);">ШН28</td></tr><tr style="border-bottom:1px solid var(--border);"><td style="padding:5px 4px;text-align:left;color:var(--gold2);">32 мм (ШН32)</td><td style="padding:5px 4px;text-align:right;color:#3A9EC8;">8.04</td><td style="padding:5px 4px;text-align:left;color:var(--gold2);">6.31</td><td style="padding:5px 4px;text-align:right;color:#2EA84C;">72.4</td><td style="padding:5px 4px;text-align:right;color:var(--text);">ШН32</td></tr><tr style="border-bottom:1px solid var(--border);"><td style="padding:5px 4px;text-align:left;color:var(--gold2);">36 мм (ШН36)</td><td style="padding:5px 4px;text-align:right;color:#3A9EC8;">10.17</td><td style="padding:5px 4px;text-align:left;color:var(--gold2);">7.99</td><td style="padding:5px 4px;text-align:right;color:#2EA84C;">91.7</td><td style="padding:5px 4px;text-align:right;color:var(--text);">ШН36</td></tr></tbody>
         </table>
       </div>
     </div>
   </div>
 
-  <div id="gost_sec_3" style="display:none;">
+  <div id="gost_sec_3" style="display:none;" data-built="1">
     <div class="ac-card">
       <div class="ac-card-title">УЭЦН — ОСНОВНЫЕ ТИПОРАЗМЕРЫ ПО ОД (ЭЦН5, 5А, 6)</div>
       <div style="overflow-x:auto;">
@@ -5044,7 +5260,7 @@ var OIL_GRADES_2 = {
             <th style="padding:6px 4px;text-align:right;border-bottom:1px solid var(--border2);">Qном м³/сут</th>
             <th style="padding:6px 4px;text-align:right;border-bottom:1px solid var(--border2);">Мин. ЭК мм</th>
           </tr></thead>
-          <tbody id="gost_esp_body"></tbody>
+          <tbody id="gost_esp_body"><tr style="border-bottom:1px solid var(--border);"><td style="padding:5px 4px;text-align:left;color:var(--gold2);">ЭЦН5</td><td style="padding:5px 4px;text-align:right;color:#E0EAF0;">92</td><td style="padding:5px 4px;text-align:left;color:var(--gold2);">10–80</td><td style="padding:5px 4px;text-align:right;color:#3A9EC8;">140</td></tr><tr style="border-bottom:1px solid var(--border);"><td style="padding:5px 4px;text-align:left;color:var(--gold2);">ЭЦН5А</td><td style="padding:5px 4px;text-align:right;color:#E0EAF0;">103</td><td style="padding:5px 4px;text-align:left;color:var(--gold2);">25–200</td><td style="padding:5px 4px;text-align:right;color:#3A9EC8;">148</td></tr><tr style="border-bottom:1px solid var(--border);"><td style="padding:5px 4px;text-align:left;color:var(--gold2);">ЭЦН5Б</td><td style="padding:5px 4px;text-align:right;color:#E0EAF0;">103</td><td style="padding:5px 4px;text-align:left;color:var(--gold2);">50–500</td><td style="padding:5px 4px;text-align:right;color:#3A9EC8;">168</td></tr><tr style="border-bottom:1px solid var(--border);"><td style="padding:5px 4px;text-align:left;color:var(--gold2);">ЭЦН6</td><td style="padding:5px 4px;text-align:right;color:#E0EAF0;">114</td><td style="padding:5px 4px;text-align:left;color:var(--gold2);">100–700</td><td style="padding:5px 4px;text-align:right;color:#3A9EC8;">178</td></tr><tr style="border-bottom:1px solid var(--border);"><td style="padding:5px 4px;text-align:left;color:var(--gold2);">ЭЦН6А</td><td style="padding:5px 4px;text-align:right;color:#E0EAF0;">124</td><td style="padding:5px 4px;text-align:left;color:var(--gold2);">200–1000</td><td style="padding:5px 4px;text-align:right;color:#3A9EC8;">194</td></tr></tbody>
         </table>
       </div>
     </div>
@@ -5218,6 +5434,116 @@ var OIL_GRADES_2 = {
     </div>
   </div>
 
+  <!-- Арматура НГО -->
+  <div id="gost_sec_6" style="display:none;">
+    <div class="ac-card" style="margin-bottom:10px;">
+      <div class="ac-card-title">🔩 АРМАТУРА НЕФТЕГАЗОВОЙ ОТРАСЛИ</div>
+      <div style="font-family:var(--font-mono);font-size:0.55rem;color:var(--text);margin-bottom:8px;opacity:0.7;">
+        Трубопроводная арматура по ГОСТ и API — задвижки, краны, клапаны, обратные клапаны
+      </div>
+      <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px;" id="arm_subtabs">
+        <button class="ac-tab active" style="font-size:0.5rem;" onclick="armSubTab(0,this)">ЗАДВИЖКИ</button>
+        <button class="ac-tab" style="font-size:0.5rem;" onclick="armSubTab(1,this)">ШАРОВЫЕ КРАНЫ</button>
+        <button class="ac-tab" style="font-size:0.5rem;" onclick="armSubTab(2,this)">ОБРАТНЫЕ КЛ.</button>
+        <button class="ac-tab" style="font-size:0.5rem;" onclick="armSubTab(3,this)">ПРЕДОХР. КЛ.</button>
+        <button class="ac-tab" style="font-size:0.5rem;" onclick="armSubTab(4,this)">ФЛАНЦЫ API</button>
+      </div>
+
+      <div id="arm_sub_0">
+        <div style="font-family:var(--font-head);font-size:0.55rem;color:var(--gold);letter-spacing:1px;margin-bottom:6px;">
+          ЗАДВИЖКИ — ГОСТ 5762-2002 / ГОСТ 33272-2015 (клиновые и шиберные)
+        </div>
+        <div style="overflow-x:auto;">
+          <table style="width:100%;border-collapse:collapse;font-family:var(--font-mono);font-size:0.6rem;">
+            <thead><tr style="background:var(--panel2);color:var(--gold);">
+              <th style="padding:5px 4px;text-align:left;border-bottom:1px solid var(--border2);">Тип / Обозначение</th>
+              <th style="padding:5px 4px;text-align:right;border-bottom:1px solid var(--border2);">Dу мм</th>
+              <th style="padding:5px 4px;text-align:right;border-bottom:1px solid var(--border2);">Рном МПа</th>
+              <th style="padding:5px 4px;text-align:right;border-bottom:1px solid var(--border2);">Масса кг</th>
+              <th style="padding:5px 4px;text-align:left;border-bottom:1px solid var(--border2);">Применение</th>
+            </tr></thead>
+            <tbody id="arm_zadv_body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="arm_sub_1" style="display:none;">
+        <div style="font-family:var(--font-head);font-size:0.55rem;color:var(--gold);letter-spacing:1px;margin-bottom:6px;">
+          ШАРОВЫЕ КРАНЫ — ГОСТ Р 54808-2011 / API 6D
+        </div>
+        <div style="overflow-x:auto;">
+          <table style="width:100%;border-collapse:collapse;font-family:var(--font-mono);font-size:0.6rem;">
+            <thead><tr style="background:var(--panel2);color:var(--gold);">
+              <th style="padding:5px 4px;text-align:left;border-bottom:1px solid var(--border2);">Тип</th>
+              <th style="padding:5px 4px;text-align:right;border-bottom:1px solid var(--border2);">Dу мм</th>
+              <th style="padding:5px 4px;text-align:right;border-bottom:1px solid var(--border2);">Рном МПа</th>
+              <th style="padding:5px 4px;text-align:right;border-bottom:1px solid var(--border2);">Масса кг</th>
+              <th style="padding:5px 4px;text-align:left;border-bottom:1px solid var(--border2);">Применение</th>
+            </tr></thead>
+            <tbody id="arm_kran_body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="arm_sub_2" style="display:none;">
+        <div style="font-family:var(--font-head);font-size:0.55rem;color:var(--gold);letter-spacing:1px;margin-bottom:6px;">
+          ОБРАТНЫЕ КЛАПАНЫ — ГОСТ 33260-2015 / API 6D
+        </div>
+        <div style="overflow-x:auto;">
+          <table style="width:100%;border-collapse:collapse;font-family:var(--font-mono);font-size:0.6rem;">
+            <thead><tr style="background:var(--panel2);color:var(--gold);">
+              <th style="padding:5px 4px;text-align:left;border-bottom:1px solid var(--border2);">Тип</th>
+              <th style="padding:5px 4px;text-align:right;border-bottom:1px solid var(--border2);">Dу мм</th>
+              <th style="padding:5px 4px;text-align:right;border-bottom:1px solid var(--border2);">Рном МПа</th>
+              <th style="padding:5px 4px;text-align:right;border-bottom:1px solid var(--border2);">Масса кг</th>
+              <th style="padding:5px 4px;text-align:left;border-bottom:1px solid var(--border2);">Применение</th>
+            </tr></thead>
+            <tbody id="arm_obr_body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="arm_sub_3" style="display:none;">
+        <div style="font-family:var(--font-head);font-size:0.55rem;color:var(--gold);letter-spacing:1px;margin-bottom:6px;">
+          ПРЕДОХРАНИТЕЛЬНЫЕ КЛАПАНЫ — ГОСТ 12.2.085-2002 / API 520/526
+        </div>
+        <div style="overflow-x:auto;">
+          <table style="width:100%;border-collapse:collapse;font-family:var(--font-mono);font-size:0.6rem;">
+            <thead><tr style="background:var(--panel2);color:var(--gold);">
+              <th style="padding:5px 4px;text-align:left;border-bottom:1px solid var(--border2);">Тип / Серия</th>
+              <th style="padding:5px 4px;text-align:right;border-bottom:1px solid var(--border2);">Dу вх мм</th>
+              <th style="padding:5px 4px;text-align:right;border-bottom:1px solid var(--border2);">Рнастр. МПа</th>
+              <th style="padding:5px 4px;text-align:right;border-bottom:1px solid var(--border2);">Пропуск м³/ч</th>
+              <th style="padding:5px 4px;text-align:left;border-bottom:1px solid var(--border2);">Применение</th>
+            </tr></thead>
+            <tbody id="arm_pred_body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="arm_sub_4" style="display:none;">
+        <div style="font-family:var(--font-head);font-size:0.55rem;color:var(--gold);letter-spacing:1px;margin-bottom:6px;">
+          ФЛАНЦЫ — API 6A / ГОСТ 33259-2015 (классы давления)
+        </div>
+        <div style="overflow-x:auto;">
+          <table style="width:100%;border-collapse:collapse;font-family:var(--font-mono);font-size:0.6rem;">
+            <thead><tr style="background:var(--panel2);color:var(--gold);">
+              <th style="padding:5px 4px;text-align:left;border-bottom:1px solid var(--border2);">Класс давл. API</th>
+              <th style="padding:5px 4px;text-align:right;border-bottom:1px solid var(--border2);">Рном МПа</th>
+              <th style="padding:5px 4px;text-align:right;border-bottom:1px solid var(--border2);">Рном psi</th>
+              <th style="padding:5px 4px;text-align:right;border-bottom:1px solid var(--border2);">Dу мм (типов.)</th>
+              <th style="padding:5px 4px;text-align:left;border-bottom:1px solid var(--border2);">Применение</th>
+            </tr></thead>
+            <tbody id="arm_flange_body"></tbody>
+          </table>
+        </div>
+        <div style="margin-top:8px;padding:8px;background:rgba(200,168,75,0.07);border-left:3px solid var(--gold3);border-radius:4px;font-size:0.55rem;color:var(--text);font-family:var(--font-mono);">
+          ⚠ API 6A применяется для устьевого оборудования (фонтанная арматура, ФА). API 6D — для трубопроводной арматуры. ГОСТ 33259-2015 — аналог ASME B16.5.
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <!-- ===== КАРТА КУСТА / GPS ===== -->
@@ -5226,15 +5552,30 @@ var OIL_GRADES_2 = {
   <div style="font-family:var(--font-head);font-size:0.6rem;color:var(--cyan);letter-spacing:2px;margin-bottom:10px;">🗺 КАРТА КУСТА — МЕТКИ СКВАЖИН</div>
 
   <div class="ac-card" style="margin-bottom:10px;">
-    <div class="ac-card-title">ДОБАВИТЬ СКВАЖИНУ</div>
+    <div class="ac-card-title">ДОБАВИТЬ СКВАЖИНУ / ОБЪЕКТ КУСТА</div>
     <div class="ac-two">
-      <div class="ac-field"><label>Номер скважины</label><input type="text" id="cm_well_name" placeholder="КП-5/скв.301"></div>
+      <div class="ac-field"><label>Номер скважины</label><input type="text" id="cm_well_name" placeholder="КП-5/скв.301 или АГЗУ-7"></div>
       <div class="ac-field"><label>Статус</label>
         <select id="cm_well_status">
-          <option value="work">🟢 В работе</option>
-          <option value="stop">🔴 Остановлена</option>
-          <option value="repair">🟡 КРС/ремонт</option>
-          <option value="inject">🔵 Нагнетат.</option>
+          <optgroup label="── СКВАЖИНЫ ──">
+            <option value="oil_well">⚫ Скв. нефтяная (работает)</option>
+            <option value="oil_stop">○ Скв. нефтяная (остановлена)</option>
+            <option value="ppd_well">🔵 Скв. ППД (нагнетат.)</option>
+            <option value="gas_well">🟡 Скв. газовая</option>
+            <option value="repair">🟠 Скв. КРС/ремонт</option>
+            <option value="liq_well">⬛ Скв. ликвидированная</option>
+            <option value="work">🟢 Скв. в работе (общ.)</option>
+            <option value="stop">🔴 Скв. остановлена (общ.)</option>
+          </optgroup>
+          <optgroup label="── ОБЪЕКТЫ КУСТА ──">
+            <option value="agzu">🟣 АГЗУ</option>
+            <option value="bng">🟤 БНГ</option>
+            <option value="rostv">⬛ Ростверк / КТПН</option>
+            <option value="su">🔷 С.У. (Станция упр.)</option>
+            <option value="pku">🔶 ПКУ</option>
+            <option value="udr">☠️ УДР</option>
+            <option value="brh">☠️ БРХ</option>
+          </optgroup>
         </select>
       </div>
       <div class="ac-field"><label>Дебит (м³/сут)</label><input type="number" id="cm_well_q" placeholder="0"></div>
@@ -7387,841 +7728,4 @@ const P_heat = Q_des*LHV/1000;
 const F_allow = 4000;
 const R_safe = Math.sqrt(P_heat*1000*0.1/(4*Math.PI*F_allow));
 return [
-[{ru:'Тепловая нагрузка (норм.)',en:'Heat load (normal)'}[lang], (Qn*LHV/1e6).toFixed(2)+' МВт'],
-[{ru:'Тепловая нагрузка (авар.)',en:'Heat load (emergency)'}[lang], (Q_des*LHV/1e6).toFixed(2)+' МВт'],
-[{ru:'Скорость газа в оголовке',en:'Gas velocity at tip'}[lang], V_tip.toFixed(1)+' м/с'],
-[{ru:'Безопасное расстояние',en:'Safe distance'}[lang], R_safe.toFixed(1)+' м'],
-[{ru:'Высота факела',en:'Flare height'}[lang], H.toFixed(0)+' м'],
-V_tip>60 ? [L('ВНИМАНИЕ: скорость > 60 м/с — шум/вибрация','WARNING: velocity > 60 m/s — noise/vibration'),''] :
-[L('Скорость в норме','Velocity OK'),''],
-].filter(r => r[1] !== '' || true).filter(r => r[0] !== '');
-}
-},
-
-{
-tab: 7,
-id: 'cable_esp',
-title: {ru:'КАБЕЛЬ УЭЦН — СЕЧЕНИЕ И ПОТЕРИ',en:'ESP CABLE — CROSS-SECTION & LOSSES'},
-fields: [
-{ id: 'I', label:{ ru: 'Ток ПЭД (А)', en: 'Motor current (A)' }, def: '' },
-{ id: 'L', label:{ ru: 'Длина кабеля (м)', en: 'Cable length (m)' }, def: '' },
-{ id: 'A', label:{ ru: 'Сечение кабеля (мм2)', en: 'Cable section (mm²)' }, def: '16' },
-{ id: 'U', label:{ ru: 'Напряжение трансформ. (В)', en: 'Transformer voltage (V)' }, def: '1000' },
-{ id: 'T_fluid', label:{ ru: 'Темп. жидкости на глубине (°C)', en: 'Fluid temp at depth (°C)' }, def: '60' },
-],
-calc(v) {
-const I=+v.I, L=+v.L, A=+v.A, U=+v.U, T=+v.T_fluid;
-if(!I||!L||!A||!U) return null;
-const rho_cu = 0.0172 * (1 + 0.004*(T-20));
-const R_phase = rho_cu * L / A;
-const dU = Math.sqrt(3) * I * R_phase / 1000;
-const dU_pct = dU/U*100;
-const P_loss = 3 * I*I * R_phase / 1000;
-const U_motor = U - dU;
-let status;
-if(dU_pct > 10) status = L('КРИТИЧЕСКИЕ ПОТЕРИ — увеличить сечение!','CRITICAL LOSSES — increase cross-section!');
-else if(dU_pct > 5) status = L('Повышенные потери — проверить сечение','High losses — check cross-section');
-else status = L('Потери в норме','Losses normal');
-const A_rec = dU_pct>5 ? Math.ceil(A * dU_pct / 5) : A;
-return [
-[{ru:'Сопротивление фазы R',en:'Phase resistance R'}[lang], R_phase.toFixed(4)+' Ом'],
-[{ru:'Потери напряжения dU',en:'Voltage drop dU'}[lang], dU.toFixed(1)+' В ('+dU_pct.toFixed(1)+'%)'],
-[{ru:'Напряжение на ПЭД',en:'Motor voltage'}[lang], U_motor.toFixed(1)+' В'],
-[{ru:'Тепловые потери в кабеле',en:'Cable heat losses'}[lang], P_loss.toFixed(2)+' кВт'],
-[{ru:'Нагрев кабеля (прибл.)',en:'Cable heating (approx.)'}[lang], (P_loss*10).toFixed(1)+' °C/100м'],
-[{ru:'Статус',en:'Status'}[lang], status],
-dU_pct>5 ? [{ru:'Рекоменд. сечение',en:'Recommended section'}[lang], A_rec+' мм2'] :
-[{ru:'Сечение достаточно',en:'Section sufficient'}[lang], A+' мм2'],
-];
-}
-},
-
-{
-tab: 7,
-id: 'pump_efficiency',
-title: {ru:'КПД НАСОСНОЙ УСТАНОВКИ (УЭЦН полный)',en:'TOTAL ESP SYSTEM EFFICIENCY'},
-fields: [
-{ id: 'kpd_nas', label:{ ru: 'КПД насоса (%)', en: 'Pump efficiency (%)' }, def: '55' },
-{ id: 'kpd_ped', label:{ ru: 'КПД ПЭД (%)', en: 'Motor efficiency (%)' }, def: '85' },
-{ id: 'kpd_kab', label:{ ru: 'КПД кабеля (%, обычно 95-98)', en: 'Cable efficiency (%, usually 95-98)' }, def: '96' },
-{ id: 'kpd_trans', label:{ ru: 'КПД трансформатора (%)', en: 'Transformer efficiency (%)' }, def: '97' },
-{ id: 'kpd_chp', label:{ ru: 'КПД ЧРП/ЧП (%, если есть)', en: 'VFD efficiency (%, if applicable)' }, def: '97' },
-{ id: 'P_gidro', label:{ ru: 'Гидравл. мощность (кВт)', en: 'Hydraulic power (kW)' }, def: '' },
-],
-calc(v) {
-const kn=+v.kpd_nas/100, km=+v.kpd_ped/100, kc=+v.kpd_kab/100;
-const kt=+v.kpd_trans/100, kv=+v.kpd_chp/100, Pg=+v.P_gidro;
-if(!kn||!km||!kc||!kt||!kv) return null;
-const KPD_total = kn*km*kc*kt*kv*100;
-const KPD_no_chp = kn*km*kc*kt*100;
-const P_consumed = Pg ? Pg/(KPD_total/100) : null;
-const P_losses = Pg && P_consumed ? P_consumed - Pg : null;
-return [
-[{ru:'КПД насоса',en:'Pump efficiency'}[lang], (kn*100).toFixed(1)+'%'],
-[{ru:'КПД ПЭД',en:'Motor efficiency'}[lang], (km*100).toFixed(1)+'%'],
-[{ru:'КПД кабеля',en:'Cable efficiency'}[lang], (kc*100).toFixed(1)+'%'],
-[{ru:'КПД трансформатора',en:'Transformer efficiency'}[lang], (kt*100).toFixed(1)+'%'],
-[{ru:'КПД ЧРП',en:'VFD efficiency'}[lang], (kv*100).toFixed(1)+'%'],
-[{ru:'КПД СИСТЕМЫ (с ЧРП)',en:'SYSTEM EFFICIENCY (with VFD)'}[lang], KPD_total.toFixed(2)+'%'],
-[{ru:'КПД системы (без ЧРП)',en:'System efficiency (no VFD)'}[lang], KPD_no_chp.toFixed(2)+'%'],
-P_consumed ? [{ru:'Потребляемая мощность',en:'Power consumption'}[lang], P_consumed.toFixed(2)+' кВт'] : ['',''],
-P_losses ? [{ru:'Потери в системе',en:'System losses'}[lang], P_losses.toFixed(2)+' кВт'] : ['',''],
-].filter(r => r[1] !== '');
-}
-},
-
-{
-tab: 7,
-id: 'cable_voltage_drop',
-title: {ru:'ПОТЕРЯ НАПРЯЖЕНИЯ ΔU В КАБЕЛЕ УЭЦН (ПУЭ)',en:'VOLTAGE DROP ΔU IN ESP CABLE (PUE)'},
-fields: [
-{ id: 'I', label:{ ru: 'Номинальный ток ПЭД I (А)', en: 'ESP motor nominal current I (A)' }, def: '' },
-{ id: 'L', label:{ ru: 'Длина кабеля L (км)', en: 'Cable length L (km)' }, def: '' },
-{ id: 'S', label:{ ru: 'Сечение кабеля S (мм²)', en: 'Cable section S (mm²)' }, def: '16',
-type: 'select', options: [
-{v:'6', l:'6 мм²'},
-{v:'10', l:'10 мм²'},
-{v:'16', l:'16 мм²'},
-{v:'25', l:'25 мм²'},
-{v:'35', l:'35 мм²'},
-{v:'50', l:'50 мм²'},
-{v:'70', l:'70 мм²'},
-{v:'95', l:'95 мм²'},
-{v:'120', l:'120 мм²'},
-{v:'150', l:'150 мм²'},
-{v:'185', l:'185 мм²'},
-{v:'custom', l:'Другое — ввести вручную'},
-]
-},
-{ id: 'S_custom', label:{ ru: 'Сечение вручную (мм²) — если выбрали "Другое"', en: 'Custom section (mm²)' }, def: '' },
-{ id: 'U_trans', label:{ ru: 'Напряжение трансформатора (В)', en: 'Transformer voltage (V)' }, def: '1000' },
-{ id: 'cos_fi', label:{ ru: 'Коэффициент мощности cos φ', en: 'Power factor cos φ' }, def: '0.88' },
-{ id: 'T_cable', label:{ ru: 'Температура кабеля (°C)', en: 'Cable temperature (°C)' }, def: '60' },
-],
-calc(v) {
-const I=+v.I, L=+v.L, cosfi=+v.cos_fi, U=+v.U_trans, T=+v.T_cable;
-const S_sel = v.S === 'custom' ? +v.S_custom : +v.S;
-const S = S_sel || 16;
-if(!I||!L||!S||!U) return null;
-
-const dU_pue = 30 * I * L / S;
-
-const rho_20 = 0.0175;
-const rho_T = rho_20 * (1 + 0.004*(T-20));
-const r = rho_T * 1000 / S;
-const x = 0.08;
-const sinfi = Math.sqrt(1 - cosfi*cosfi);
-const dU_exact = Math.sqrt(3) * I * L * (r*cosfi + x*sinfi);
-
-const dU_pct_pue = dU_pue / U * 100;
-const dU_pct_exact = dU_exact / U * 100;
-const U_motor_pue = U - dU_pue;
-const U_motor_exact = U - dU_exact;
-
-const P_loss = 3 * I * I * r * L / 1000;
-
-const S_rec_pue = Math.ceil(30 * I * L / (U * 0.07));
-const S_rec_ex = Math.ceil(Math.sqrt(3)*I*L*(cosfi) / (U*0.07) * rho_T*1000);
-
-let status;
-if(dU_pct_exact > 10) status = L('КРИТИЧНО: потери >10% — увеличить сечение!','CRITICAL: drop >10% — increase section!');
-else if(dU_pct_exact > 7) status = L('ВНИМАНИЕ: потери 7-10% — рекомендуется проверить','WARNING: drop 7-10% — check needed');
-else status = L('НОРМА: потери в допустимых пределах (<7%)','NORMAL: drop within limits (<7%)');
-
-const std_sections = [6,10,16,25,35,50,70,95,120,150,185];
-const S_std = std_sections.find(s => s >= S_rec_ex) || 185;
-
-return [
-[{ru:'Сечение кабеля',en:'Cable section'}[lang], S+' мм²'],
-[{ru:'Длина кабеля',en:'Cable length'}[lang], L.toFixed(3)+' км = '+(L*1000).toFixed(0)+' м'],
-[{ru:'Уд. сопр. при '+T+'°C',en:'Specific resistance at '+T+'°C'}, r.toFixed(4)+' Ом/км'],
-['', '──── ПОТЕРЯ НАПРЯЖЕНИЯ ────'],
-['ΔU по ПУЭ (30×I×L/S)', dU_pue.toFixed(1)+' В ('+dU_pct_pue.toFixed(2)+'%)'],
-['ΔU точная (с cosφ и indуктивн.)', dU_exact.toFixed(1)+' В ('+dU_pct_exact.toFixed(2)+'%)'],
-[{ru:'НАПРЯЖЕНИЕ НА ПЭД (точное)',en:'MOTOR VOLTAGE (exact)'}[lang], U_motor_exact.toFixed(1)+' В'],
-[{ru:'Потери мощности в кабеле',en:'Cable power losses'}[lang], P_loss.toFixed(3)+' кВт'],
-['', '──── РЕКОМЕНДАЦИЯ ────'],
-[{ru:'Статус',en:'Status'}[lang], status],
-[{ru:'Рекоменд. сечение (ΔU≤7%)',en:'Recommended section (ΔU≤7%)'}[lang], S_std+' мм²'],
-];
-}
-},
-
-{
-tab: 8,
-id: 'langelier',
-title: {ru:'КОРРОЗИЯ — ИНДЕКС ЛАНЖЕЛЬЕ (LSI)',en:'CORROSION — LANGELIER SATURATION INDEX (LSI)'},
-fields: [
-{ id: 'pH', label:{ ru: 'pH воды', en: 'Water pH' }, def: '7.2' },
-{ id: 'Ca', label:{ ru: 'Жёсткость Ca²⁺ (мг/л как CaCO₃)', en: 'Ca²⁺ hardness (mg/L as CaCO₃)' }, def: '200' },
-{ id: 'Alk', label:{ ru: 'Щёлочность (мг/л как CaCO₃)', en: 'Alkalinity (mg/L as CaCO₃)' }, def: '150' },
-{ id: 'TDS', label:{ ru: 'Минерализация TDS (мг/л)', en: 'TDS (mg/L)' }, def: '500' },
-{ id: 'T', label:{ ru: 'Температура воды (°C)', en: 'Water temperature (°C)' }, def: '25' },
-],
-calc(v) {
-const pH=+v.pH, Ca=+v.Ca, Alk=+v.Alk, TDS=+v.TDS, T=+v.T;
-if(!pH||!Ca||!Alk) return null;
-const pCa = -Math.log10(Ca/100000);
-const pAlk = -Math.log10(Alk/100000);
-
-const C = 9.3 + 0.1*(T/10) - 0.05*Math.log10(TDS||1);
-const pHs = pCa + pAlk + C;
-const LSI = pH - pHs;
-let interp, risk;
-if(LSI < -2) { interp=[{ru:'Сильно агрессивная — высокая коррозия',en:'Highly corrosive — high corrosion'}[lang],'Highly aggressive — severe corrosion']; risk='high'; }
-else if(LSI < -0.5) { interp=[{ru:'Умеренно агрессивная — коррозия',en:'Moderately corrosive'}[lang],'Moderately aggressive — corrosion']; risk='med'; }
-else if(LSI < 0.5) { interp=[{ru:'Сбалансированная — норма',en:'Balanced — normal'}[lang],'Balanced — normal']; risk='ok'; }
-else if(LSI < 2) { interp=[{ru:'Слабое осадкообразование CaCO₃',en:'Slight CaCO₃ scaling'}[lang],'Slight CaCO₃ scaling']; risk='med'; }
-else { interp=[{ru:'Сильное осадкообразование — отложения',en:'Heavy scaling — deposits'}[lang],'Strong scaling — deposits']; risk='high'; }
-let rec;
-if(LSI < -0.5) rec=[{ru:'Рекомендуется: ингибитор коррозии',en:'Recommended: corrosion inhibitor'}[lang],'Recommended: corrosion inhibitor'];
-else if(LSI > 0.5) rec=[{ru:'Рекомендуется: ингибитор осадкообразования',en:'Recommended: scale inhibitor'}[lang],'Recommended: scale inhibitor'];
-else rec=[{ru:'Ингибирование не требуется',en:'Inhibition not required'}[lang],'No inhibitor required'];
-return [
-['pHs (расчётный)', pHs.toFixed(2)],
-['pH (фактический)', pH.toFixed(2)],
-[{ru:'Индекс Ланжелье LSI',en:'Langelier Saturation Index LSI'}[lang], LSI.toFixed(3)],
-[{ru:'Характеристика воды',en:'Water characterization'}[lang], interp[lang]],
-[{ru:'Рекомендация',en:'Recommendation'}[lang], rec[lang]],
-];
-}
-},
-
-{
-tab: 8,
-id: 'explosion_radius',
-title: {ru:'ЗОНЫ ВЗРЫВООПАСНОСТИ (НГПА)',en:'EXPLOSION HAZARD ZONES'},
-fields: [
-{ id: 'm_gas', label:{ ru: 'Масса газа в облаке (кг)', en: 'Gas cloud mass (kg)' }, def: '' },
-{ id: 'H_lfl', label:{ ru: 'НКПР газа (% об.)', en: 'LEL (vol%)' }, def: '2.2' },
-{ id: 'H_ufl', label:{ ru: 'ВКПР газа (% об.)', en: 'UEL (vol%)' }, def: '9.5' },
-{ id: 'T_gas', label:{ ru: 'Температура газа (°C)', en: 'Gas temperature (°C)' }, def: '20' },
-],
-calc(v) {
-const m=+v.m_gas, lfl=+v.H_lfl, ufl=+v.H_ufl;
-if(!m||!lfl) return null;
-
-const TNT_eq = m*50000/4520;
-
-const R1 = 1.7*Math.pow(TNT_eq, 1/3);
-const R2 = 3.8*Math.pow(TNT_eq, 1/3);
-const R3 = 7.0*Math.pow(TNT_eq, 1/3);
-const R4 = 14*Math.pow(TNT_eq, 1/3);
-
-return [
-[{ru:'Масса газа',en:'Gas mass'}[lang], m.toFixed(1)+' кг'],
-[{ru:'Тротиловый эквивалент',en:'TNT equivalent'}[lang], TNT_eq.toFixed(1)+' кг'],
-[{ru:'Зона 1 (смертельная)',en:'Zone 1 (lethal)'}[lang], R1.toFixed(1)+' м'],
-[{ru:'Зона 2 (тяжёлые травмы)',en:'Zone 2 (severe injuries)'}[lang], R2.toFixed(1)+' м'],
-[{ru:'Зона 3 (средние травмы)',en:'Zone 3 (moderate injuries)'}[lang], R3.toFixed(1)+' м'],
-[{ru:'Зона 4 (лёгкие травмы)',en:'Zone 4 (minor injuries)'}[lang], R4.toFixed(1)+' м'],
-[{ru:'НКПР / ВКПР',en:'LEL / UEL'}[lang], lfl+'% / '+ufl+'%'],
-];
-}
-},
-
-{
-tab: 8,
-id: 'h2s_safety',
-title: {ru:'БЕЗОПАСНОСТЬ — РАСЧЁТ ЗОНЫ H₂S',en:'SAFETY — H₂S HAZARD ZONE CALC'},
-fields: [
-{ id: 'Q_h2s', label:{ ru: 'Расход выброса H₂S (кг/с)', en: 'H₂S emission rate (kg/s)' }, def: '' },
-{ id: 'U_wind', label:{ ru: 'Скорость ветра (м/с)', en: 'Wind speed (m/s)' }, def: '3' },
-{ id: 'C_h2s', label:{ ru: 'Концентр. H₂S в газе (% мол.)', en: 'H₂S in gas (mol%)' }, def: '' },
-{ id: 'Q_gas', label:{ ru: 'Дебит газа (тыс.м³/сут)', en: 'Gas rate (Mm³/d)' }, def: '' },
-],
-calc(v) {
-const Q_h2s=+v.Q_h2s, U=+v.U_wind, C_h2s=+v.C_h2s, Q_gas=+v.Q_gas;
-if((!Q_h2s && (!C_h2s||!Q_gas))||!U) return null;
-
-let m_h2s = Q_h2s;
-if(!m_h2s && C_h2s && Q_gas) {
-
-const Q_m3s = Q_gas*1000/86400;
-m_h2s = Q_m3s*(C_h2s/100)*34/22.4;
-}
-
-const PDK_work = 0.00001;
-const PDK_danger = 0.0003;
-const PDK_lethal = 0.0009;
-
-const R_work = Math.sqrt(m_h2s/(Math.PI*U*PDK_work));
-const R_danger = Math.sqrt(m_h2s/(Math.PI*U*PDK_danger));
-const R_lethal = Math.sqrt(m_h2s/(Math.PI*U*PDK_lethal));
-return [
-[{ru:'Выброс H₂S',en:'H₂S emission'}[lang], m_h2s.toFixed(4)+' кг/с'],
-[{ru:'Зона ПДК рабочей зоны (10мг/м³)',en:'Workplace MAC zone (10mg/m³)'}[lang], R_work.toFixed(0)+' м'],
-[{ru:'Опасная зона (300 мг/м³)',en:'Hazard zone (300 mg/m³)'}[lang], R_danger.toFixed(0)+' м'],
-[{ru:'Смертельная зона (900 мг/м³)',en:'Lethal zone (900 mg/m³)'}[lang], R_lethal.toFixed(0)+' м'],
-[{ru:'Направление эвакуации',en:'Evacuation direction'}[lang], L('ПРОТИВ направления ветра','UPWIND from source')],
-];
-}
-},
-
-{
-tab: 2,
-id: 'pipe_stress',
-title: {ru:'ПРОЧНОСТЬ ОБСАДНОЙ КОЛОННЫ',en:'CASING STRING STRENGTH'},
-fields: [
-{ id: 'D_out', label:{ ru: 'Внешн. диаметр (мм)', en: 'Outer diameter (mm)' }, def: '168.3' },
-{ id: 'D_in', label:{ ru: 'Внутр. диаметр (мм)', en: 'Inner diameter (mm)' }, def: '152' },
-{ id: 'sigma_t', label:{ ru: 'Предел текучести стали (МПа)', en: 'Steel yield strength (MPa)' }, def: '550' },
-{ id: 'H', label:{ ru: 'Глубина спуска колонны (м)', en: 'Casing depth (m)' }, def: '' },
-{ id: 'rho_fl', label:{ ru: 'Плотность флюида (кг/м³)', en: 'Fluid density (kg/m³)' }, def: '1200' },
-],
-calc(v) {
-const Do=+v.D_out/1000, Di=+v.D_in/1000, sig=+v.sigma_t;
-const H=+v.H, rho=+v.rho_fl;
-if(!Do||!Di||!sig) return null;
-const t = (Do-Di)/2;
-const t_mm = t*1000;
-
-const D_t = Do/t;
-let P_collapse;
-if(D_t <= 15) P_collapse = 2*sig*t/(Do)*0.875/1e6*10.197;
-else P_collapse = (0.052*sig/(D_t-0.875)/1e6)*10197;
-
-const P_burst = 2*sig*t/(Do)*0.875/1e6*10.197;
-
-const F_metal = Math.PI/4*(Do*Do - Di*Di);
-const N_yield = F_metal*sig*1e6/1000;
-
-const G_col = H ? F_metal*H*7850*9.81/1000 : null;
-
-const P_hydro = H && rho ? rho*9.81*H/101325 : null;
-const res = [
-[{ru:'Толщина стенки',en:'Wall thickness'}[lang], t_mm.toFixed(1)+' мм'],
-[{ru:'Давление смятия (collapse)',en:'Collapse pressure'}[lang], Math.abs(P_collapse).toFixed(0)+' атм'],
-[{ru:'Давление разрыва (burst)',en:'Burst pressure'}[lang], P_burst.toFixed(0)+' атм'],
-[{ru:'Растягивающая нагрузка (предел)',en:'Tensile limit load'}[lang], N_yield.toFixed(0)+' кН'],
-];
-if(G_col) res.push([{ru:'Вес колонны',en:'String weight'}[lang], (G_col/1000).toFixed(2)+' т']);
-if(P_hydro) res.push([{ru:'Гидростатика на башмаке',en:'Hydrostatic at shoe'}[lang], P_hydro.toFixed(1)+' атм']);
-return res;
-}
-},
-
-{
-tab: 12,
-id: 'mto_materials',
-title: {ru:'МТО — РАСЧЁТ МАТЕРИАЛОВ И РЕАГЕНТОВ',en:'MTO — MATERIALS & CHEMICALS CALC'},
-fields: [
-{ id: 'Q_liq', label:{ ru: 'Дебит жидкости (м³/сут)', en: 'Liquid rate (m³/d)' }, def: '' },
-{ id: 'wc', label:{ ru: 'Обводнённость (%)', en: 'Watercut (%)' }, def: '' },
-{ id: 'norm_dem', label:{ ru: 'Норма деэмульгатора (г/т)', en: 'Demulsifier dose (g/t)' }, def: '50' },
-{ id: 'norm_inh', label:{ ru: 'Норма ингибитора корр. (г/м³)', en: 'Corrosion inhibitor dose (g/m³)' }, def: '25' },
-{ id: 'norm_scl', label:{ ru: 'Норма ингиб. солеотложений (г/м³)', en: 'Scale inhibitor dose (g/m³)' }, def: '15' },
-{ id: 'rho_oil', label:{ ru: 'Плотность нефти (кг/м³)', en: 'Oil density (kg/m³)' }, def: '870' },
-],
-calc(v) {
-const Ql=+v.Q_liq, wc=+v.wc, dem=+v.norm_dem, inh=+v.norm_inh, scl=+v.norm_scl, rho=+v.rho_oil;
-if(!Ql||wc<0||wc>100) return null;
-const Qoil_m3 = Ql*(1-wc/100);
-const Qwater = Ql*(wc/100);
-const t_oil = Qoil_m3*rho/1000;
-
-const dem_day = t_oil*dem/1000/1000;
-const dem_kg = t_oil*dem/1000;
-const inh_kg = Ql*inh/1000/1000*1000;
-const scl_kg = Ql*scl/1000;
-return [
-[{ru:'Дебит нефти',en:'Oil rate'}[lang], Qoil_m3.toFixed(2)+' м³/сут / '+t_oil.toFixed(2)+' т/сут'],
-[{ru:'Дебит воды',en:'Water rate'}[lang], Qwater.toFixed(2)+' м³/сут'],
-['', '── Реагенты в сутки ──'],
-[{ru:'Деэмульгатор',en:'Demulsifier'}[lang], dem_kg.toFixed(3)+' кг/сут'],
-[{ru:'Деэмульгатор в месяц',en:'Demulsifier/month'}[lang], (dem_kg*30).toFixed(1)+' кг/мес'],
-[{ru:'Ингибитор коррозии',en:'Corrosion inhibitor'}[lang], inh_kg.toFixed(3)+' кг/сут'],
-[{ru:'Ингибитор солеотлож.',en:'Scale inhibitor'}[lang], scl_kg.toFixed(3)+' кг/сут'],
-[{ru:'Общий расход реагентов',en:'Total chemical consumption'}[lang], (dem_kg+inh_kg+scl_kg).toFixed(3)+' кг/сут'],
-[{ru:'Общий расход в месяц',en:'Total monthly consumption'}[lang], ((dem_kg+inh_kg+scl_kg)*30).toFixed(1)+' кг/мес'],
-];
-}
-},
-
-{
-tab: 8,
-id: 'ngpa_zones',
-title: {ru:'ЗОНЫ ВЗРЫВООПАСНОСТИ ПО ПУЭ / НГПА (КЛАССИФИКАЦИЯ)',en:'EXPLOSION HAZARD ZONES — PUE / NGPA CLASSIFICATION'},
-fields: [
-{ id: 'obj_type', label:{ ru: 'Тип объекта: 1=скважина, 2=сепаратор, 3=резервуар, 4=насосная, 5=ГЗУ', en: 'Object: 1=well, 2=sep, 3=tank, 4=pump stn, 5=MMS' }, def: '1' },
-{ id: 'Q_gas', label:{ ru: 'Дебит газа (тыс.м³/сут)', en: 'Gas rate (Mm³/d)' }, def: '' },
-{ id: 'P_work', label:{ ru: 'Рабочее давление (атм)', en: 'Working pressure (atm)' }, def: '' },
-{ id: 'D_pipe', label:{ ru: 'Диаметр трубопровода/штуцера (мм)', en: 'Pipeline/choke diameter (mm)' }, def: '73' },
-{ id: 'rho_gas', label:{ ru: 'Плотность газа (кг/м³ при н.у.)', en: 'Gas density (kg/m³ at STP)' }, def: '0.73' },
-{ id: 'NKPR', label:{ ru: 'НКПР газа (% об.) — метан=2.2, пропан=1.7', en: 'LEL (vol%) — methane=2.2, propane=1.7' }, def: '2.2' },
-],
-calc(v) {
-const obj=+v.obj_type, Qg=+v.Q_gas*1000/86400, P=+v.P_work;
-const D=+v.D_pipe/1000, rho=+v.rho_gas, lfl=+v.NKPR/100;
-if(!obj||!P||!D||!rho||!lfl) return null;
-
-const objects = {
-1: [{ru:'Устье скважины',en:'Wellhead'}[lang],'Wellhead'],
-2: [{ru:'Нефтегазовый сепаратор',en:'Oil-gas separator'}[lang],'Oil-gas separator'],
-3: [{ru:'Резервуар нефти/конденсата',en:'Oil/condensate tank'}[lang],'Oil/condensate tank'],
-4: [{ru:'Насосная станция',en:'Pump station'}[lang],'Pump station'],
-5: [{ru:'Групповая замерная установка (ГЗУ)',en:'Group measurement unit (GMU)'}[lang],'Multi-phase flow meter (MPFM)'],
-};
-
-const zone_data = {
-1: { z1: 3, z2: 10, z0: 'Внутри обсадной/НКТ' },
-2: { z1: 1.5,z2: 5, z0: 'Внутри корпуса сепаратора' },
-3: { z1: 3, z2: 15, z0: 'Внутри резервуара (газовая шапка)' },
-4: { z1: 3, z2: 5, z0: 'Внутри корпусов насосов' },
-5: { z1: 3, z2: 5, z0: 'Внутри корпуса ГЗУ' },
-};
-
-const zd = zone_data[obj] || zone_data[1];
-const obj_name = objects[obj] || objects[1];
-
-let R_conc = null;
-if(Qg && D) {
-
-const A_pipe = Math.PI/4*D*D;
-const V_gas_pipe = Qg/A_pipe;
-
-const m_sec = Qg*rho;
-
-R_conc = Math.pow(m_sec*6/(Math.PI*rho*lfl), 1/3);
-}
-
-const dist_transf = zd.z2 + 10;
-const dist_zktp = zd.z2 + 15;
-const dist_zcu = zd.z2 + 5;
-
-const res = [
-[{ru:'Объект',en:'Object'}[lang], obj_name[lang]],
-['', '──── КЛАССИФИКАЦИЯ ЗОН ────'],
-[{ru:'ЗОНА 0 (В-Iа) — постоянная',en:'ZONE 0 (Cl.I) — continuous'}[lang], {ru:zd.z0,en:zd.z0}[lang]],
-[{ru:'ЗОНА 1 (В-I) — нормал. работа',en:'ZONE 1 (Cl.I) — normal operation'}[lang], '± '+zd.z1+' м от источника'],
-[{ru:'ЗОНА 2 (В-Iа) — при аварии',en:'ZONE 2 (Cl.I) — emergency'}[lang], '± '+zd.z2+' м от источника'],
-['', '──── РАЗМЕЩЕНИЕ ОБОРУДОВАНИЯ ────'],
-[{ru:'Трансформатор — не ближе',en:'Transformer — min distance'}[lang], dist_transf+' м'],
-[{ru:'БКТП / ЗТП — не ближе',en:'BKTP / Substation — min distance'}[lang], dist_zktp+' м'],
-[{ru:'Щит управления ЩУ — не ближе',en:'Control panel — min distance'}[lang], dist_zcu+' м'],
-[{ru:'Жилые здания — не ближе',en:'Residential buildings — min distance'}[lang], (zd.z2+50)+' м'],
-['', '──── МАРК-КА ВЗРЫВОЗАЩИТЫ ────'],
-[{ru:'Зона 1: оборудование Ex',en:'Zone 1: Ex equipment'}[lang], 'ExdIIBT4 / ExeIIBT3'],
-[{ru:'Зона 2: оборудование Ex',en:'Zone 2: Ex equipment'}[lang], 'ExnIIBT3 / ExeIIBT4'],
-];
-
-if(R_conc) {
-res.splice(5, 0, [{ru:'Расчётный радиус НКПР (авар.)',en:'LEL radius (emergency)'}[lang], R_conc.toFixed(1)+' м']);
-}
-
-return res.filter(r => r[1] !== '');
-}
-},
-
-{
-tab: 8,
-id: 'ngpa_zones2',
-title: {ru:'ЗОНЫ НКПР — РАСЧЁТ РАДИУСА ПО ГОСТ Р 51330',en:'LFL ZONE RADIUS — GOST R 51330 CALC'},
-fields: [
-{ id: 'Q_av', label:{ ru: 'Аварийный расход газа (кг/с)', en: 'Emergency gas flow (kg/s)' }, def: '' },
-{ id: 't_av', label:{ ru: 'Время аварийного выброса (с)', en: 'Emergency release time (s)' }, def: '300' },
-{ id: 'rho_gas', label:{ ru: 'Плотность газа (кг/м³)', en: 'Gas density (kg/m³)' }, def: '0.73' },
-{ id: 'NKPR', label:{ ru: 'НКПР (% об.)', en: 'LEL (vol%)' }, def: '2.2' },
-{ id: 'U_wind', label:{ ru: 'Скорость ветра (м/с)', en: 'Wind speed (m/s)' }, def: '1' },
-{ id: 'form', label:{ ru: 'Форма: 1=шар (закрыт.), 2=полушар (открыт.)', en: 'Shape: 1=sphere, 2=hemisphere' }, def: '2' },
-],
-calc(v) {
-const Qav=+v.Q_av, t=+v.t_av, rho=+v.rho_gas;
-const lfl=+v.NKPR/100, Uw=+v.U_wind, form=+v.form;
-if(!Qav||!t||!rho||!lfl) return null;
-
-const m_av = Qav*t;
-
-const K_form = form===1 ? 1.0 : 0.794;
-
-const V_nkpr = m_av/(rho*lfl);
-const R_nkpr = K_form*Math.pow(3*V_nkpr/(4*Math.PI), 1/3);
-
-const R_wind = R_nkpr + Uw*t*0.1;
-
-const R_z0 = R_nkpr*0.5;
-const R_z1 = R_nkpr;
-const R_z2 = R_nkpr*1.5;
-
-const Q_comb = 46000;
-const TNT = m_av*Q_comb/4520;
-const R_detonate = 1.7*Math.pow(TNT, 1/3);
-const R_shock = 7.0*Math.pow(TNT, 1/3);
-
-return [
-[{ru:'Масса аварийного выброса',en:'Emergency release mass'}[lang], m_av.toFixed(1)+' кг'],
-[{ru:'Объём облака при НКПР',en:'Cloud volume at LEL'}[lang], (V_nkpr).toFixed(1)+' м³'],
-['', '──── РАДИУСЫ ЗОН ────'],
-['R зона 0 (ядро облака)', R_z0.toFixed(1)+' м'],
-['R зона 1 — НКПР граница', R_nkpr.toFixed(1)+' м'],
-['R зона 2 — с запасом x1.5', R_z2.toFixed(1)+' м'],
-['R с учётом ветра', R_wind.toFixed(1)+' м'],
-['', '──── ВЗРЫВ (тротил. экв.) ────'],
-[{ru:'Тротиловый эквивалент',en:'TNT equivalent'}[lang], TNT.toFixed(1)+' кг тнт'],
-[{ru:'Зона детонации (смертельная)',en:'Detonation zone (lethal)'}[lang], R_detonate.toFixed(1)+' м'],
-[{ru:'Зона ударной волны (травмы)',en:'Blast wave zone (injuries)'}[lang], R_shock.toFixed(1)+' м'],
-['', '──── ТРЕБОВАНИЯ ────'],
-[{ru:'Эвакуация персонала — не менее',en:'Personnel evacuation — min'}[lang], (R_z2*2).toFixed(0)+' м'],
-[{ru:'Оцепление территории',en:'Area cordoning'}[lang], (R_shock).toFixed(0)+' м'],
-];
-}
-},
-
-{
-tab: 11,
-id: 'pressure_conv',
-title: {ru:'КОНВЕРТАЦИЯ ДАВЛЕНИЯ',en:'PRESSURE CONVERSION'},
-fields: [
-{ id: 'val', label:{ ru: 'Значение', en: 'Value' }, def: '' },
-{ id: 'unit', label:{ ru: 'Из единицы', en: 'From unit' }, def: '', type: 'select', opts: [{ru:'МПа / MPa',en:'MPa'}[lang],'бар / bar','атм / atm','psi','кПа / kPa'] },
-],
-calc(v) {
-const val=+v.val, unit=v.unit;
-if(!val) return null;
-let Pa;
-if(unit.startsWith('МПа')) Pa=val*1e6;
-else if(unit.startsWith('бар')) Pa=val*1e5;
-else if(unit.startsWith('атм')) Pa=val*101325;
-else if(unit.startsWith('psi')) Pa=val*6894.76;
-else Pa=val*1000;
-return [
-[{ru:'МПа',en:'MPa'}[lang], (Pa/1e6).toFixed(6)],
-[{ru:'бар',en:'bar'}[lang], (Pa/1e5).toFixed(6)],
-[{ru:'атм',en:'atm'}[lang], (Pa/101325).toFixed(6)],
-['psi', (Pa/6894.76).toFixed(4)],
-[{ru:'кПа',en:'kPa'}[lang], (Pa/1000).toFixed(4)],
-];
-}
-},
-
-{
-tab: 11,
-id: 'volume_conv',
-title: {ru:'КОНВЕРТАЦИЯ ОБЪЁМА',en:'VOLUME CONVERSION'},
-fields: [
-{ id: 'val', label:{ ru: 'Значение', en: 'Value' }, def: '' },
-{ id: 'unit', label:{ ru: 'Из единицы', en: 'From unit' }, def: '', type: 'select', opts: [{ru:'м³',en:'m³'}[lang],'литр / L','барр / bbl','галлон США / gal'] },
-],
-calc(v) {
-const val=+v.val, unit=v.unit;
-if(!val) return null;
-let m3;
-if(unit.startsWith('м³')) m3=val;
-else if(unit.startsWith('литр')) m3=val/1000;
-else if(unit.startsWith('барр')) m3=val*0.158987;
-else m3=val*0.003785;
-return [
-[{ru:'м³',en:'m³'}[lang], m3.toFixed(6)],
-[{ru:'литров',en:'litres'}[lang], (m3*1000).toFixed(4)],
-[{ru:'баррелей',en:'barrels'}[lang], (m3/0.158987).toFixed(4)],
-[{ru:'галлонов США',en:'US gallons'}[lang], (m3/0.003785).toFixed(3)],
-];
-}
-},
-
-{
-tab: 11,
-id: 'flow_conv',
-title: {ru:'КОНВЕРТАЦИЯ РАСХОДА',en:'FLOW RATE CONVERSION'},
-fields: [
-{ id: 'val', label:{ ru: 'Значение', en: 'Value' }, def: '' },
-{ id: 'unit', label:{ ru: 'Из единицы', en: 'From unit' }, def: '', type: 'select', opts: [{ru:'м³/сут',en:'m³/d'}[lang],'барр/сут (bbl/d)','м³/ч','л/мин','л/с'] },
-],
-calc(v) {
-const val=+v.val, unit=v.unit;
-if(!val) return null;
-let m3d;
-if(unit.startsWith('м³/сут')) m3d=val;
-else if(unit.startsWith('барр')) m3d=val*0.158987;
-else if(unit.startsWith('м³/ч')) m3d=val*24;
-else if(unit.startsWith('л/мин')) m3d=val*1440/1000;
-else m3d=val*86.4;
-return [
-[{ru:'м³/сут',en:'m³/d'}[lang], m3d.toFixed(4)],
-[{ru:'барр/сут',en:'bbl/d'}[lang], (m3d/0.158987).toFixed(4)],
-[{ru:'м³/ч',en:'m³/h'}[lang], (m3d/24).toFixed(5)],
-[{ru:'л/мин',en:'L/min'}[lang], (m3d*1000/1440).toFixed(4)],
-[{ru:'л/с',en:'L/s'}[lang], (m3d*1000/86400).toFixed(5)],
-];
-}
-},
-
-{
-tab: 11,
-id: 'density_conv',
-title: {ru:'КОНВЕРТАЦИЯ ПЛОТНОСТИ / API',en:'DENSITY / API CONVERSION'},
-fields: [
-{ id: 'val', label:{ ru: 'Значение', en: 'Value' }, def: '' },
-{ id: 'unit', label:{ ru: 'Из единицы', en: 'From unit' }, def: '', type: 'select', opts: [{ru:'кг/м³ (15°C)',en:'kg/m³ (15°C)'}[lang],'°API','г/см³','отн. плотн. (вода=1)'] },
-],
-calc(v) {
-const val=+v.val, unit=v.unit;
-if(!val) return null;
-let kgm3;
-if(unit.startsWith('кг')) kgm3=val;
-else if(unit.startsWith('°API')) kgm3=141500/(val+131.5);
-else if(unit.startsWith('г')) kgm3=val*1000;
-else kgm3=val*999.1;
-const SG=kgm3/999.1;
-const API=141.5/SG-131.5;
-return [
-[{ru:'кг/м³',en:'kg/m³'}[lang], kgm3.toFixed(2)],
-[{ru:'г/см³',en:'g/cm³'}[lang], (kgm3/1000).toFixed(4)],
-[{ru:'Отн. плотность',en:'Relative density'}[lang], SG.toFixed(4)],
-['°API', API.toFixed(2)],
-[{ru:'Тип нефти',en:'Oil type'}[lang], API>45?L('Лёгкая','Light'):API>31?L('Средняя','Medium'):API>22?L('Тяжёлая','Heavy'):L('Сверхтяжёлая','Extra-heavy')],
-];
-}
-},
-
-{
-tab: 10,
-id: 'z_factor',
-title: {ru:'Z-ФАКТОР ГАЗА (ПРИБЛИЖ.)',en:'GAS Z-FACTOR (APPROX.)'},
-fields: [
-{ id: 'P', label:{ ru: 'Давление P (МПа)', en: 'Pressure P (MPa)' }, def: '' },
-{ id: 'T', label:{ ru: 'Температура T (°C)', en: 'Temperature T (°C)' }, def: '' },
-{ id: 'Pc', label:{ ru: 'Псевдокрит. давл. Pc (МПа)', en: 'Pseudo-critical pressure Pc (MPa)' }, def: '4.6' },
-{ id: 'Tc', label:{ ru: 'Псевдокрит. темп. Tc (°C)', en: 'Pseudo-critical temp Tc (°C)' }, def: '-80' },
-],
-calc(v) {
-const P=+v.P, T=+v.T+273.15, Pc=+v.Pc, Tc=+v.Tc+273.15;
-if(!P||!T||!Pc||!Tc) return null;
-const Ppr=P/Pc, Tpr=T/Tc;
-
-const A=-0.06125*Ppr/Tpr*Math.exp(-1.2*Math.pow(1-1/Tpr,2));
-
-const Z = 1 - (0.06125*Ppr/Tpr)*Math.exp(-1.2*Math.pow(1-1/Tpr,2)) * 0.9;
-const rho_sc=0.7173*P*1000/(Z*(T))*0.001;
-return [
-['Z-фактор (прибл.)', Math.max(0.1,Z).toFixed(4)],
-['Ppr (приведённое)', Ppr.toFixed(4)],
-['Tpr (приведённое)', Tpr.toFixed(4)],
-];
-}
-},
-
-{
-tab: 10,
-id: 'gas_density',
-title: {ru:'ПЛОТНОСТЬ ГАЗА',en:'GAS DENSITY'},
-fields: [
-{ id: 'P', label:{ ru: 'Давление P (МПа абс)', en: 'Pressure P (MPa abs)' }, def: '5' },
-{ id: 'T', label:{ ru: 'Температура T (°C)', en: 'Temperature T (°C)' }, def: '20' },
-{ id: 'M', label:{ ru: 'Мол. масса M (г/моль)', en: 'Molecular weight M (g/mol)' }, def: '18' },
-{ id: 'Z', label:'Z-фактор', def: '0.9' },
-],
-calc(v) {
-const P=+v.P*1e6, T=+v.T+273.15, M=+v.M/1000, Z=+v.Z;
-if(!P||!T||!M||!Z) return null;
-const R=8.314, rho=P*M/(Z*R*T);
-return [
-[{ru:'Плотность газа',en:'Gas density'}[lang], rho.toFixed(4)+' кг/м³'],
-[{ru:'Отн. плотность (воздух=1)',en:'Relative density (air=1)'}[lang], (rho/1.2).toFixed(4)],
-[{ru:'Молярный объём',en:'Molar volume'}[lang], (Z*R*T/P*1000).toFixed(2)+' л/моль'],
-];
-}
-},
-
-{
-tab: 10,
-id: 'oil_fvf',
-title: {ru:'ОБЪЁМНЫЙ КОЭФФ. НЕФТИ Bo',en:'OIL FORMATION VOLUME FACTOR Bo'},
-fields: [
-{ id: 'Rs', label:{ ru: 'Газосодержание Rs (м³/м³)', en: 'Solution GOR Rs (m³/m³)' }, def: '50' },
-{ id: 'T', label:{ ru: 'Пластовая темп. T (°C)', en: 'Reservoir temp T (°C)' }, def: '80' },
-{ id: 'SG_g', label:{ ru: 'Отн. плотн. газа (воздух=1)', en: 'Gas relative density (air=1)' }, def: '0.65' },
-{ id: 'API', label:'°API нефти', def: '35' },
-],
-calc(v) {
-const Rs=+v.Rs, T=(+v.T*9/5)+32, sg=+v.SG_g, API=+v.API;
-if(!Rs||!T||!sg||!API) return null;
-const F=Rs*Math.pow(sg/((141.5/(API+131.5))),0.5)+(1.25*T);
-const Bo=0.972+1.47e-4*Math.pow(F,1.175);
-return [
-['Bo (объёмный коэфф.)', Bo.toFixed(4)+' рез.м³/ст.м³'],
-[{ru:'Расширение нефти',en:'Oil expansion'}[lang], ((Bo-1)*100).toFixed(2)+'%'],
-['F (параметр Стэндинга)', F.toFixed(2)],
-];
-}
-},
-
-{
-tab: 7,
-id: 'transformer_select',
-title: {ru:'ПОДБОР ТРАНСФОРМАТОРА',en:'TRANSFORMER SELECTION'},
-fields: [
-{ id: 'P_load', label:{ ru: 'Нагрузка P (кВт)', en: 'Load P (kW)' }, def: '' },
-{ id: 'cosf', label:'cosφ', def: '0.85' },
-{ id: 'U_vn', label:{ ru: 'Напряжение ВН (кВ)', en: 'HV voltage (kV)' }, def: '6',
-type:'select', options:[{v:'6',l:'6 кВ'},{v:'10',l:'10 кВ'},{v:'35',l:'35 кВ'}]},
-{ id: 'U_nn', label:{ ru: 'Напряжение НН (В)', en: 'LV voltage (V)' }, def: '1000',
-type:'select', options:[{v:'380',l:'380 В'},{v:'660',l:'660 В'},{v:'1000',l:'1000 В'},{v:'6000',l:'6000 В'}]},
-{ id: 'k_zap', label:{ ru: 'Коэфф. загрузки (0.70-0.85)', en: 'Load factor (0.70-0.85)' }, def: '0.75' },
-{ id: 'Uk', label:{ ru: 'Напряжение КЗ Uк (%)', en: 'Short-circuit voltage Uk (%)' }, def: '5.5' },
-],
-calc(v) {
-const P=+v.P_load, cosf=+v.cosf, Uvn=+v.U_vn*1000, Unn=+v.U_nn;
-const kz=+v.k_zap, Uk=+v.Uk/100;
-if(!P||!cosf||!Uvn||!Unn||!kz) return null;
-const Q=P*Math.sqrt(1-cosf*cosf)/cosf;
-const S_load=Math.sqrt(P*P+Q*Q);
-const S_need=S_load/kz;
-const std=[25,40,63,100,160,250,400,630,1000,1600,2500,4000,6300];
-const S_std=std.find(s=>s>=S_need)||6300;
-const I_nn=S_std*1000/(Math.sqrt(3)*Unn);
-const I_vn=S_std*1000/(Math.sqrt(3)*Uvn);
-const I_kz=I_nn/Uk;
-const eta=P/(P+S_std*0.003+S_std*Uk*kz*kz)*100;
-return [
-[{ru:'Полная нагрузка S',en:'Apparent load S'}[lang], S_load.toFixed(1)+' кВА'],
-[{ru:'Требуемая мощность',en:'Required power'}[lang], S_need.toFixed(1)+' кВА'],
-[{ru:'ВЫБРАННЫЙ ТРАНСФОРМАТОР',en:'SELECTED TRANSFORMER'}[lang], 'ТМ-'+S_std+'/'+Math.round(Uvn/1000)],
-[{ru:'Ток НН ('+Unn+' В)',en:'LV current'}, I_nn.toFixed(1)+' А'],
-[{ru:'Ток ВН ('+Math.round(Uvn/1000)+' кВ)',en:'HV current'}, I_vn.toFixed(2)+' А'],
-[{ru:'Ток КЗ на шинах НН',en:'Short-circuit current LV bus'}[lang], I_kz.toFixed(0)+' А'],
-[{ru:'КПД при загрузке '+Math.round(kz*100)+'%',en:'Efficiency at '+Math.round(kz*100)+'%'}, eta.toFixed(2)+'%'],
-[{ru:'Потери х.х.',en:'No-load losses'}[lang], (S_std*0.003).toFixed(2)+' кВт'],
-];
-}
-},
-
-{
-tab: 7,
-id: 'grounding_calc',
-title: {ru:'ЗАЗЕМЛЕНИЕ — ЧИСЛО ЭЛЕКТРОДОВ',en:'GROUNDING — ELECTRODE COUNT'},
-fields: [
-{ id: 'rho_soil', label:{ ru: 'Удельное сопр. грунта ρ (Ом·м)', en: 'Soil resistivity ρ (Ohm·m)' }, def: '100',
-type:'select', options:[
-{v:'5',l:'Морская вода — 5'},{v:'30',l:'Влажная глина — 30'},{v:'50',l:'Суглинок — 50'},
-{v:'100',l:'Супесь — 100'},{v:'200',l:'Влажный песок — 200'},{v:'500',l:'Сухой песок — 500'},
-{v:'1000',l:'Скальный грунт — 1000'},{v:'custom',l:'Другой (вручную)'},
-]},
-{ id: 'rho_custom', label:'ρ вручную (Ом·м)', def: '' },
-{ id: 'L_el', label:{ ru: 'Длина электрода L (м)', en: 'Electrode length L (m)' }, def: '3' },
-{ id: 'd_el', label:{ ru: 'Диаметр электрода d (мм)', en: 'Electrode diameter d (mm)' }, def: '16' },
-{ id: 'obj_type', label:{ ru: 'Тип объекта', en: 'Object type' }, def: '4',
-type:'select', options:[
-{v:'4',l:'Подстанция/БКТП — норма 4 Ом'},{v:'4b',l:'Скважина/УЭЦН — норма 4 Ом'},
-{v:'10',l:'ВЛ 6-10 кВ — норма 10 Ом'},{v:'10b',l:'Молниеотвод — норма 10 Ом'},
-]},
-],
-calc(v) {
-const rho=v.rho_soil==='custom'?+v.rho_custom:+v.rho_soil;
-const L=+v.L_el, d=+v.d_el/1000, Rn=parseFloat(v.obj_type)||4;
-if(!rho||!L||!d) return null;
-const R1=rho/(2*Math.PI*L)*(Math.log(2*L/d)-1);
-const n=Math.ceil(R1/(Rn*0.6));
-const Rt=R1/(n*0.6);
-const ok=Rt<=Rn;
-return [
-[{ru:'Сопр. одного электрода R1',en:'Single electrode resistance R1'}[lang], R1.toFixed(2)+' Ом'],
-[{ru:'Норматив (ПУЭ)',en:'Standard (PUE)'}[lang], Rn+' Ом'],
-[{ru:'КОЛИЧЕСТВО ЭЛЕКТРОДОВ',en:'NUMBER OF ELECTRODES'}[lang], n+' шт'],
-[{ru:'Длина соединит. полосы',en:'Connecting strip length'}[lang], ((n>1?(n-1)*1.5*L:0)).toFixed(1)+' м'],
-[{ru:'Расчётное сопр. контура',en:'Calculated loop resistance'}[lang], Rt.toFixed(2)+' Ом'],
-[{ru:'Статус',en:'Status'}[lang], ok?L('НОРМА','COMPLIANT'):L('НЕ СООТВЕТСТВУЕТ','NON-COMPLIANT')],
-];
-}
-},
-
-{
-tab: 7,
-id: 'lightning_prot',
-title: {ru:'МОЛНИЕЗАЩИТА — ВЫСОТА МОЛНИЕОТВОДА',en:'LIGHTNING ROD HEIGHT'},
-fields: [
-{ id: 'hx', label:{ ru: 'Высота объекта hx (м)', en: 'Object height hx (m)' }, def: '' },
-{ id: 'L_obj', label:{ ru: 'Длина объекта L (м)', en: 'Object length L (m)' }, def: '' },
-{ id: 'W_obj', label:{ ru: 'Ширина объекта W (м)', en: 'Object width W (m)' }, def: '' },
-{ id: 'zone', label:{ ru: 'Зона защиты', en: 'Protection zone' }, def: 'A',
-type:'select', options:[
-{v:'A',l:'Зона А — 99.5% (взрывоопасные)'},
-{v:'B',l:'Зона Б — 95% (обычные)'},
-]},
-{ id: 'n_rods', label:{ ru: 'Кол-во молниеотводов', en: 'Number of lightning rods' }, def: '1',
-type:'select', options:[{v:'1',l:'1'},{v:'2',l:'2'},{v:'4',l:'4'}]},
-],
-calc(v) {
-const hx=+v.hx, L=+v.L_obj||0, W=+v.W_obj||0;
-const zone=v.zone||'A', n=+v.n_rods||1;
-if(!hx) return null;
-const hd=L&&W?Math.sqrt(L*L+W*W)/2:Math.max(L,W)||10;
-let hr=null;
-for(let h=Math.ceil(hx)+1;h<=200;h++){
-const rx=zone==='A'?(1.1-0.002*h)*(h-hx/0.85):1.5*(h-hx/0.92);
-if(rx*Math.sqrt(n)>=hd){hr=h;break;}
-}
-if(!hr) hr=200;
-const h=hr;
-const h0=zone==='A'?0.85*h:0.92*h;
-const r0=zone==='A'?1.2*h:1.5*h;
-const rx=zone==='A'?(1.1-0.002*h)*(h-hx/0.85):1.5*(h-hx/0.92);
-const ok=rx*Math.sqrt(n)>=hd;
-return [
-[{ru:'Зона / надёжность',en:'Zone / reliability'}[lang], 'Зона '+zone+' ('+(zone==='A'?'99.5%':'95%')+')'],
-[{ru:'ВЫСОТА МОЛНИЕОТВОДА',en:'LIGHTNING ROD HEIGHT'}[lang], hr+' м'],
-['h0 — вершина конуса', h0.toFixed(1)+' м'],
-['r0 — радиус у земли', r0.toFixed(1)+' м'],
-['rx на высоте hx', rx.toFixed(1)+' м'],
-[{ru:'Полукатет объекта (диаг/2)',en:'Object half-diagonal'}[lang], hd.toFixed(1)+' м'],
-[{ru:'Объект защищён',en:'Object protected'}[lang], ok?L('ДА','YES'):L('НЕТ — увелич. h или n','NO — increase h or n')],
-];
-}
-},
-
-{
-tab: 7,
-id: 'breaker_select',
-title: {ru:'ВЫБОР АВТОМАТА И ПРЕДОХРАНИТЕЛЯ',en:'CIRCUIT BREAKER & FUSE SELECTION'},
-fields: [
-{ id: 'P_kw', label:{ ru: 'Мощность двигателя P (кВт)', en: 'Motor power P (kW)' }, def: '' },
-{ id: 'U_v', label:{ ru: 'Напряжение (В)', en: 'Voltage (V)' }, def: '380',
-type:'select', options:[{v:'220',l:'220 В'},{v:'380',l:'380 В'},{v:'660',l:'660 В'},{v:'1000',l:'1000 В'},{v:'6000',l:'6000 В'}]},
-{ id: 'cosf', label:'cosφ', def: '0.85' },
-{ id: 'eta', label:{ ru: 'КПД η (%)', en: 'Efficiency η (%)' }, def: '92' },
-{ id: 'kp', label:{ ru: 'Кратность пускового тока', en: 'Starting current ratio' }, def: '6' },
-{ id: 'stype',label:{ ru: 'Способ пуска', en: 'Starting method' }, def: 'direct',
-type:'select', options:[
-{v:'direct',l:'Прямой пуск'},{v:'star_tri',l:'Звезда-треугольник (Iпуск/3)'},
-{v:'soft',l:'Плавный пуск УПП (Iпуск/2)'},{v:'vfd',l:'ЧРП (Iпуск=1.5xIном)'},
-]},
-],
-calc(v) {
-const P=+v.P_kw, U=+v.U_v, cosf=+v.cosf, eta=+v.eta/100, kp=+v.kp;
-if(!P||!U||!cosf||!eta) return null;
-const sq3=+U>=380?Math.sqrt(3):1;
-const In=P*1000/(sq3*U*cosf*eta);
-let Ip=In*kp;
-if(v.stype==='star_tri') Ip/=3;
-else if(v.stype==='soft') Ip/=2;
-else if(v.stype==='vfd') Ip=In*1.5;
-const sa=[6,10,16,20,25,32,40,50,63,80,100,125,160,200,250,315,400,500,630];
-const Ia=sa.find(i=>i>=In*1.25)||630;
-const Iprd=sa.find(i=>i>=Ip/2.5)||630;
-const cm=[[19,'2.5'],[27,'4'],[36,'6'],[60,'10'],[79,'16'],[101,'25'],[122,'35'],[148,'50'],[184,'70'],[220,'95'],[255,'120']];
-const cab=(cm.find(([i])=>In<=i)||[0,'185+'])[1];
-const sn={direct:'Прямой',star_tri:'Звезда-треугольник',soft:'Плавный пуск',vfd:'ЧРП'};
-return [
-[{ru:'Способ пуска',en:'Starting method'}[lang], sn[v.stype]||'Прямой'],
-[{ru:'Номинальный ток Iном',en:'Nominal current Inom'}[lang], In.toFixed(1)+' А'],
-[{ru:'Пусковой ток Iпуск',en:'Starting current Istart'}[lang], Ip.toFixed(0)+' А'],
-[{ru:'АВТОМАТИЧЕСКИЙ ВЫКЛЮЧАТЕЛЬ',en:'CIRCUIT BREAKER'}[lang], Ia+' А'],
-[{ru:'Уставка теплового расцепителя',en:'Thermal relay setting'}[lang], (In*1.15).toFixed(1)+' А'],
-[{ru:'ПРЕДОХРАНИТЕЛЬ',en:'FUSE'}[lang], Iprd+' А'],
-[{ru:'Рекоменд. кабель (Cu)',en:'Recommended cable (Cu)'}[lang], cab+' мм²'],
-];
-}
-},
-
-{
-tab: 9,
-id: 'heat_exchanger',
-title: {ru:'ТЕПЛООБМЕННИК — ПЛОЩАДЬ И LMTD',en:'HEAT EXCHANGER — AREA & LMTD'},
-fields: [
-{ id: 'Th1', label:{ ru: 'Горячий — вход Tг1 (°C)', en: 'Hot inlet Th1 (°C)' }, def: '' },
-{ id: 'Th2', label:{ ru: 'Горячий — выход Tг2 (°C)', en: 'Hot outlet Th2 (°C)' }, def: '' },
-{ id: 'Tc1', label:{ ru: 'Холодный — вход Тх1 (°C)', en: 'Cold inlet Tc1
-
-
-
-
+[{ru:'Тепловая нагрузка (норм.)',en:'Heat load (normal)'}[l
