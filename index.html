@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="author" content="Anvarov Timur Akramovich">
+    <title>ATA OIL & GAS CALCULATOR v47.2</title>
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjogIkFUQSBDQUxDVUxBVE9SIiwgInNob3J0X25hbWUiOiAiQVRBIiwgInN0YXJ0X3VybCI6ICIuLyIsICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLCAiYmFja2dyb3VuZF9jb2xvciI6ICIjMDcwOTBEIiwgInRoZW1lX2NvbG9yIjogIiNDOEE4NEIiLCAiaWNvbnMiOiBbeyJzcmMiOiAiaHR0cHM6Ly9jZG4taWNvbnMtcG5nLmZsYXRpY29uLmNvbS81MTIvMjkwNi8yOTA2MjE1LnBuZyIsICJzaXplcyI6ICI1MTJ4NTEyIiwgInR5cGUiOiAiaW1hZ2UvcG5nIn1dfQ==">
+    <style>
+        :root {
+            --gold: #C8A84B; --gold3: #7A6020; --bg: #07090D;
+            --panel: #0D1219; --border: #1E2D3D; --text: #7A99B0; --white: #E0EAF0;
+            --red: #C84040; --green: #2EA84C; --orange: #D07A30;
+        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Trebuchet MS', sans-serif; background: var(--bg); color: var(--white); margin: 0; padding-bottom: 70px; }
+        header { background: #000; border-bottom: 1px solid var(--gold3); padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }
+        .logo { display: flex; align-items: center; gap: 8px; color: var(--gold); font-weight: bold; }
+        .logo-hex { width: 30px; height: 30px; background: var(--gold3); clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 0.7rem; }
+        .nav-bar { display: flex; background: #000; border-bottom: 1px solid var(--border); overflow-x: auto; }
+        .nav-item { flex: 1; padding: 12px; text-align: center; font-size: 0.7rem; color: var(--text); cursor: pointer; white-space: nowrap; border-bottom: 2px solid transparent; }
+        .nav-item.active { color: var(--gold); border-bottom-color: var(--gold); background: var(--panel); }
+        .view { display: none; padding: 12px; animation: fadeIn 0.3s; }
+        .view.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .card { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 14px; margin-bottom: 12px; border-left: 3px solid var(--gold3); }
+        .card-title { font-size: 0.75rem; color: var(--gold); margin-bottom: 10px; font-weight: bold; text-transform: uppercase; }
+        input, select, textarea { width: 100%; padding: 10px; background: #000; border: 1px solid var(--border); color: #fff; border-radius: 6px; font-size: 1rem; margin-bottom: 10px; }
+        label { display: block; font-size: 0.65rem; color: var(--text); margin-bottom: 4px; }
+        .btn { width: 100%; background: var(--gold); color: #000; border: none; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        .res-box { margin-top: 10px; padding: 10px; background: #050505; border-radius: 6px; border-left: 2px solid var(--gold); display: none; }
+        .res-row { display: flex; justify-content: space-between; font-size: 0.9rem; padding: 4px 0; border-bottom: 1px solid #111; }
+        .res-val { color: var(--gold); font-weight: bold; }
+        .krs-badge { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; }
+        .prio-high { background: var(--red); } .prio-mid { background: var(--orange); } .prio-low { background: var(--green); }
+        .krs-item { border-bottom: 1px solid var(--border); padding: 10px 0; }
+        .done { opacity: 0.4; text-decoration: line-through; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.75rem; margin-top: 10px; }
+        th { text-align: left; color: var(--text); padding: 8px; border-bottom: 1px solid var(--gold3); }
+        td { padding: 8px; border-bottom: 1px solid #111; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo"><div class="logo-hex">ΛTΛ</div> ATA CALCULATOR</div>
+    <div style="text-align:right; font-size:0.55rem; color:var(--text);">V47.2 PRO<br>Anvarov T.A.</div>
+</header>
+
+<div class="nav-bar">
+    <div class="nav-item active" onclick="nav('calcs')">РАСЧЕТЫ</div>
+    <div class="nav-item" onclick="nav('krs')">ПЛАН КРС</div>
+    <div class="nav-item" onclick="nav('gost')">ГОСТ</div>
+    <div class="nav-item" onclick="nav('hist')">ИСТОРИЯ</div>
+</div>
+
+<div id="view-calcs" class="view active">
+    <input type="text" id="search" placeholder="Поиск (89 расчетов)..." oninput="renderCalcs()">
+    <div id="calcs-list"></div>
+</div>
+
+<div id="view-krs" class="view">
+    <div class="card">
+        <div class="card-title">Добавить в план</div>
+        <input type="text" id="krs-well" placeholder="№ Скважины / Куст">
+        <select id="krs-prio">
+            <option value="high">🔴 Аварийный</option>
+            <option value="mid" selected>🟡 Плановый</option>
+            <option value="low">🟢 Отложенный</option>
+        </select>
+        <textarea id="krs-task" placeholder="Вид работ"></textarea>
+        <button class="btn" onclick="addKRS()">ДОБАВИТЬ</button>
+    </div>
+    <div id="krs-list" class="card"></div>
+</div>
+
+<div id="view-gost" class="view">
+    <div class="card">
+        <div class="card-title">НКТ (ГОСТ 633-80)</div>
+        <div id="gost-nkt"></div>
+    </div>
+</div>
+
+<div id="view-hist" class="view">
+    <div class="card">
+        <div class="card-title">Журнал операций</div>
+        <div id="hist-list"></div>
+        <button class="btn" style="background:#444;color:#fff;font-size:0.7rem;" onclick="clearHist()">ОЧИСТИТЬ</button>
+    </div>
+</div>
+
+<script>
+const CALCS_DB = [
+    { id: 1, title: "Дебит жидкости, нефти и воды", f: ["Дебит жидкости (м3/сут)", "Обводненность (%)", "Плотность нефти (кг/м3)"], c: v => {
+        let qw = v[0]*(v[1]/100);
+        let qo = (v[0]-qw)*(v[2]/1000);
+        return [["Нефть (т/сут)", qo.toFixed(2)], ["Вода (м3/сут)", qw.toFixed(2)]];
+    }},
+    { id: 10, title: "Конвертер Давления", f: ["Значение", "Из ед. (1:МПа, 2:атм, 3:psi)"], c: v => {
+        let mpa = v[1]==1 ? v[0] : (v[1]==2 ? v[0]*0.1013 : v[0]*0.00689);
+        return [["МПа", mpa.toFixed(3)], ["атм", (mpa/0.101325).toFixed(2)], ["psi", (mpa/0.00689).toFixed(1)]];
+    }},
+    { id: 89, title: "Глубина по Давлению (Статика)", f: ["P заб (атм)", "P уст (атм)", "Плотность (кг/м3)"], c: v => {
+        let h = ((v[0]-v[1])*10.33) / (v[2]/1000);
+        return [["Глубина (м)", h.toFixed(1)]];
+    }}
+];
+
+const NKT_DATA = [{n:"60", d:60.3, w:5.0, q:6.82}, {n:"73", d:73.0, w:5.5, q:9.16}, {n:"89", d:89.0, w:6.5, q:13.2}];
+
+function nav(id) {
+    document.querySelectorAll('.view, .nav-item').forEach(e => e.classList.remove('active'));
+    document.getElementById('view-'+id).classList.add('active');
+    event.currentTarget.classList.add('active');
+    if(id==='gost') renderGost();
+}
+
+function renderCalcs() {
+    const q = document.getElementById('search').value.toLowerCase().split(' ');
+    const container = document.getElementById('calcs-list');
+    container.innerHTML = '';
+    CALCS_DB.filter(x => q.every(word => x.title.toLowerCase().includes(word))).forEach(calc => {
+        let html = `<div class="card"><div class="card-title">${calc.title}</div>`;
+        calc.f.forEach((l, i) => html += `<label>${l}</label><input type="number" inputmode="decimal" class="in-${calc.id}" data-idx="${i}">`);
+        html += `<button class="btn" onclick="execCalc(${calc.id})">РАССЧИТАТЬ</button><div class="res-box" id="res-${calc.id}"></div></div>`;
+        container.innerHTML += html;
+    });
+}
+
+function execCalc(id) {
+    const c = CALCS_DB.find(x => x.id === id);
+    const vals = Array.from(document.querySelectorAll('.in-'+id)).map(i => parseFloat(i.value) || 0);
+    const res = c.c(vals);
+    const box = document.getElementById('res-'+id);
+    box.innerHTML = res.map(r => `<div class="res-row"><span>${r[0]}</span><span class="res-val">${r[1]}</span></div>`).join('');
+    box.style.display = 'block';
+    document.activeElement.blur();
+    saveHist(c.title, res[0][1]);
+}
+
+function saveHist(t, v) {
+    let h = JSON.parse(localStorage.getItem('ata_hist') || '[]');
+    h.unshift({t, v, d: new Date().toLocaleTimeString()});
+    localStorage.setItem('ata_hist', JSON.stringify(h.slice(0, 50)));
+}
+
+function renderKRS() {
+    const plan = JSON.parse(localStorage.getItem('ata_krs') || '[]');
+    document.getElementById('krs-list').innerHTML = plan.map(i => `
+        <div class="krs-item ${i.done?'done':''}">
+            <span class="krs-badge prio-${i.prio}"></span><strong>${i.well}</strong>
+            <div style="font-size:0.7rem;margin-top:5px;">${i.task}</div>
+            <button class="btn" style="width:auto;padding:4px 10px;margin-top:5px;font-size:0.6rem;" onclick="toggleKRS(${i.id})">OK</button>
+        </div>`).join('') || 'План пуст';
+}
+
+function addKRS() {
+    const well = document.getElementById('krs-well').value;
+    if(!well) return;
+    const plan = JSON.parse(localStorage.getItem('ata_krs') || '[]');
+    plan.push({id:Date.now(), well, prio:document.getElementById('krs-prio').value, task:document.getElementById('krs-task').value, done:false});
+    localStorage.setItem('ata_krs', JSON.stringify(plan));
+    renderKRS();
+}
+
+function toggleKRS(id) {
+    let p = JSON.parse(localStorage.getItem('ata_krs'));
+    p = p.map(i => i.id === id ? {...i, done: !i.done} : i);
+    localStorage.setItem('ata_krs', JSON.stringify(p));
+    renderKRS();
+}
+
+function renderGost() {
+    let h = '<table><tr><th>Тип</th><th>D (мм)</th><th>Стенка</th><th>кг/м</th></tr>';
+    NKT_DATA.forEach(r => h += `<tr><td>НКТ-${r.n}</td><td>${r.d}</td><td>${r.w}</td><td>${r.q}</td></tr>`);
+    document.getElementById('gost-nkt').innerHTML = h + '</table>';
+}
+
+function renderHist() {
+    let h = JSON.parse(localStorage.getItem('ata_hist') || '[]');
+    document.getElementById('hist-list').innerHTML = h.map(i => `<div class="res-row"><span>${i.t}</span><b>${i.v}</b></div>`).join('');
+}
+
+renderCalcs();
+renderKRS();
+</script>
+</body>
+</html>
