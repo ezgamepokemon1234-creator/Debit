@@ -362,55 +362,22 @@
             font-family: monospace; font-weight: 400;
             display: block;
         }
-        .nav-primary {
-            background: linear-gradient(160deg, #0F1822 0%, #0A1018 100%);
-            border-color: var(--border2);
-            border-top: 2px solid var(--gold3);
-        }
+        .nav-primary { background: linear-gradient(160deg, #0A1018 0%, #080C14 100%); border-color: var(--gold3); border-top: 2px solid var(--gold); color: var(--gold2); }
         .nav-primary .nav-icon-wrap { color: var(--gold); }
-        .nav-accent {
-            background: linear-gradient(160deg, #0C1620 0%, #08101A 100%);
-            border-color: var(--border2);
-            border-top: 2px solid var(--cyan);
-            color: #7ACAE0;
-        }
-        .nav-accent .nav-icon-wrap { color: var(--cyan); font-size: 1.8rem; }
-        .nav-journal {
-            background: linear-gradient(160deg, #0A1520 0%, #081018 100%);
-            border-color: #1E4A6A; border-top: 2px solid var(--cyan);
-            color: #5ABEEA;
-        }
-        .nav-journal .nav-icon-wrap { color: var(--cyan); }
-        .nav-share {
-            background: linear-gradient(160deg, #0A180E 0%, #081210 100%);
-            border-color: #1A4A28; border-top: 2px solid var(--green);
-            color: #4ACA6A;
-        }
-        .nav-share .nav-icon-wrap { color: var(--green); font-size: 1.5rem; }
-        .nav-qr {
-            background: linear-gradient(160deg, #150A20 0%, #100818 100%);
-            border-color: #3A1A5A; border-top: 2px solid #9C5AC8;
-            color: #B87AE0;
-        }
-        .nav-qr .nav-icon-wrap { color: #9C5AC8; }
-        .nav-twin {
-            background: linear-gradient(160deg, #0A1A12 0%, #081510 100%);
-            border-color: #1A5A3A; border-top: 2px solid #2ACA7A;
-            color: #4AEA9A;
-        }
-        .nav-twin .nav-icon-wrap { color: #2ACA7A; font-size: 1.6rem; }
-        .nav-manual {
-            background: linear-gradient(160deg, #101018 0%, #0C0C14 100%);
-            border-color: #2A2A5A; border-top: 2px solid #6A6AEA;
-            color: #9A9AEA;
-        }
-        .nav-manual .nav-icon-wrap { color: #6A6AEA; font-size: 1.4rem; }
+        .nav-accent { background: linear-gradient(160deg, #08101A 0%, #060C14 100%); border-color: var(--gold3); border-top: 2px solid var(--gold); color: var(--gold2); }
+        .nav-accent .nav-icon-wrap { color: var(--gold); font-size: 1.8rem; }
+        .nav-journal { background: linear-gradient(160deg, #081018 0%, #060C14 100%); border-color: var(--gold3); border-top: 2px solid var(--gold); color: var(--gold2); }
+        .nav-journal .nav-icon-wrap { color: var(--gold); }
+        .nav-share { background: linear-gradient(160deg, #081210 0%, #060E0C 100%); border-color: var(--gold3); border-top: 2px solid var(--gold); color: var(--gold2); }
+        .nav-share .nav-icon-wrap { color: var(--gold); font-size: 1.5rem; }
+        .nav-qr { background: linear-gradient(160deg, #100818 0%, #080610 100%); border-color: var(--gold3); border-top: 2px solid var(--gold); color: var(--gold2); }
+        .nav-qr .nav-icon-wrap { color: var(--gold); }
+        .nav-twin { background: linear-gradient(160deg, #081510 0%, #060C0A 100%); border-color: var(--gold3); border-top: 2px solid var(--gold); color: var(--gold2); }
+        .nav-twin .nav-icon-wrap { color: var(--gold); font-size: 1.6rem; }
+        .nav-manual { background: linear-gradient(160deg, #0C0C14 0%, #080810 100%); border-color: var(--gold3); border-top: 2px solid var(--gold); color: var(--gold2); }
+        .nav-manual .nav-icon-wrap { color: var(--gold); font-size: 1.4rem; }
 
-        .nav-defect {
-            background: linear-gradient(160deg, #1A0808 0%, #120606 100%);
-            border-color: #5A1010; border-top: 2px solid #C84040;
-            color: #C84040;
-        }
+        .nav-defect { background: linear-gradient(160deg, #120606 0%, #0A0404 100%); border-color: var(--gold3); border-top: 2px solid var(--gold); color: var(--gold2); }
         .nav-defect .nav-icon-wrap { font-size: 1.4rem; }
 
         /* ─── CARDS ─── */
@@ -854,20 +821,20 @@
             <div class="nav-icon-wrap">⚠️</div>
             <span class="nav-label" id="nav_defect_label">АКТ<br>ДЕФЕКТА</span>
         </div>
-        <div class="nav-btn" id="nav_favorites_btn" onclick="nav('v_favorites')" style="border-color:#C8A84B;">
-            <div class="nav-icon-wrap" style="color:#C8A84B;">★</div>
+        <div class="nav-btn" id="nav_favorites_btn" onclick="nav('v_favorites')" style="border-color:var(--gold);border-top:2px solid var(--gold);">
+            <div class="nav-icon-wrap" style="color:var(--gold);">★</div>
             <span class="nav-label">ИЗБРАННЫЕ<br>РАСЧЁТЫ</span>
         </div>
-        <div class="nav-btn" id="nav_history_btn" onclick="nav('v_history'); renderHistory();" style="border-color:#3A9EC8;">
-            <div class="nav-icon-wrap" style="color:#3A9EC8;">⏱</div>
+        <div class="nav-btn" id="nav_history_btn" onclick="nav('v_history'); renderHistory();" style="border-color:var(--gold);border-top:2px solid var(--gold);">
+            <div class="nav-icon-wrap" style="color:var(--gold);">⏱</div>
             <span class="nav-label">ИСТОРИЯ<br>РАСЧЁТОВ</span>
         </div>
-        <div class="nav-btn" id="nav_graphs_btn" onclick="nav('v_graphs')" style="border-color:#2EA84C;">
-            <div class="nav-icon-wrap" style="color:#2EA84C;">📊</div>
+        <div class="nav-btn" id="nav_graphs_btn" onclick="nav('v_graphs')" style="border-color:var(--gold);border-top:2px solid var(--gold);">
+            <div class="nav-icon-wrap" style="color:var(--gold);">📊</div>
             <span class="nav-label">ГРАФИКИ<br>АНАЛИЗ</span>
         </div>
-        <div class="nav-btn" id="nav_gost_btn" onclick="nav('v_gost')" style="border-color:#5ABEEA;">
-            <div class="nav-icon-wrap" style="color:#5ABEEA;">📖</div>
+        <div class="nav-btn" id="nav_gost_btn" onclick="nav('v_gost')" style="border-color:var(--gold);border-top:2px solid var(--gold);">
+            <div class="nav-icon-wrap" style="color:var(--gold);">📖</div>
             <span class="nav-label">ГОСТ/API<br>СПРАВОЧНИК</span>
         </div>
         
@@ -13013,6 +12980,24 @@ function applyAccent(key) {
     var s = document.createElement('style');
     s.id = styleId;
     s.textContent = [
+        // ── NAV BUTTONS - override all unique colors with accent ──
+        '.nav-btn { border-top-color: ' + p.c1 + ' !important; color: ' + p.c2 + ' !important; }',
+        '.nav-btn .nav-label { color: ' + p.c2 + ' !important; }',
+        '.nav-btn .nav-icon-wrap { color: ' + p.c2 + ' !important; }',
+        '.nav-btn.active, .nav-btn:active { border-top-color: ' + p.c2 + ' !important; border-color: ' + p.c1 + ' !important; }',
+        // Specific nav classes border overrides
+        '.nav-accent { border-top: 2px solid ' + p.c1 + ' !important; }',
+        '.nav-journal { border-top: 2px solid ' + p.c1 + ' !important; }',
+        '.nav-share { border-top: 2px solid ' + p.c1 + ' !important; color: ' + p.c2 + ' !important; }',
+        '.nav-share .nav-icon-wrap { color: ' + p.c2 + ' !important; }',
+        '.nav-qr { border-top: 2px solid ' + p.c1 + ' !important; }',
+        '.nav-qr .nav-icon-wrap { color: ' + p.c2 + ' !important; }',
+        '.nav-twin { border-top: 2px solid ' + p.c1 + ' !important; color: ' + p.c2 + ' !important; }',
+        '.nav-twin .nav-icon-wrap { color: ' + p.c2 + ' !important; }',
+        '.nav-manual { border-top: 2px solid ' + p.c1 + ' !important; }',
+        '.nav-manual .nav-icon-wrap { color: ' + p.c2 + ' !important; }',
+        '.nav-defect { border-top: 2px solid ' + p.c1 + ' !important; color: ' + p.c2 + ' !important; }',
+
         // QR read view
         '#qr_status { border-color: ' + p.c1 + ' !important; }',
         '#qr_result_wrap button { border-color: ' + p.c1 + ' !important; color: ' + p.c1 + ' !important; }',
